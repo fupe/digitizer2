@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>pic/application-exit.png</file>
+        <file>pic/auto.png</file>
+        <file>pic/circle.png</file>
+        <file>pic/connect.png</file>
+        <file>pic/disconnect.png</file>
+        <file>pic/icon.ico</file>
+        <file>pic/icon.png</file>
+        <file>pic/line.png</file>
+        <file>pic/manual.png</file>
+        <file>pic/measure.png</file>
+        <file>pic/new-file.png</file>
+        <file>pic/point.png</file>
+        <file>pic/recycle-bin.png</file>
+        <file>pic/settings.png</file>
+        <file>pic/splash.png</file>
+        <file>pic/zoom_all.png</file>
+        <file>pic/zoom_select.png</file>
+    </qresource>
+</RCC>
