@@ -783,7 +783,7 @@ void CalibrateWindow::on_actionSave_calibration_data_triggered()
     QFileInfo fileInfo(calib_file);
     QString calib_file_txt = fileInfo.absolutePath() + QDir::separator() + fileInfo.completeBaseName() + ".txt";
     QFile file2(calib_file_txt);
-    qDebug() << "file 2 " << file2;
+    //qDebug() << "file 2 " << file2;
     QTextStream out2(&file2);
 
     if (file2.open(QIODevice::WriteOnly)) {

@@ -66,14 +66,7 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
     connect(ui->actionCalibrate,    &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Calibrate);});
     connect(appManager(), &AppManager::modeAddPointChanged,this, &MainWindow::onAddPointModeChanged); //reakce na zmenu modu
     // UI → AppManager
-
-        // AppManager → status bar
-        connect(appManager(), &AppManager::serialOpened, this, [this](){
-            statusBar()->showMessage(tr("Sériový port otevřen;"), 5000);
-        });
-        connect(appManager_, &AppManager::serialClosed, this, [this]{
-            statusBar()->showMessage(tr("Sériový port zavřen"), 3000);
-        });
+        // AppManager → status bab
         connect(appManager_, &AppManager::connectionNotice, this, [this](const QString& msg){
             statusBar()->showMessage(msg, 5000);
         });
@@ -83,60 +76,27 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
         });
 
         currentSettings_ = appManager_->settingsManager()->currentSettings();
-        //const auto &settins = appManager_->settingsManager()->currentSettings(); // obnoveni pozice okna
         if (currentSettings_.main_window_position.isValid()) {
             setGeometry(currentSettings_.main_window_position);
         }
     //-----
     connect(settingsManager_, &SettingsManager::settingsChanged,
             this, &MainWindow::onSettingsChanged);
-
     // inicializace z aktuálních Settings (např. zkratky, stavy checkboxů…)
     onSettingsChanged(settingsManager_->currentSettings()); // nebo jak se u tebe jmenuje getter
     connect(ui->actionExit, &QAction::triggered, this, [this]() {
         qDebug() << "Menu Exit triggered";
         this->close();  // vyvolá closeEvent()
-    }, Qt::UniqueConnection);
+    });
     this->setWindowTitle(tr("Digitizer"));
     //qApp->installEventFilter(this);
     //this->installEventFilter(this);
-    //connect(ui->graphicsView, SIGNAL(text_to_status_bar(QString,int)),this,SLOT (status_bar_print(QString,int)));  //posilani textu do statusbaru
-
-    //shortcuts = new  ShortCutsDialog(this);
-    //settings.shortcuts = shortcuts;
-    //appManager.shortcuts = shortcuts;
-    //initActions();
     initMenu();
     ui->toolBar_2->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
     ui->toolBar_2->setIconSize(QSize(70, 70));
-
-
-
-    //connect(ui->actionConnect, &QAction::triggered, this, &MainWindow::openSerialPort);
-    //connect(ui->actionDisconnect, &QAction::triggered, this, &MainWindow::closeSerialPort);
-    //connect(serialDevice, &QSerialPort::errorOccurred, this, &MainWindow::handleError);
-    //connect(serialDevice, &QSerialPort::readyRead, this, &MainWindow::readData);
-
-
-
     /*graphics*/
     // qDebug() << " scene = new QGraphicsScene(this); = " ;
     scene = new QGraphicsScene(this);
-
-
- //   setup_scene();
-//    appManager.setScene(scene);
-
-    //connect(scene, SIGNAL (selectionChanged()),              this, SLOT(itemSelected()));
-   // connect(scene, SIGNAL (changed(const QList<QRectF> & ) ), this, SLOT(sceneModified( const QList<QRectF> &)));
- //   connect(settings, &SettingsDialog::signal_reconnect, this, &MainWindow::reconnect);   //zmena portu.
-  //  connect(settings, &SettingsDialog::signal_retranslate, this, &MainWindow::retranslate); //zmena jazyku v settings
-
-
-
- //   reconnect();
-  //  retranslate();
-
 }
 
 MainWindow::~MainWindow()
@@ -148,27 +108,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 {
     qDebug()<<"MainWindow::closeEvent " << &event  ;
-
     {
         if (!appManager()) return QWidget::closeEvent(event);
-
-
-        qDebug()<<"ano ne okno main  " << currentSettings_.save_main_window_position_on_exit ;
-
         if (currentSettings_.save_main_window_position_on_exit) {
-            currentSettings_.main_window_position = this->geometry(); // QRect jako dřív
-            qDebug()<<"geometry " << this->geometry() ;
+            currentSettings_.main_window_position = this->geometry();  // QRect jako dřív
             appManager()->settingsManager()->updateSettings(currentSettings_);               // commit (uloží do QSettings přes SettingsManager)
         }
-        qDebug()<<"pred close event " << this->geometry() ;
         QWidget::closeEvent(event);
     }
-
 }
 
-
 /*
-
 void MainWindow::readData()
 {
     const QByteArray data = serialDevice->readAll();
@@ -249,12 +199,9 @@ void MainWindow::Zoom_Dynamic()
                     }
                 }
             }
-
             if (hasItem) {
-
                 QRectF endpoitArm(lastEndArm2_, QSizeF(1, 1));  // malý obdélník okolo bodu
                         bounds = bounds.united(endpoitArm);          // přidat do oblasti
-
                 bounds.adjust(-20, -20, 20, 20);  // přidá okraje
                 ui->graphicsView->fitInView(bounds, Qt::KeepAspectRatio);
                 ui->graphicsView->centerOn(bounds.center());
@@ -266,10 +213,7 @@ void MainWindow::Zoom_Dynamic()
 
 void MainWindow::Zoom_All()
 {
-
     ui->graphicsView->fitInView(QRect(-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length)),Qt::KeepAspectRatio);
-    //this->actionZoom_All->setIconText("aaaaaaa");
-    //ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(),Qt::KeepAspectRatio);
 }
 
 void MainWindow::Zoom_User()
@@ -286,19 +230,7 @@ void MainWindow::status_bar_print(QString text,int delay)
 
 void MainWindow::initActions()
 {
-
-    ui->actionConnect->setEnabled(true);
-    ui->actionDisconnect->setEnabled(false);
-    ui->actionExit->setEnabled(true);
-    ui->actionSave_dxf->setEnabled(false);
-    connect(ui->actionExit, &QAction::triggered, this, &QMainWindow::close, Qt::UniqueConnection); //selze pro druhe volani, nevytvori duplicitu
-    ui->actionAdd_circle->setEnabled(false);
-    ui->actionDelete_last_point->setEnabled(false);
-    ui->actionset_zero->setEnabled(false);
-    ui->toolBar_2->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
-    ui->toolBar_2->setIconSize(QSize(70, 70));
-
-    QString  menuStyle(
+      QString  menuStyle(
                "QMenu::item{"
                "background-color: rgb(200, 170, 0);"
                "color: rgb(255, 255, 255);"
@@ -334,20 +266,15 @@ void MainWindow::initMenu()
     ZoomMenu->setTitle("zoommenu");
 }
 
-
-
-
 void MainWindow::setup_scene()
 {
     qDebug() << "scene = " ;
-
     scene->setSceneRect(QRect(-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length)));
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->graphicsView->setDragMode(GraphicsView::RubberBandDrag);
     ui->graphicsView->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
     ui->graphicsView->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
-
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
 //    ui->graphicsView->setDragMode(selectModeButton->isChecked() ? QGraphicsView::RubberBandDrag : QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
@@ -359,15 +286,13 @@ void MainWindow::setup_scene()
     // arm2->hide();
     ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(),Qt::KeepAspectRatio);
     //ui->graphicsView->show();
-    qDebug() << " konecscene = " ;
+//    qDebug() << " konecscene = " ;
 }
 
 void MainWindow::on_actionDelete_last_point_triggered()
 {
 
 }
-
-
 
 void MainWindow::sceneModified(const QList<QRectF> & region)
 {
@@ -381,7 +306,6 @@ GraphicsView::GraphicsView(QWidget *parent) :
     zoom_pen.setColor(Qt::black);
     zoom_pen.setWidth(2);
 }
-
 
 
 void GraphicsView::wheelEvent(QWheelEvent *e)
@@ -1024,9 +948,7 @@ void MainWindow::on_actionSetup_triggered(bool /*checked*/)
 
 void MainWindow::on_actionexport_settings_triggered()
 {
-
         if (!appManager()->settingsManager()) return;
-
         const QString defDir =
             QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
         const QString path = QFileDialog::getSaveFileName(
@@ -1036,18 +958,13 @@ void MainWindow::on_actionexport_settings_triggered()
             tr("JSON files (*.json)")
         );
         if (path.isEmpty()) return;
-
         QString err;
         if (!appManager()->settingsManager()->exportJson(path, &err)) {
             QMessageBox::warning(this, tr("Export failed"),
                                  tr("Cannot export settings:\n%1").arg(err));
             return;
         }
-
-        statusBar()->showMessage(tr("Settings exported to %1")
-                                 .arg(QDir::toNativeSeparators(path)), 4000);
-
-
+        statusBar()->showMessage(tr("Settings exported to %1").arg(QDir::toNativeSeparators(path)), 4000);
 }
 
 void MainWindow::on_actionConnect_triggered()
