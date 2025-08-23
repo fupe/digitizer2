@@ -93,7 +93,7 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
     //this->installEventFilter(this);
     initMenu();
     ui->toolBar_2->setToolButtonStyle( Qt::ToolButtonTextUnderIcon );
-    ui->toolBar_2->setIconSize(QSize(70, 70));
+    ui->toolBar_2->setIconSize(QSize(50, 50));
     /*graphics*/
     // qDebug() << " scene = new QGraphicsScene(this); = " ;
     scene = new QGraphicsScene(this);
