@@ -1,25 +1,17 @@
-#include <QStandardItemModel>
-#include <QStatusBar>
 #include <QDebug>
 #include <QMessageBox>
-#include <QSerialPortInfo>
-#include <QKeyEvent>
-#include <QList>
-#include <QApplication>
 #include <QAction>
-#include <QToolButton>
-#include <QToolBar>
 #include <QGraphicsScene>
-#include <QElapsedTimer>                     //measure time
-#include <QThread>
 #include <QFileDialog>     //save dxf
 #include <QDir>
 #include <QtMath>
 
-#include <QTranslator>
-#include <QInputDialog>
 #include "appmanager.h"
-
+#include "CustomToolButton.h"
+#include "MeasureDialog.h"
+#include "calibratewindow.h"
+#include "InfoDialog.h"
+#include "SettingsDialog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 

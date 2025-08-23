@@ -2,11 +2,11 @@
 #define CALIBRATIONENGINE_H
 #include <QVector>
 #include <QPointF>
-#include<QLineF>
+#include <QLineF>
 #include <qmath.h>
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include <QDebug>
+#include <limits>
 
 
 

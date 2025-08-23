@@ -8,7 +8,6 @@
 #include <QGuiApplication>
 #include <QSignalBlocker>
 #include <QAction>
-#include <QCloseEvent>
 #include <QScreen>
 #include <QLCDNumber>
 #include <QPalette>

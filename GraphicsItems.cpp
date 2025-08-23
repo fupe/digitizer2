@@ -3,6 +3,7 @@
 #include <QCursor>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainterPathStroker>
+#include <QDebug>
 
 GraphicsItems::GraphicsItems()
 {
