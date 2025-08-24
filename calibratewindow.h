@@ -9,6 +9,7 @@
 #include <QMessageBox>
 #include <calibrationengine.h>
 #include "settings.h"
+#include <QThread>
 
 struct my_set_xy_points {
     QPointF point_xy;

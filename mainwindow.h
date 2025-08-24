@@ -3,10 +3,12 @@
 
 #include <QMainWindow>
 #include <QtCore>
+#include <QObject>
 #include <QtGui>
 #include <QSerialPort>
 #include <QGraphicsView>
 #include "settings.h"
+#include "appmanager.h"
 
 
 QT_BEGIN_NAMESPACE

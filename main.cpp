@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     a.setWindowIcon(QIcon(":///pic/icon.png"));
-
     QCoreApplication::setOrganizationName(QStringLiteral("LiborSoft"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("www.example.com"));
     QCoreApplication::setApplicationName(QStringLiteral("Digitizer2"));
@@ -21,14 +20,13 @@ int main(int argc, char *argv[])
     splash.show();
     QTimer::singleShot(2000, &splash, &QSplashScreen::close);
 
-
-    QObject root;                 // kořenový vlastník, není to okno
+    QObject root;                 // kořenový vlastník, není to okno, kvuli vlastnictvi a zavirani oken
     auto* applicationManager     = new AppManager(&root);  // dítě rootu (ne MainWindow!)
     auto* settingsManager   = new SettingsManager(&root);
     applicationManager->setSettingsManager(settingsManager);
     MainWindow mainwindow(applicationManager);      // top‑level okno, parent = nullptr
-    auto* serial = new SerialManager();      // bez parenta
-    applicationManager->setSerialManager(serial);
+    auto* serial_mng = new SerialManager();      // bez parenta
+    applicationManager->setSerialManager(serial_mng);
     QTimer::singleShot(2000, &mainwindow, &MainWindow::show);
     return a.exec();
 }
