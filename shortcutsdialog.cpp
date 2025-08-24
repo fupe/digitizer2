@@ -2,6 +2,7 @@
 #include "ui_shortcutsdialog.h"      // přesný název podle .ui
 #include <QKeySequenceEdit>
 #include <QPushButton>
+#include <QDebug>
 
 ShortCutsDialog::ShortCutsDialog(QWidget* parent)
     : QDialog(parent),

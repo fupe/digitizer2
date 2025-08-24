@@ -2,11 +2,10 @@
 #define SETTINGSDIALOG_H
 
 #include <QDialog>
-#include <QtCore>
-#include <QDebug>
-#include <QSettings>
-#include <QColorDialog>
-#include <shortcutsdialog.h>
+#include <QColor>
+#include "settings.h"
+
+class QPen;
 
 namespace Ui {
 class SettingsDialog;

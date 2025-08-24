@@ -2,7 +2,6 @@
 #define SHORTCUTSDIALOG_H
 
 #include <QDialog>
-#include <QDebug>
 #include "settings.h"                 // kvůli Shortcuts
 
 namespace Ui { class ShortCutsDialog; }

@@ -1,4 +1,5 @@
 #include "shapemanager.h"
+#include <QDebug>
 
 ShapeManager::ShapeManager(QObject* parent)
     : QObject(parent)
