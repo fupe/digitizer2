@@ -8,7 +8,7 @@
 #include <QSerialPort>
 #include <QGraphicsView>
 #include "settings.h"
-#include "appmanager.h"
+#include "appmanager.h" //musi byt
 
 
 QT_BEGIN_NAMESPACE

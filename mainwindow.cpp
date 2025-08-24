@@ -607,7 +607,6 @@ void MainWindow::on_actionNew_file_triggered()
                     }
                 }
             }
-
     settings.document_modified=false;
     ui->actionSave_dxf->setEnabled(false);
     }
