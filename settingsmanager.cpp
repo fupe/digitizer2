@@ -2,6 +2,7 @@
 #include <QCoreApplication>
 #include <QJsonDocument>
 #include <QFile>
+#include <QDebug>
 
 SettingsManager::SettingsManager(QObject* parent)
     : QObject(parent)

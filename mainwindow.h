@@ -3,37 +3,30 @@
 
 #include <QMainWindow>
 #include <QtCore>
+#include <QObject>
 #include <QtGui>
-#include <QDebug>
-#include <QSettings>
-//#include "my_modbus.h"
-//#include <QModbusDataUnit>
 #include <QSerialPort>
 #include <QGraphicsView>
-#include <QGraphicsItem>
-#include "GraphicsItems.h"
-#include <QThread>
-#include "shortcutsdialog.h"
-#include "CustomToolButton.h"
-#include "MeasureDialog.h"
-#include "calibratewindow.h"
-#include "InfoDialog.h"
-#include <qmath.h>
-#include "appmanager.h"
-#include "QGraphicsItem"
-#include "settingsmanager.h"     // kvůli typu SettingsManager
-#include "SettingsDialog.h"      // kvůli dialogu
-#include "appmanager.h"
+#include "settings.h"
+#include "appmanager.h" //musi byt
 
-#define _USE_MATH_DEFINES
-#include <cmath>
 
 QT_BEGIN_NAMESPACE
 //class QModbusClient;
 //class QModbusReply;
 class QGraphicsView;
+class QGraphicsItem;
+class QGraphicsLineItem;
+class QGraphicsEllipseItem;
 class AppManager;
 class SettingsManager;
+class CustomToolButton;
+class MeasureDialog;
+class CalibrateWindow;
+class InfoDialog;
+class GraphicsItems;
+class QKeyEvent;
+enum class AddPointMode;
 
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

@@ -2,9 +2,9 @@
 #include <QString>
 #include <QKeySequence>
 #include <QHash>
-#include <QDebug>
-#include <QSettings>
-#include <QColorDialog>
+#include <QPen>
+#include <QColor>
+#include <QRect>
 
 // --- Units enum & helpers ---
 enum class Units { Millimeters, Inches };

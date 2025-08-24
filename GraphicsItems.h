@@ -2,11 +2,11 @@
 #define GRAPHICSITEMS_H
 #include <QGraphicsItem>
 #include <QPainter>
-#include <QDebug>
 #include <QList>
 #include <QtGlobal>
 
 
+class QTextStream;
 
 
 class GraphicsItems : public QGraphicsItem

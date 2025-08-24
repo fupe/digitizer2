@@ -1,13 +1,13 @@
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 #include "shortcutsdialog.h"
-#include "ui_shortcutsdialog.h"
 #include <QSerialPortInfo>
-#include <QGraphicsScene>
 #include <QColor>
 #include <QFileDialog>
 #include <QShortcut>
 #include <QKeySequence>
+#include <QSettings>
+#include <QColorDialog>
 #include <QDebug>
 
 
