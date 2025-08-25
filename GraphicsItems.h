@@ -5,8 +5,9 @@
 #include <QList>
 #include <QtGlobal>
 
-
 class QTextStream;
+class DL_Dxf;
+class DL_WriterA;
 
 
 class GraphicsItems : public QGraphicsItem
@@ -29,7 +30,7 @@ public:
     bool finished;
     QRectF m_boundingRect;
 
-    virtual void export_dxf(QTextStream *stream);  //export to dxf file
+    virtual void export_dxf(DL_Dxf& dxf, DL_WriterA& dw);  //export to dxf file
     virtual void save(QTextStream &out) = 0;  // čistě virtuální metoda v základní třídě
 
 
@@ -55,7 +56,7 @@ public:
     void addPointToShape(const QPointF&) override ;
     QRectF boundingRect()const override;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget) override ;
-    virtual void export_dxf(QTextStream *stream) override;  //export to dxf file
+    virtual void export_dxf(DL_Dxf& dxf, DL_WriterA& dw) override;  //export to dxf file
     void save(QTextStream &out) override;
 
     QString typeName() const override { return "point"; }
@@ -78,7 +79,7 @@ public:
     QRectF boundingRect()const override;
     void addPointToShape(const QPointF&) override ;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget) override ;
-    virtual void export_dxf(QTextStream *stream) override;  //export to dxf file
+    virtual void export_dxf(DL_Dxf& dxf, DL_WriterA& dw) override;  //export to dxf file
     void save(QTextStream &out) override;
 
 
@@ -111,7 +112,7 @@ public:
     void addPointToShape(const QPointF&) override ;
     QRectF boundingRect()const override;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget) override ;
-    virtual void export_dxf(QTextStream *stream) override;  //export to dxf file
+    virtual void export_dxf(DL_Dxf& dxf, DL_WriterA& dw) override;  //export to dxf file
     void save(QTextStream &out) override;
 
 

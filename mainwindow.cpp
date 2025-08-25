@@ -5,6 +5,7 @@
 #include <QFileDialog>     //save dxf
 #include <QDir>
 #include <QtMath>
+#include "3rdparty/dxflib/src/dl_dxf.h"
 
 #include "appmanager.h"
 #include "CustomToolButton.h"
@@ -464,76 +465,41 @@ void MainWindow::on_actionSave_dxf_triggered()
 {
     QDateTime date = QDateTime::currentDateTime();
     QString formattedTime = date.toString("yyyy-MM-dd-hh-mm-ss");
-    QByteArray formattedTimeMsg = formattedTime.toLocal8Bit();
-    QString export_file = QFileDialog::getSaveFileName (this,tr("Export DXF"),  currentSettings_.directory_save_dxf + "/" + formattedTime,"DXF files (*.dxf)");
+    QString export_file = QFileDialog::getSaveFileName(this, tr("Export DXF"), currentSettings_.directory_save_dxf + "/" + formattedTime, "DXF files (*.dxf)");
+    if (export_file.isEmpty()) {
+        return;
+    }
     QDir d = QFileInfo(export_file).absoluteDir();
-    currentSettings_.directory_save_dxf=d.absolutePath();
+    currentSettings_.directory_save_dxf = d.absolutePath();
     appManager()->settingsManager()->updateSettings(currentSettings_);
 
-    QFile file(export_file);
-    if (!file.open(QFile::WriteOnly))
-    {
-        qDebug()<< "error";
-        //currentSettings_.document_saved = false;
+    DL_Dxf dxf;
+    QByteArray filenameArray = export_file.toLocal8Bit();
+    DL_WriterA* dw = dxf.out(filenameArray.constData(), DL_Codes::AC1009);
+    if (dw == nullptr) {
+        qDebug() << "error";
+        return;
     }
-    else {
-        //currentSettings_.document_modified=false;
-        //ui->actionSave_file->setEnabled(false);
-        //currentSettings_.document_saved = true;
-        //qDebug() << "modified"   << currentSettings_.document_modified ;
-    QTextStream out(&file);
-    qDebug() << "QTEXTSTREAM:" << &out;
-    out << "0\n";
-    out << "SECTION\n";
-    //qDebug() << "QTEXTSTREAM:" << &out;
 
-    out << "2\n";
-    out << "HEADER\n";
-    out << "9\n";
-    out << "$DIMALTF\n";
-    out << "40\n";
-    out << "0.0393700787401\n";
-    out << "0\n";
-    out << "ENDSEC\n";
-    out << "0\n";
-    out << "SECTION\n";
-    out << "2\n";
-    out << "ENTITIES\n";
-        // arms
-    out << "999\n";
-    out << "ARM1: " << currentSettings_.arm1_length;
-    out << "\n";
-    out << "999\n";
-    out << "ARM2: " << currentSettings_.arm2_length;
-    out << "\n";
-   // zero point
-    out << "0\n";
-    out << "POINT\n";
-    out << "8\n";
-    out << "0\n";
-    out << "10\n";
-    out << "0\n";
-    out << "20\n";
-    out << "0\n";
-    out << "30\n";
-    out << "0\n";
+    dxf.writeHeader(*dw);
+    dw->sectionEnd();
+    dw->sectionEntities();
 
-//predelat na novy zasobnik
+    dxf.writeComment(*dw, QString("ARM1: %1").arg(currentSettings_.arm1_length).toStdString());
+    dxf.writeComment(*dw, QString("ARM2: %1").arg(currentSettings_.arm2_length).toStdString());
+    dxf.writePoint(*dw, DL_PointData(0.0, 0.0, 0.0), DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
+
     for (QGraphicsItem* item : scene->items()) {
         if (auto fm = dynamic_cast<GraphicsItems*>(item)) {
-            fm->export_dxf(&out);
+            fm->export_dxf(dxf, *dw);
         }
     }
 
-    out << "0\n";
-    out << "ENDSEC\n";
-    out << "0\n";
-    out << "EOF\n";
-
-    file.flush ();
-    file.close ();
-    }
-
+    dw->sectionEnd();
+    dxf.writeObjects(*dw);
+    dw->dxfEOF();
+    dw->close();
+    delete dw;
 }
 
 void MainWindow::on_actionset_zero_triggered()

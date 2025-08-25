@@ -4,6 +4,8 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainterPathStroker>
 #include <QDebug>
+#include "3rdparty/dxflib/src/dl_dxf.h"
+#include <QTextStream>
 
 GraphicsItems::GraphicsItems()
 {
@@ -26,9 +28,10 @@ void GraphicsItems::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(widget);
 }
 
-void GraphicsItems::export_dxf(QTextStream *stream)
+void GraphicsItems::export_dxf(DL_Dxf& dxf, DL_WriterA& dw)
 {
-     Q_UNUSED(stream);
+    Q_UNUSED(dxf);
+    Q_UNUSED(dw);
     qDebug() << "export mygraphicsitem" << this->pen;
 }
 
@@ -79,29 +82,13 @@ void mypoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     painter->drawPoint(1,1);
 }
 
-void mypoint::export_dxf(QTextStream *stream)
+void mypoint::export_dxf(DL_Dxf& dxf, DL_WriterA& dw)
 {
-    qDebug() << "export mypoint" << this->pos ();
-  //  qDebug() << "export mypoint stream" << stream;
-   // *stream << "pos.x" << this->pos ().x () << "\n";
-   // *stream << "pos.y" << this->pos ().y () << "\n";
-
-    *stream << "999\n";
-    *stream << "alfa: " << -alfa;
-    *stream << "\n";
-    *stream << "999\n";
-    *stream << "beta: " << -beta;
-    *stream << "\n";
-    *stream << "0\n";
-    *stream << "POINT\n";
-    *stream << "8\n";
-    *stream << "0\n";
-    *stream << "10\n";
-    *stream << this->pos ().x () << "\n";
-    *stream << "20\n";
-    *stream << this->pos ().y ()*(-1) << "\n";
-    *stream << "30\n";
-    *stream << "0\n";
+    qDebug() << "export mypoint" << this->pos();
+    dxf.writeComment(dw, QString("alfa: %1").arg(-alfa).toStdString());
+    dxf.writeComment(dw, QString("beta: %1").arg(-beta).toStdString());
+    DL_PointData data(this->pos().x(), this->pos().y() * (-1), 0.0);
+    dxf.writePoint(dw, data, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
 }
 
 void mypoint::save(QTextStream &out)
@@ -199,30 +186,18 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
 }
 
-void mypolyline::export_dxf(QTextStream *stream)
+void mypolyline::export_dxf(DL_Dxf& dxf, DL_WriterA& dw)
 {
-    Q_UNUSED(stream);
-
     qDebug() << "export mypolyline" << this->pen;
-
-    for (int i=0; i<mypolygon->count()-1; i++)
-    {
-        *stream << "0\n";
-        *stream << "LINE\n";
-        *stream << "8\n";
-        *stream << "0\n";
-        *stream << "10\n";
-        *stream << (mypolygon->at(i).x()+pos().x()) << "\n";
-        *stream << "20\n";
-        *stream << (mypolygon->at(i).y()+pos().y())*(-1) << "\n";
-        *stream << "30\n";
-        *stream << "0\n";
-        *stream << "11\n";
-        *stream << (mypolygon->at(i+1).x()+pos().x()) << "\n";
-        *stream << "21\n";
-        *stream << (mypolygon->at(i+1).y()+pos().y())*(-1) << "\n";
-        *stream << "31\n";
-        *stream << "0\n";
+    for (int i = 0; i < mypolygon->count() - 1; i++) {
+        DL_LineData lineData(
+            mypolygon->at(i).x() + pos().x(),
+            (mypolygon->at(i).y() + pos().y()) * (-1),
+            0.0,
+            mypolygon->at(i + 1).x() + pos().x(),
+            (mypolygon->at(i + 1).y() + pos().y()) * (-1),
+            0.0);
+        dxf.writeLine(dw, lineData, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
     }
 }
 
@@ -335,37 +310,13 @@ QRectF mycircle::boundingRect() const
 
 }
 
-void mycircle::export_dxf(QTextStream *stream)
+void mycircle::export_dxf(DL_Dxf& dxf, DL_WriterA& dw)
 {
-    Q_UNUSED(stream);
-
     qDebug() << "export mycircle" << this->pen;
-
-    *stream << "0\n";
-    *stream << "CIRCLE\n";
-    *stream << "8\n";
-    *stream << "0\n";
-    *stream << "10\n";
-    *stream << center.x() << "\n";
-    *stream << "20\n";
-    *stream << center.y()*(-1) << "\n";
-    *stream << "30\n";
-    *stream << "0\n";
-    *stream << "40\n";
-    *stream << radius << "\n";
-    //*stream << "0\n";
-//center point
-    *stream << "0\n";
-    *stream << "POINT\n";
-    *stream << "8\n";
-    *stream << "0\n";
-    *stream << "10\n";
-    *stream << center.x() << "\n";
-    *stream << "20\n";
-    *stream << center.y()*(-1) << "\n";
-    *stream << "30\n";
-    *stream << "0\n";
-
+    DL_CircleData circleData(center.x(), center.y() * (-1), 0.0, radius);
+    dxf.writeCircle(dw, circleData, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
+    DL_PointData pointData(center.x(), center.y() * (-1), 0.0);
+    dxf.writePoint(dw, pointData, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
 }
 
 void mycircle::save(QTextStream &out)
