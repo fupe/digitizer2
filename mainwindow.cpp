@@ -26,11 +26,8 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
     // až teď existují všechny prvky z UI → můžeš nastavovat akce, signály, shortcuty…
     settingsManager_ = appManager_->settingsManager();
     Q_ASSERT(settingsManager_);
-    qDebug() << " konstruktor " ;
-    //----------
     auto modes = new QActionGroup(this);
     modes->setExclusive(true);
-
     ui->actionAdd_polyline->setCheckable(true);
     ui->actionAdd_circle->setCheckable(true);
     ui->actionMeasure->setCheckable(true);

@@ -251,25 +251,12 @@ CalibrateWindow::my_calibration_set::my_calibration_set(double arm_1, double arm
 {
     this->arm_1=arm_1;
     this->arm_2=arm_2;
-    qDebug()<< "new calib set in konstruktor" << this ;
-    //qDebug()<< "arm1 " << this->arm_1 << "arm2 " << this->arm_2;
-
-
 }
 
 CalibrateWindow::my_calibration_set::~my_calibration_set()
 {
-
- qDebug () << "destruktor mazu my_calibration_set"   ;
  xy_points_list.clear();
-
-
 }
-
-
-
-
-
 
 double CalibrateWindow::distance(const QPointF &p1, const QPointF &p2)
 {

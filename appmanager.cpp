@@ -12,11 +12,9 @@ namespace {
 }
 
 AppManager::AppManager(QObject* parent) : QObject(parent) {
-    qDebug() << "app manager konstruktor";
      serialmanager_ = new SerialManager(this);
      serialmanager_->open();
      QObject::connect(qApp, &QCoreApplication::aboutToQuit, serialmanager_, &SerialManager::close);
-     qDebug() << "app manager konstruktor  konec";
 }
 
 /*ShapeManager& AppManager::shapeManager()

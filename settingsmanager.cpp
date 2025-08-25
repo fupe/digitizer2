@@ -12,12 +12,9 @@ SettingsManager::SettingsManager(QObject* parent)
              QCoreApplication::applicationName())
 
 {
-    qDebug() << "settings  manager konstruktor";
     current_ = loadFromStore();
     emit settingsChanged(current_);
     emit shortcutsChanged(current_.shortcuts);
-    qDebug() << "settings  manager konstruktor konec";
-
 }
 
 
@@ -52,7 +49,6 @@ void SettingsManager::updateSettings(const Settings& s)
 
 Settings SettingsManager::loadFromStore()  {
     Settings settings;
-    qDebug()<<"loadfromStore....";
     // ====== Komunikace – společná volba zdroje ======
     store_.beginGroup(QStringLiteral("Comm"));
     // výchozí: serial
@@ -91,18 +87,14 @@ Settings SettingsManager::loadFromStore()  {
     settings.units       = stringToUnits(store_.value(QStringLiteral("Units"), unitsToString(settings.units)).toString());
     settings.arms_color = store_.value("arms_color", settings.arms_color).value<QColor>();
     settings.save_main_window_position_on_exit = store_.value(QStringLiteral("save_main_window_position_on_exit"), true).toBool();
-    qDebug()<<"save_main_window_position_on_exit " << settings.save_main_window_position_on_exit ;
+//    qDebug()<<"save_main_window_position_on_exit " << settings.save_main_window_position_on_exit ;
     settings.main_window_position = store_.value(QStringLiteral("main_window_position"), QRect()).toRect();
     settings.save_measure_window_position_on_exit = store_.value(QStringLiteral("save_measure_window_position_on_exit"), true).toBool();
        settings.measure_window_position = store_.value(QStringLiteral("measure_window_position"), QRect()).toRect();
-    qDebug() << " load 2";
     settings.language = store_.value(QStringLiteral("language"),settings.language).toString();
-    qDebug() << " load 3";
     settings.directory_save_dxf = store_.value(QStringLiteral("directory_save_dxf"),"c:/").toString();
     settings.directory_save_data = store_.value(QStringLiteral("directory_save_data"),"c:/").toString();
-    qDebug() << " load 3";
     store_.endGroup();
-    qDebug() << " load !";
     store_.beginGroup(QStringLiteral("Shortcuts"));
     settings.shortcuts = Shortcuts::defaults();
     for (auto it = settings.shortcuts.map.begin(); it != settings.shortcuts.map.end(); ++it) {
@@ -112,7 +104,6 @@ Settings SettingsManager::loadFromStore()  {
         it.value() = QKeySequence(seq);
     }
     store_.endGroup();
-    qDebug() << " load ";
     store_.beginGroup(QStringLiteral("Program"));
     settings.auto_step= store_.value(QStringLiteral("auto_step"),settings.auto_step).toDouble();
    // alfa_offset = double(setting.value("alfa_offset",0).toDouble ());
@@ -122,7 +113,6 @@ Settings SettingsManager::loadFromStore()  {
     settings.arm1_length= store_.value(QStringLiteral("arm1_length"),settings.arm1_length).toDouble();
     settings.arm2_length= store_.value(QStringLiteral("arm2_length"),settings.arm2_length).toDouble();
     store_.endGroup();
-    qDebug() << " load from store end ";
     return settings;
 }
 
