@@ -1026,4 +1026,30 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
 }
 
 
+void MainWindow::on_actionimport_settings_triggered()
+{
+    if (!appManager()->settingsManager()) return;
 
+    const QString defDir =
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    const QString path = QFileDialog::getOpenFileName(
+        this,
+        tr("Import settings from JSON"),
+        QDir(defDir).filePath("settings.json"),
+        tr("JSON files (*.json)")
+    );
+    if (path.isEmpty()) return;
+
+    QString err;
+    if (!appManager()->settingsManager()->importJson(path, &err)) {
+        QMessageBox::warning(this, tr("Import failed"),
+                             tr("Cannot import settings:\n%1").arg(err));
+        return;
+    }
+
+    statusBar()->showMessage(
+        tr("Settings imported from %1")
+            .arg(QDir::toNativeSeparators(path)),
+        4000
+    );
+}

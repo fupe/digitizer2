@@ -1,0 +1,45 @@
+# ---- Qt Creator ----
+# Uživatelské soubory Qt Creatoru (lokální konfigurace IDE)
+*.pro.user
+*.pro.user.*
+*.qbs.user
+*.qbs.user.*
+
+# ---- Qt build artefakty ----
+*.moc
+*.obj
+*.o
+*.a
+*.so
+*.so.*
+*.dll
+*.dylib
+*.lib
+*.exp
+*.pdb
+
+# Auto-generované soubory z uic a moc
+ui_*.h
+qrc_*.cpp
+moc_*.cpp
+moc_*.h
+
+# Build adresáře (doporučeno kompilovat mimo repo, ale pro jistotu)
+build-*/
+*/build-*/
+
+# ---- IDE / OS ----
+# Visual Studio Code
+.vscode/
+# CLion
+.idea/
+cmake-build-*/
+
+# Windows / macOS
+Thumbs.db
+*.DS_Store
+
+# ---- Logs / temporary ----
+*.log
+*.tmp
+*.swp

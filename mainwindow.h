@@ -121,6 +121,8 @@ private slots:
 
     void on_actionConnect_triggered();
 
+    void on_actionimport_settings_triggered();
+
 public slots:
     void Zoom_Dynamic();
     void Zoom_All();

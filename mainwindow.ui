@@ -133,7 +133,7 @@
      <x>0</x>
      <y>0</y>
      <width>929</width>
-     <height>36</height>
+     <height>41</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuDevice">
@@ -154,6 +154,7 @@
     </property>
     <addaction name="actionSetup"/>
     <addaction name="actionexport_settings"/>
+    <addaction name="actionimport_settings"/>
     <addaction name="actionset_zero"/>
     <addaction name="actionCalibrate"/>
    </widget>
@@ -368,6 +369,11 @@
   <action name="actionexport_settings">
    <property name="text">
     <string>export settings</string>
+   </property>
+  </action>
+  <action name="actionimport_settings">
+   <property name="text">
+    <string>import settings</string>
    </property>
   </action>
  </widget>
