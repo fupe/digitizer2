@@ -2,6 +2,7 @@
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
 !include "nsDialogs.nsh"
+!include "UAC.nsh"
 
 ; ==== ZÁKLADNÍ INFO (uprav podle sebe) ====
 !define APP_NAME     "Digitizer2"
@@ -11,10 +12,15 @@
 Name "${APP_NAME} ${APP_VERSION}"
 OutFile "digitizer2-setup-${APP_VERSION}.exe"
 InstallDir "$PROGRAMFILES\${COMPANY}\${APP_NAME}"
-RequestExecutionLevel admin
+RequestExecutionLevel user
 SetCompressor /SOLID lzma
 
+Var InstallScope
+Var RadioAll
+Var RadioCurrent
+
 ; ==== STRÁNKY ====
+Page custom InstallScopePage InstallScopePageLeave
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -33,13 +39,19 @@ Function ImportRegIfExists
   Pop $1    ; exit code
   Pop $2    ; output
   StrCmp $1 "0" +2
-    MessageBox MB_ICONEXCLAMATION "Registry import failed ($1).$\\r$\\n$2"
+    MessageBox MB_ICONEXCLAMATION "Registry import failed ($1).$\r$\n$2"
 done:
 FunctionEnd
 
 ; ==== INSTALACE ====
 Section "Application (required)" SecMain
   SectionIn RO
+
+  ${If} $InstallScope == "all"
+    SetShellVarContext all
+  ${Else}
+    SetShellVarContext current
+  ${EndIf}
 
   ; Cíl instalace
   SetOutPath "$INSTDIR"
@@ -67,14 +79,67 @@ Section "Application (required)" SecMain
 
   ; Odinstalátor + položka v „Programs and Features“
   WriteUninstaller "$INSTDIR\Uninstall.exe"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "DisplayName" "${APP_NAME} ${APP_VERSION}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
+  ${If} $InstallScope == "all"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "DisplayName" "${APP_NAME} ${APP_VERSION}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "InstallScope" "$InstallScope"
+  ${Else}
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "DisplayName" "${APP_NAME} ${APP_VERSION}"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "UninstallString" '"$INSTDIR\Uninstall.exe"'
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "InstallScope" "$InstallScope"
+  ${EndIf}
 SectionEnd
 
 ; ==== ODINSTALACE ====
 Section "Uninstall"
+  ReadRegStr $InstallScope HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "InstallScope"
+  ${If} $InstallScope == ""
+    ReadRegStr $InstallScope HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}" "InstallScope"
+  ${EndIf}
+
+  ${If} $InstallScope == "all"
+    SetShellVarContext all
+  ${Else}
+    SetShellVarContext current
+  ${EndIf}
+
   Delete "$DESKTOP\${APP_NAME}.lnk"
   RMDir /r "$SMPROGRAMS\${APP_NAME}"
   RMDir /r "$INSTDIR"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
+
+  ${If} $InstallScope == "all"
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
+  ${Else}
+    DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APP_NAME}"
+  ${EndIf}
 SectionEnd
+
+Function InstallScopePage
+  nsDialogs::Create 1018
+  Pop $0
+  ${If} $0 == error
+    Abort
+  ${EndIf}
+  !insertmacro MUI_HEADER_TEXT "Installation Scope" "Select who can use ${APP_NAME}"
+  ${NSD_CreateRadioButton} 0 0 100% 12u "All users"
+  Pop $RadioAll
+  ${NSD_CreateRadioButton} 0 13u 100% 12u "Current user"
+  Pop $RadioCurrent
+  ${NSD_Check} $RadioCurrent
+  nsDialogs::Show
+FunctionEnd
+
+Function InstallScopePageLeave
+  ${NSD_GetState} $RadioAll $0
+  ${If} $0 == 1
+    StrCpy $InstallScope "all"
+    StrCpy $INSTDIR "$PROGRAMFILES\${COMPANY}\${APP_NAME}"
+    UAC::RunElevated
+    Pop $0
+    StrCmp $0 0 +3
+      Quit
+  ${Else}
+    StrCpy $InstallScope "current"
+    StrCpy $INSTDIR "$LOCALAPPDATA\${COMPANY}\${APP_NAME}"
+  ${EndIf}
+FunctionEnd
