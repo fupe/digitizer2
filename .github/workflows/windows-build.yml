@@ -30,11 +30,10 @@ jobs:
           choco install 7zip -y
 
       # Qt + modul SerialPort
-- name: Install Qt with aqt
-  shell: bash
-  run: |
-    python -m aqt install-qt windows desktop "$QT_VERSION" "$QT_ARCH" -O C:\Qt
-
+      - name: Install Qt with aqt
+        shell: bash
+        run: |
+          python -m aqt install-qt windows desktop "$QT_VERSION" "$QT_ARCH" -O C:\Qt
 
       # MinGW nástroje (gcc, mingw32-make) pro dané Qt
       - name: Install MinGW toolchain
