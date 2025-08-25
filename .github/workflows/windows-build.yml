@@ -1,4 +1,4 @@
-name: Windows Qt build (MinGW) + deploy (aqt)
+name: Windows Qt build (MinGW) + deploy + NSIS installer
 
 on:
   push:
@@ -133,8 +133,22 @@ jobs:
             if (Test-Path $src) { Copy-Item $src dist/ -Force } else { Write-Host "Warning: $d not found in ${env:MINGW_BIN}" }
           }
 
+      # Upload portable build
       - name: Upload artifact (portable app)
         uses: actions/upload-artifact@v4
         with:
           name: digitizer2-windows-portable
           path: dist/**
+
+      # 🔹 NSIS installer build
+      - name: Install NSIS
+        run: choco install nsis -y
+
+      - name: Build installer (NSIS)
+        run: makensis installer.nsi
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: digitizer2-installer
+          path: digitizer2-setup-*.exe
