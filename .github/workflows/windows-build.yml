@@ -1,4 +1,4 @@
-name: Windows Qt build (MinGW) + deploy
+name: Windows Qt build (MinGW) + deploy (aqt)
 
 on:
   push:
@@ -9,71 +9,24 @@ jobs:
   build:
     runs-on: windows-latest
 
+    env:
+      QT_VERSION: "5.14.2"
+      QT_ARCH: "win64_mingw73"     # Qt 5.14.2 + MinGW 7.3
+      MINGW_TOOL: "qt.tools.win64_mingw730"
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Explicitně nastav Python (někdy pomůže proti exit code 1 v AQT)
-      - name: Setup Python
+      - name: Setup Python (stable)
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.10"
 
-      # Minimalistická instalace Qt 5.14.2 + SerialPort + MinGW toolchain
-      - name: Install Qt (5.14.2 MinGW 7.3)
-        uses: jurplel/install-qt-action@v3
-        with:
-          version: '5.14.2'
-          host: 'windows'
-          target: 'desktop'
-          arch: 'win64_mingw73'
-          modules: 'qtserialport'
-          cache: true
-
-      - name: Show Qt versions (debug)
-        shell: bash
+      - name: Install aqt + 7zip
         run: |
-          qmake -v || true
-          where qmake || true
-          where mingw32-make || true
-          where windeployqt || true
+          python -m pip install --upgrade pip
+          pip install "aqtinstall==3.1.*"
+          choco install 7zip -y
 
-      - name: Build (qmake + mingw32-make)
-        shell: bash
-        run: |
-          qmake digitizer2.pro CONFIG+=release
-          mingw32-make -j4
-
-      - name: Locate built EXE
-        id: findexe
-        shell: bash
-        run: |
-          EXE_PATH=$(ls -1 ./release/*.exe | head -n 1)
-          if [ -z "$EXE_PATH" ]; then
-            echo "No EXE found in ./release"
-            exit 1
-          fi
-          echo "exe=$EXE_PATH" >> $GITHUB_OUTPUT
-
-      - name: Run windeployqt
-        shell: bash
-        run: |
-          mkdir -p dist
-          cp "${{ steps.findexe.outputs.exe }}" dist/
-          windeployqt --release "dist/$(basename "${{ steps.findexe.outputs.exe }}")"
-
-      - name: Add MinGW runtime DLLs
-        shell: pwsh
-        run: |
-          $mingwBin = (Get-Command mingw32-make.exe).Source | Split-Path
-          $dlls = @('libstdc++-6.dll','libgcc_s_seh-1.dll','libwinpthread-1.dll')
-          foreach ($d in $dlls) {
-            $src = Join-Path $mingwBin $d
-            if (Test-Path $src) { Copy-Item $src dist/ -Force } else { Write-Host "Warning: $d not found in $mingwBin" }
-          }
-
-      - name: Upload artifact (portable app)
-        uses: actions/upload-artifact@v4
-        with:
-          name: digitizer2-windows-portable
-          path: dist/**
+      # Qt + m
