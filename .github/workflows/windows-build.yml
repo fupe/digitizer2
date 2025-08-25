@@ -13,7 +13,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Qt (5.14.2 MinGW 7.3 + SerialPort)
+      # Explicitně nastav Python (někdy pomůže proti exit code 1 v AQT)
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      # Minimalistická instalace Qt 5.14.2 + SerialPort + MinGW toolchain
+      - name: Install Qt (5.14.2 MinGW 7.3)
         uses: jurplel/install-qt-action@v3
         with:
           version: '5.14.2'
@@ -21,7 +28,15 @@ jobs:
           target: 'desktop'
           arch: 'win64_mingw73'
           modules: 'qtserialport'
-          tools: 'tools_mingw,qt.tools.win64_mingw730'
+          cache: true
+
+      - name: Show Qt versions (debug)
+        shell: bash
+        run: |
+          qmake -v || true
+          where qmake || true
+          where mingw32-make || true
+          where windeployqt || true
 
       - name: Build (qmake + mingw32-make)
         shell: bash
@@ -29,7 +44,6 @@ jobs:
           qmake digitizer2.pro CONFIG+=release
           mingw32-make -j4
 
-      # Najdeme .exe v Release adresáři (uprav, pokud máš jinou cestu)
       - name: Locate built EXE
         id: findexe
         shell: bash
@@ -41,33 +55,21 @@ jobs:
           fi
           echo "exe=$EXE_PATH" >> $GITHUB_OUTPUT
 
-      # Spustíme windeployqt, který zkopíruje Qt DLL a pluginy k EXE
       - name: Run windeployqt
         shell: bash
         run: |
           mkdir -p dist
           cp "${{ steps.findexe.outputs.exe }}" dist/
-          # windeployqt upraví obsah ve složce dist
           windeployqt --release "dist/$(basename "${{ steps.findexe.outputs.exe }}")"
 
-      # Přibalíme i MinGW runtime DLL (ty windeployqt obvykle nepřidá)
       - name: Add MinGW runtime DLLs
         shell: pwsh
         run: |
-          $exe = "$(Resolve-Path 'dist\*.exe' | Select-Object -First 1)"
-          if (-not $exe) { throw "EXE not found in dist" }
-
-          # Najdi MinGW bin (tam leží libstdc++-6.dll, libgcc_s_seh-1.dll, libwinpthread-1.dll)
           $mingwBin = (Get-Command mingw32-make.exe).Source | Split-Path
           $dlls = @('libstdc++-6.dll','libgcc_s_seh-1.dll','libwinpthread-1.dll')
-
           foreach ($d in $dlls) {
             $src = Join-Path $mingwBin $d
-            if (Test-Path $src) {
-              Copy-Item $src dist/ -Force
-            } else {
-              Write-Host "Warning: $d not found in $mingwBin"
-            }
+            if (Test-Path $src) { Copy-Item $src dist/ -Force } else { Write-Host "Warning: $d not found in $mingwBin" }
           }
 
       - name: Upload artifact (portable app)
