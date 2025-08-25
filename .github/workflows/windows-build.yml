@@ -11,7 +11,7 @@ jobs:
 
     env:
       QT_VERSION: "5.14.2"
-      QT_ARCH: "win64_mingw73"     # Qt 5.14.2 + MinGW 7.3
+      QT_ARCH: "win64_mingw73"      # Qt 5.14.2 + MinGW 7.3
       MINGW_TOOL: "qt.tools.win64_mingw730"
 
     steps:
@@ -29,13 +29,13 @@ jobs:
           pip install "aqtinstall==3.1.*"
           choco install 7zip -y
 
-      # Qt + modul SerialPort
+      # Qt
       - name: Install Qt with aqt
         shell: bash
         run: |
           python -m aqt install-qt windows desktop "$QT_VERSION" "$QT_ARCH" -O C:\Qt
 
-      # MinGW nástroje (gcc, mingw32-make) pro dané Qt
+      # MinGW nástroje (gcc, mingw32-make)
       - name: Install MinGW toolchain
         shell: bash
         run: |
@@ -50,6 +50,13 @@ jobs:
           echo "MINGW_BIN=$mingwBin" >> $env:GITHUB_ENV
           echo "$qtBin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           echo "$mingwBin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      # DŮLEŽITÉ: ukaž Qt pluginům cestu (kvůli qwindows.dll)
+      - name: Export QT_PLUGIN_PATH
+        shell: pwsh
+        run: |
+          $qtPlugins = "C:\Qt\${env:QT_VERSION}\mingw73_64\plugins"
+          echo "QT_PLUGIN_PATH=$qtPlugins" >> $env:GITHUB_ENV
 
       - name: Show tool versions (debug)
         shell: bash
@@ -76,12 +83,21 @@ jobs:
           fi
           echo "exe=$EXE_PATH" >> $GITHUB_OUTPUT
 
-      - name: Run windeployqt
+      - name: Run windeployqt (with fallback plugins copy)
         shell: bash
         run: |
           mkdir -p dist
           cp "${{ steps.findexe.outputs.exe }}" dist/
-          windeployqt --release "dist/$(basename "${{ steps.findexe.outputs.exe }}")"
+          # nasměruj výstup přímo do dist
+          windeployqt --release --dir dist "dist/$(basename "${{ steps.findexe.outputs.exe }}")" || true
+
+          # Fallback: ručně zkopíruj platform pluginy, kdyby je windeployqt nepřidal
+          mkdir -p dist/plugins/platforms
+          cp -f "C:/Qt/${QT_VERSION}/mingw73_64/plugins/platforms/qwindows.dll" dist/plugins/platforms/ 2>/dev/null || true
+
+          # volitelně přidej style plugin (nevadí, když neexistuje)
+          mkdir -p dist/plugins/styles
+          cp -f "C:/Qt/${QT_VERSION}/mingw73_64/plugins/styles/qwindowsvistastyle.dll" dist/plugins/styles/ 2>/dev/null || true
 
       - name: Add MinGW runtime DLLs
         shell: pwsh
