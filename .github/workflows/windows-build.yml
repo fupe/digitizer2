@@ -99,6 +99,31 @@ jobs:
           mkdir -p dist/plugins/styles
           cp -f "C:/Qt/${QT_VERSION}/mingw73_64/plugins/styles/qwindowsvistastyle.dll" dist/plugins/styles/ 2>/dev/null || true
 
+      # 🔹 Debug: vypiš co je v dist
+      - name: List dist content (debug)
+        shell: bash
+        run: |
+          echo "=== dist root ==="
+          ls -la dist
+          echo "=== dist/plugins ==="
+          ls -la dist/plugins || true
+          echo "=== dist/plugins/platforms ==="
+          ls -la dist/plugins/platforms || true
+
+      # 🔹 Fallback: základní Qt DLL, kdyby chyběly
+      - name: Fallback copy of core Qt DLLs
+        shell: pwsh
+        run: |
+          $qtBin = "C:\Qt\${env:QT_VERSION}\mingw73_64\bin"
+          $dlls  = @(
+            'Qt5Core.dll','Qt5Gui.dll','Qt5Widgets.dll','Qt5SerialPort.dll'
+          )
+          foreach ($d in $dlls) {
+            $src = Join-Path $qtBin $d
+            if (Test-Path $src) { Copy-Item $src dist\ -Force }
+            else { Write-Host "Warning: $d not found in $qtBin" }
+          }
+
       - name: Add MinGW runtime DLLs
         shell: pwsh
         run: |
