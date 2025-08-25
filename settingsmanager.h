@@ -13,13 +13,13 @@ public:
     const Settings& currentSettings() const { return current_; }
 
     // WRITE: provede porovnání, uložení do QSettings a emisi signálů pouze při změně
-    void updateSettings(const Settings& s);
+    void updateSettings(const Settings& s, bool admin = false);
 
 
     // convenient setters (optional)
-    void setUnits(Units u);
-    void setSerial(const QString& port, int baud);
-    void setDatasource(const DataSource data);
+    void setUnits(Units u, bool admin = false);
+    void setSerial(const QString& port, int baud, bool admin = false);
+    void setDatasource(const DataSource data, bool admin = false);
 
     // export/import JSON (optional)
     bool exportJson(const QString& filePath, QString* err = nullptr) const;
@@ -31,10 +31,12 @@ signals:
 
 private:
     Settings  current_;   // hodnotový typ, žádné pointry
-    QSettings store_;     // NativeFormat/UserScope (Windows: HKCU\Software\<Org>\<App>)
+    QSettings userStore_; // NativeFormat/UserScope  (HKCU\Software\<Org>\<App>)
+    QSettings adminStore_; // NativeFormat/SystemScope (HKLM\Software\<Org>\<App>)
 
     Settings loadFromStore();
-    void     saveToStore(const Settings& st) ;
+    void     saveToStore(const Settings& st, bool admin = false);
+    void     loadFrom(QSettings& store, Settings& st);
 
     static QJsonObject shortcutsToJson(const Shortcuts& sc);
     static Shortcuts   jsonToShortcuts(const QJsonObject& obj);

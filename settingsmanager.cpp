@@ -7,10 +7,12 @@
 
 SettingsManager::SettingsManager(QObject* parent)
     : QObject(parent)
-    , store_(QSettings::NativeFormat, QSettings::UserScope,
-             QCoreApplication::organizationName(),
-             QCoreApplication::applicationName())
-
+    , userStore_(QSettings::NativeFormat, QSettings::UserScope,
+                 QCoreApplication::organizationName(),
+                 QCoreApplication::applicationName())
+    , adminStore_(QSettings::NativeFormat, QSettings::SystemScope,
+                  QCoreApplication::organizationName(),
+                  QCoreApplication::applicationName())
 {
     current_ = loadFromStore();
     emit settingsChanged(current_);
@@ -19,166 +21,160 @@ SettingsManager::SettingsManager(QObject* parent)
 
 
 
-void SettingsManager::setUnits(Units u) {
+void SettingsManager::setUnits(Units u, bool admin) {
     current_.units = u;
-    saveToStore(current_);
+    saveToStore(current_, admin);
     emit settingsChanged(current_);
 }
 
-void SettingsManager::setSerial(const QString& port, int baud) {
+void SettingsManager::setSerial(const QString& port, int baud, bool admin) {
     current_.portName = port;
     current_.baudRate = baud;
-    saveToStore(current_);
+    saveToStore(current_, admin);
     emit settingsChanged(current_);
 }
 
-void SettingsManager::setDatasource (DataSource source)
+void SettingsManager::setDatasource(DataSource source, bool admin)
 {
     current_.datasource = source;
-    saveToStore(current_);
+    saveToStore(current_, admin);
     emit settingsChanged(current_);
 }
-void SettingsManager::updateSettings(const Settings& s)
+
+void SettingsManager::updateSettings(const Settings& s, bool admin)
 {
        current_ = s;
-       saveToStore(current_);
+       saveToStore(current_, admin);
 
        emit settingsChanged(current_);
        emit shortcutsChanged(current_.shortcuts);
 }
 
-Settings SettingsManager::loadFromStore()  {
+Settings SettingsManager::loadFromStore()
+{
     Settings settings;
-    // ====== Komunikace – společná volba zdroje ======
-    store_.beginGroup(QStringLiteral("Comm"));
-    // výchozí: serial
-    settings.datasource = stringToDataSource(store_.value(QStringLiteral("DataSource"), dataSourceToString(settings.datasource)).toString());
-    qDebug() << "    ---    "  <<dataSourceToString (settings.datasource);
-    store_.endGroup();
-    store_.beginGroup(QStringLiteral("Serial"));
-    // nové: SerialParams
-        settings.serial.portName = store_.value(QStringLiteral("PortName"), settings.portName).toString();
-        settings.serial.baudRate = store_.value(QStringLiteral("Baud"),     settings.baudRate).toInt();
-        settings.serial.dataBits = store_.value(QStringLiteral("DataBits"), settings.serial.dataBits).toInt();
-        settings.serial.stopBits = store_.value(QStringLiteral("StopBits"), settings.serial.stopBits).toInt();
-        settings.serial.parity   = store_.value(QStringLiteral("Parity"),   settings.serial.parity).toInt();
-        settings.serial.flow     = store_.value(QStringLiteral("Flow"),     settings.serial.flow).toInt();
-    store_.endGroup();
-    // ====== MODBUS ======
-        store_.beginGroup(QStringLiteral("Modbus"));
-        settings.modbus.isTcp      = store_.value(QStringLiteral("IsTcp"),      settings.modbus.isTcp).toBool();
-        settings.modbus.serialPort = store_.value(QStringLiteral("SerialPort"), settings.modbus.serialPort).toString();
-        settings.modbus.baudRate   = store_.value(QStringLiteral("Baud"),       settings.modbus.baudRate).toInt();
-        settings.modbus.host       = store_.value(QStringLiteral("Host"),       settings.modbus.host).toString();
-        settings.modbus.port       = store_.value(QStringLiteral("Port"),       settings.modbus.port).toInt();
-        settings.modbus.serverId   = store_.value(QStringLiteral("ServerId"),   settings.modbus.serverId).toInt();
-        store_.endGroup();
-
-        // ====== SIMULATION ======
-        store_.beginGroup(QStringLiteral("Simulation"));
-        settings.simulation.logFile     = store_.value(QStringLiteral("LogFile"),     settings.simulation.logFile).toString();
-        settings.simulation.speedFactor = store_.value(QStringLiteral("SpeedFactor"), settings.simulation.speedFactor).toDouble();
-        store_.endGroup();
-
-        // ====== UI / Sho
-
-    //qDebug()<<" Baud" << settings.baudRate ;
-    store_.beginGroup(QStringLiteral("UI"));
-    settings.units       = stringToUnits(store_.value(QStringLiteral("Units"), unitsToString(settings.units)).toString());
-    settings.arms_color = store_.value("arms_color", settings.arms_color).value<QColor>();
-    settings.save_main_window_position_on_exit = store_.value(QStringLiteral("save_main_window_position_on_exit"), true).toBool();
-//    qDebug()<<"save_main_window_position_on_exit " << settings.save_main_window_position_on_exit ;
-    settings.main_window_position = store_.value(QStringLiteral("main_window_position"), QRect()).toRect();
-    settings.save_measure_window_position_on_exit = store_.value(QStringLiteral("save_measure_window_position_on_exit"), true).toBool();
-       settings.measure_window_position = store_.value(QStringLiteral("measure_window_position"), QRect()).toRect();
-    settings.language = store_.value(QStringLiteral("language"),settings.language).toString();
-    settings.directory_save_dxf = store_.value(QStringLiteral("directory_save_dxf"),"c:/").toString();
-    settings.directory_save_data = store_.value(QStringLiteral("directory_save_data"),"c:/").toString();
-    store_.endGroup();
-    store_.beginGroup(QStringLiteral("Shortcuts"));
-    settings.shortcuts = Shortcuts::defaults();
-    for (auto it = settings.shortcuts.map.begin(); it != settings.shortcuts.map.end(); ++it) {
-        const QString key = it.key();
-        const QString seq = store_.value(key, it.value().toString()).toString();
-        //qDebug() << " load " << it.value() << "   "  << seq;
-        it.value() = QKeySequence(seq);
-    }
-    store_.endGroup();
-    store_.beginGroup(QStringLiteral("Program"));
-    settings.auto_step= store_.value(QStringLiteral("auto_step"),settings.auto_step).toDouble();
-   // alfa_offset = double(setting.value("alfa_offset",0).toDouble ());
-   // beta_offset = double(setting.value("beta_offset",0).toDouble ());
-    settings.alfa_offset= store_.value(QStringLiteral("alfa_offset"),settings.alfa_offset).toDouble();
-    settings.beta_offset= store_.value(QStringLiteral("beta_offset"),settings.beta_offset).toDouble();
-    settings.arm1_length= store_.value(QStringLiteral("arm1_length"),settings.arm1_length).toDouble();
-    settings.arm2_length= store_.value(QStringLiteral("arm2_length"),settings.arm2_length).toDouble();
-    store_.endGroup();
+    loadFrom(adminStore_, settings);
+    loadFrom(userStore_, settings);
     return settings;
 }
 
-void SettingsManager::saveToStore(const Settings& settings)  {
+void SettingsManager::loadFrom(QSettings& store, Settings& settings)
+{
+    store.beginGroup(QStringLiteral("Comm"));
+    settings.datasource = stringToDataSource(store.value(QStringLiteral("DataSource"), dataSourceToString(settings.datasource)).toString());
+    store.endGroup();
 
-    // ====== Comm: vybraný zdroj ======
-    store_.beginGroup(QStringLiteral("Comm"));
-        store_.setValue(QStringLiteral("DataSource"), dataSourceToString(settings.datasource));
-    store_.endGroup();
+    store.beginGroup(QStringLiteral("Serial"));
+        settings.serial.portName = store.value(QStringLiteral("PortName"), settings.portName).toString();
+        settings.serial.baudRate = store.value(QStringLiteral("Baud"), settings.baudRate).toInt();
+        settings.serial.dataBits = store.value(QStringLiteral("DataBits"), settings.serial.dataBits).toInt();
+        settings.serial.stopBits = store.value(QStringLiteral("StopBits"), settings.serial.stopBits).toInt();
+        settings.serial.parity   = store.value(QStringLiteral("Parity"), settings.serial.parity).toInt();
+        settings.serial.flow     = store.value(QStringLiteral("Flow"), settings.serial.flow).toInt();
+    store.endGroup();
 
-    store_.beginGroup(QStringLiteral("Serial"));
-        store_.setValue(QStringLiteral("PortName"), settings.serial.portName);
-        store_.setValue(QStringLiteral("Baud"),     settings.serial.baudRate);
-        store_.setValue(QStringLiteral("DataBits"), settings.serial.dataBits);
-        store_.setValue(QStringLiteral("StopBits"), settings.serial.stopBits);
-        store_.setValue(QStringLiteral("Parity"),   settings.serial.parity);
-        store_.setValue(QStringLiteral("Flow"),     settings.serial.flow);
-    store_.endGroup();
+    store.beginGroup(QStringLiteral("Modbus"));
+        settings.modbus.isTcp      = store.value(QStringLiteral("IsTcp"), settings.modbus.isTcp).toBool();
+        settings.modbus.serialPort = store.value(QStringLiteral("SerialPort"), settings.modbus.serialPort).toString();
+        settings.modbus.baudRate   = store.value(QStringLiteral("Baud"), settings.modbus.baudRate).toInt();
+        settings.modbus.host       = store.value(QStringLiteral("Host"), settings.modbus.host).toString();
+        settings.modbus.port       = store.value(QStringLiteral("Port"), settings.modbus.port).toInt();
+        settings.modbus.serverId   = store.value(QStringLiteral("ServerId"), settings.modbus.serverId).toInt();
+    store.endGroup();
 
-    // ====== Modbus ======
-    store_.beginGroup(QStringLiteral("Modbus"));
-        store_.setValue(QStringLiteral("IsTcp"),      settings.modbus.isTcp);
-        store_.setValue(QStringLiteral("SerialPort"), settings.modbus.serialPort);
-        store_.setValue(QStringLiteral("Baud"),       settings.modbus.baudRate);
-        store_.setValue(QStringLiteral("Host"),       settings.modbus.host);
-        store_.setValue(QStringLiteral("Port"),       settings.modbus.port);
-        store_.setValue(QStringLiteral("ServerId"),   settings.modbus.serverId);
-    store_.endGroup();
+    store.beginGroup(QStringLiteral("Simulation"));
+        settings.simulation.logFile     = store.value(QStringLiteral("LogFile"), settings.simulation.logFile).toString();
+        settings.simulation.speedFactor = store.value(QStringLiteral("SpeedFactor"), settings.simulation.speedFactor).toDouble();
+    store.endGroup();
 
-        // ====== Simulation ======
-    store_.beginGroup(QStringLiteral("Simulation"));
-        store_.setValue(QStringLiteral("LogFile"),     settings.simulation.logFile);
-        store_.setValue(QStringLiteral("SpeedFactor"), settings.simulation.speedFactor);
-    store_.endGroup();
+    store.beginGroup(QStringLiteral("UI"));
+        settings.units       = stringToUnits(store.value(QStringLiteral("Units"), unitsToString(settings.units)).toString());
+        settings.arms_color = store.value("arms_color", settings.arms_color).value<QColor>();
+        settings.save_main_window_position_on_exit = store.value(QStringLiteral("save_main_window_position_on_exit"), true).toBool();
+        settings.main_window_position = store.value(QStringLiteral("main_window_position"), QRect()).toRect();
+        settings.save_measure_window_position_on_exit = store.value(QStringLiteral("save_measure_window_position_on_exit"), true).toBool();
+        settings.measure_window_position = store.value(QStringLiteral("measure_window_position"), QRect()).toRect();
+        settings.language = store.value(QStringLiteral("language"), settings.language).toString();
+        settings.directory_save_dxf = store.value(QStringLiteral("directory_save_dxf"), "c:/").toString();
+        settings.directory_save_data = store.value(QStringLiteral("directory_save_data"), "c:/").toString();
+    store.endGroup();
 
-        // ====== UI / Shortcuts / Program ======
-    store_.beginGroup(QStringLiteral("UI"));
-        store_.setValue(QStringLiteral("Units"),unitsToString(settings.units));
-        store_.setValue(QStringLiteral("arms_color"),settings.arms_color);
-        store_.setValue(QStringLiteral("save_main_window_position_on_exit"),settings.save_main_window_position_on_exit);
-        qDebug()<<" ukladam save_measure_window_position_on_exit " << settings.save_measure_window_position_on_exit;
-        store_.setValue(QStringLiteral("main_window_position"),settings.main_window_position);
-        store_.setValue(QStringLiteral("save_measure_window_position_on_exit"),settings.save_measure_window_position_on_exit);
-        store_.setValue(QStringLiteral("measure_window_position"),settings.measure_window_position);
-        store_.setValue(QStringLiteral("language"),settings.language);
-        store_.setValue(QStringLiteral("directory_save_dxf"),settings.directory_save_dxf);
-        store_.setValue(QStringLiteral("directory_save_data"),settings.directory_save_data);
-    store_.endGroup();
+    store.beginGroup(QStringLiteral("Shortcuts"));
+        if (settings.shortcuts.map.isEmpty())
+            settings.shortcuts = Shortcuts::defaults();
+        for (auto it = settings.shortcuts.map.begin(); it != settings.shortcuts.map.end(); ++it) {
+            const QString key = it.key();
+            const QString seq = store.value(key, it.value().toString()).toString();
+            it.value() = QKeySequence(seq);
+        }
+    store.endGroup();
 
-    store_.beginGroup(QStringLiteral("Shortcuts"));
-    for (auto it = settings.shortcuts.map.constBegin(); it != settings.shortcuts.map.constEnd(); ++it) {
-        //qDebug()<<"shortcuts " << it.key() << "  " << it.value().toString();
-        store_.setValue(it.key(), it.value().toString());
-    }
-    store_.endGroup();
+    store.beginGroup(QStringLiteral("Program"));
+        settings.auto_step   = store.value(QStringLiteral("auto_step"), settings.auto_step).toDouble();
+        settings.alfa_offset = store.value(QStringLiteral("alfa_offset"), settings.alfa_offset).toDouble();
+        settings.beta_offset = store.value(QStringLiteral("beta_offset"), settings.beta_offset).toDouble();
+        settings.arm1_length = store.value(QStringLiteral("arm1_length"), settings.arm1_length).toDouble();
+        settings.arm2_length = store.value(QStringLiteral("arm2_length"), settings.arm2_length).toDouble();
+    store.endGroup();
+}
 
-    store_.beginGroup(QStringLiteral("Program"));
-        store_.setValue(QStringLiteral("auto_step"),(settings.auto_step));
-        store_.setValue(QStringLiteral("alfa_offset"),(settings.alfa_offset));
-        store_.setValue(QStringLiteral("beta_offset"),(settings.beta_offset));
-        store_.setValue(QStringLiteral("arm1_length"),(settings.arm1_length));
-        store_.setValue(QStringLiteral("arm2_length"),(settings.arm2_length));
-    store_.endGroup();
+void SettingsManager::saveToStore(const Settings& settings, bool admin)
+{
+    QSettings& store = admin ? adminStore_ : userStore_;
 
+    store.beginGroup(QStringLiteral("Comm"));
+        store.setValue(QStringLiteral("DataSource"), dataSourceToString(settings.datasource));
+    store.endGroup();
 
-    store_.sync();
+    store.beginGroup(QStringLiteral("Serial"));
+        store.setValue(QStringLiteral("PortName"), settings.serial.portName);
+        store.setValue(QStringLiteral("Baud"), settings.serial.baudRate);
+        store.setValue(QStringLiteral("DataBits"), settings.serial.dataBits);
+        store.setValue(QStringLiteral("StopBits"), settings.serial.stopBits);
+        store.setValue(QStringLiteral("Parity"), settings.serial.parity);
+        store.setValue(QStringLiteral("Flow"), settings.serial.flow);
+    store.endGroup();
+
+    store.beginGroup(QStringLiteral("Modbus"));
+        store.setValue(QStringLiteral("IsTcp"), settings.modbus.isTcp);
+        store.setValue(QStringLiteral("SerialPort"), settings.modbus.serialPort);
+        store.setValue(QStringLiteral("Baud"), settings.modbus.baudRate);
+        store.setValue(QStringLiteral("Host"), settings.modbus.host);
+        store.setValue(QStringLiteral("Port"), settings.modbus.port);
+        store.setValue(QStringLiteral("ServerId"), settings.modbus.serverId);
+    store.endGroup();
+
+    store.beginGroup(QStringLiteral("Simulation"));
+        store.setValue(QStringLiteral("LogFile"), settings.simulation.logFile);
+        store.setValue(QStringLiteral("SpeedFactor"), settings.simulation.speedFactor);
+    store.endGroup();
+
+    store.beginGroup(QStringLiteral("UI"));
+        store.setValue(QStringLiteral("Units"), unitsToString(settings.units));
+        store.setValue(QStringLiteral("arms_color"), settings.arms_color);
+        store.setValue(QStringLiteral("save_main_window_position_on_exit"), settings.save_main_window_position_on_exit);
+        store.setValue(QStringLiteral("main_window_position"), settings.main_window_position);
+        store.setValue(QStringLiteral("save_measure_window_position_on_exit"), settings.save_measure_window_position_on_exit);
+        store.setValue(QStringLiteral("measure_window_position"), settings.measure_window_position);
+        store.setValue(QStringLiteral("language"), settings.language);
+        store.setValue(QStringLiteral("directory_save_dxf"), settings.directory_save_dxf);
+        store.setValue(QStringLiteral("directory_save_data"), settings.directory_save_data);
+    store.endGroup();
+
+    store.beginGroup(QStringLiteral("Shortcuts"));
+        for (auto it = settings.shortcuts.map.constBegin(); it != settings.shortcuts.map.constEnd(); ++it)
+            store.setValue(it.key(), it.value().toString());
+    store.endGroup();
+
+    store.beginGroup(QStringLiteral("Program"));
+        store.setValue(QStringLiteral("auto_step"), settings.auto_step);
+        store.setValue(QStringLiteral("alfa_offset"), settings.alfa_offset);
+        store.setValue(QStringLiteral("beta_offset"), settings.beta_offset);
+        store.setValue(QStringLiteral("arm1_length"), settings.arm1_length);
+        store.setValue(QStringLiteral("arm2_length"), settings.arm2_length);
+    store.endGroup();
+
+    store.sync();
 }
 
 // --- export/import JSON (optional) ---
