@@ -140,12 +140,23 @@ jobs:
           name: digitizer2-windows-portable
           path: dist/**
 
-      # 🔹 NSIS installer build
-      - name: Install NSIS
-        run: choco install nsis -y
+    # 🔹 NSIS installer build
+    - name: Install NSIS
+      run: choco install nsis -y
 
-      - name: Build installer (NSIS)
-        run: makensis installer.nsi
+    - name: Install UAC plugin
+      shell: pwsh
+      run: |
+        $nsisHome = "${env:ProgramFiles(x86)}\NSIS"
+        echo "NSIS_HOME=$nsisHome" >> $env:GITHUB_ENV
+        $zip = "$env:RUNNER_TEMP\nsis-uac.zip"
+        Invoke-WebRequest "https://github.com/DavidRogers/nsis-uac/releases/latest/download/UAC.zip" -OutFile $zip
+        Expand-Archive $zip -DestinationPath "$env:RUNNER_TEMP\nsis-uac"
+        Copy-Item "$env:RUNNER_TEMP\nsis-uac\Plugins\UAC.dll" "$nsisHome\Plugins" -Force
+        Copy-Item "$env:RUNNER_TEMP\nsis-uac\Include\UAC.nsh" "$nsisHome\Include" -Force
+
+    - name: Build installer (NSIS)
+      run: makensis installer.nsi
 
       - name: Upload installer
         uses: actions/upload-artifact@v4

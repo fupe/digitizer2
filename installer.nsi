@@ -2,7 +2,7 @@
 !include "FileFunc.nsh"
 !include "LogicLib.nsh"
 !include "nsDialogs.nsh"
-;!include "UAC.nsh"
+!include "UAC.nsh"
 
 ; ==== ZÁKLADNÍ INFO (uprav podle sebe) ====
 !define APP_NAME     "Digitizer2"
