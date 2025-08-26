@@ -40,4 +40,7 @@ private:
 
     static QJsonObject shortcutsToJson(const Shortcuts& sc);
     static Shortcuts   jsonToShortcuts(const QJsonObject& obj);
+
+    static QString replaceEnvVars(const QString& path);
+    static QString expandEnvVars(const QString& path);
 };

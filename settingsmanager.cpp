@@ -4,6 +4,9 @@
 #include <QJsonParseError>
 #include <QFile>
 #include <QDebug>
+#include <QProcessEnvironment>
+#include <QRegularExpression>
+#include <algorithm>
 
 SettingsManager::SettingsManager(QObject* parent)
     : QObject(parent)
@@ -53,6 +56,7 @@ void SettingsManager::updateSettings(const Settings& s, bool admin)
 Settings SettingsManager::loadFromStore()
 {
     Settings settings;
+
     loadFrom(adminStore_, settings);
     loadFrom(userStore_, settings);
     return settings;
@@ -191,6 +195,38 @@ Shortcuts SettingsManager::jsonToShortcuts(const QJsonObject& obj) {
     return sc;
 }
 
+QString SettingsManager::replaceEnvVars(const QString& path) {
+    QString result = path;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QStringList keys = env.keys();
+    std::sort(keys.begin(), keys.end(), [&env](const QString& a, const QString& b) {
+        return env.value(a).size() > env.value(b).size();
+    });
+    for (const QString& key : keys) {
+        const QString value = env.value(key);
+        if (!value.isEmpty() && result.startsWith(value, Qt::CaseInsensitive)) {
+            result.replace(0, value.length(), QStringLiteral("%%1%").arg(key));
+        }
+    }
+    return result;
+}
+
+QString SettingsManager::expandEnvVars(const QString& path) {
+    QString result = path;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QRegularExpression re(QStringLiteral("%([^%]+)%"));
+    auto it = re.globalMatch(result);
+    while (it.hasNext()) {
+        auto match = it.next();
+        const QString var = match.captured(1);
+        const QString val = env.value(var);
+        if (!val.isEmpty()) {
+            result.replace(match.captured(0), val);
+        }
+    }
+    return result;
+}
+
 bool SettingsManager::exportJson(const QString& filePath, QString* err) const {
     const Settings& st = current_;
     QJsonObject root, comm, serial, modbus, simulation, ui, program;
@@ -212,7 +248,7 @@ bool SettingsManager::exportJson(const QString& filePath, QString* err) const {
     modbus[QStringLiteral("Port")]       = st.modbus.port;
     modbus[QStringLiteral("ServerId")]   = st.modbus.serverId;
 
-    simulation[QStringLiteral("LogFile")]     = st.simulation.logFile;
+    simulation[QStringLiteral("LogFile")]     = replaceEnvVars(st.simulation.logFile);
     simulation[QStringLiteral("SpeedFactor")] = st.simulation.speedFactor;
 
     ui[QStringLiteral("Units")] = unitsToString(st.units);
@@ -231,8 +267,8 @@ bool SettingsManager::exportJson(const QString& filePath, QString* err) const {
     ui[QStringLiteral("MainWindow")] = mainRect;
     ui[QStringLiteral("MeasureWindow")] = measureRect;
     ui[QStringLiteral("Language")] = st.language;
-    ui[QStringLiteral("DirectorySaveDxf")] = st.directory_save_dxf;
-    ui[QStringLiteral("DirectorySaveData")] = st.directory_save_data;
+    ui[QStringLiteral("DirectorySaveDxf")] = replaceEnvVars(st.directory_save_dxf);
+    ui[QStringLiteral("DirectorySaveData")] = replaceEnvVars(st.directory_save_data);
 
     program[QStringLiteral("Arm1Length")]   = st.arm1_length;
     program[QStringLiteral("Arm2Length")]   = st.arm2_length;
@@ -297,7 +333,7 @@ bool SettingsManager::importJson(const QString& filePath, QString* err) {
     }
     if (root.contains(QStringLiteral("Simulation"))) {
         const auto o = root.value(QStringLiteral("Simulation")).toObject();
-        current_.simulation.logFile     = o.value(QStringLiteral("LogFile")).toString(current_.simulation.logFile);
+        current_.simulation.logFile     = expandEnvVars(o.value(QStringLiteral("LogFile")).toString(current_.simulation.logFile));
         current_.simulation.speedFactor = o.value(QStringLiteral("SpeedFactor")).toDouble(current_.simulation.speedFactor);
     }
     if (root.contains(QStringLiteral("UI"))) {
@@ -321,8 +357,8 @@ bool SettingsManager::importJson(const QString& filePath, QString* err) {
                                                     r.value(QStringLiteral("h")).toInt());
         }
         current_.language = o.value(QStringLiteral("Language")).toString(current_.language);
-        current_.directory_save_dxf = o.value(QStringLiteral("DirectorySaveDxf")).toString(current_.directory_save_dxf);
-        current_.directory_save_data = o.value(QStringLiteral("DirectorySaveData")).toString(current_.directory_save_data);
+        current_.directory_save_dxf = expandEnvVars(o.value(QStringLiteral("DirectorySaveDxf")).toString(current_.directory_save_dxf));
+        current_.directory_save_data = expandEnvVars(o.value(QStringLiteral("DirectorySaveData")).toString(current_.directory_save_data));
     }
     if (root.contains(QStringLiteral("Program"))) {
         const auto o = root.value(QStringLiteral("Program")).toObject();
