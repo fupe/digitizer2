@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QProcessEnvironment>
 #include <QRegularExpression>
+#include <QDir>
 #include <algorithm>
 
 SettingsManager::SettingsManager(QObject* parent)
@@ -202,10 +203,12 @@ QString SettingsManager::replaceEnvVars(const QString& path) {
     std::sort(keys.begin(), keys.end(), [&env](const QString& a, const QString& b) {
         return env.value(a).size() > env.value(b).size();
     });
+    QString resultNorm = QDir::fromNativeSeparators(result);
     for (const QString& key : keys) {
-        const QString value = env.value(key);
-        if (!value.isEmpty() && result.startsWith(value, Qt::CaseInsensitive)) {
-            result.replace(0, value.length(), QStringLiteral("%%1%").arg(key));
+        const QString valueNorm = QDir::fromNativeSeparators(env.value(key));
+        if (!valueNorm.isEmpty() && resultNorm.startsWith(valueNorm, Qt::CaseInsensitive)) {
+            result.replace(0, valueNorm.length(), QStringLiteral("%%1%").arg(key));
+            resultNorm = QDir::fromNativeSeparators(result);
         }
     }
     return result;
