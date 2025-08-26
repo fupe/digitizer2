@@ -3,6 +3,7 @@
 #include "appmanager.h"
 #include "serialmanager.h"
 #include "settingsmanager.h"
+#include "SettingsDialog.h"
 #include <QSplashScreen>
 #include <QApplication>
 #include <QThread>
@@ -27,6 +28,17 @@ int main(int argc, char *argv[])
     MainWindow mainwindow(applicationManager);      // top‑level okno, parent = nullptr
     auto* serial_mng = new SerialManager();      // bez parenta
     applicationManager->setSerialManager(serial_mng);
+    const Settings loadedSettings = settingsManager->currentSettings();
+    const QString port = loadedSettings.serial.portName.isEmpty()
+                         ? loadedSettings.portName
+                         : loadedSettings.serial.portName;
+    if (loadedSettings.datasource == DataSource::Serial && port.trimmed().isEmpty()) {
+        SettingsDialog dlg(&mainwindow);
+        dlg.setSettings(loadedSettings);
+        if (dlg.exec() == QDialog::Accepted) {
+            settingsManager->updateSettings(dlg.result());
+        }
+    }
     QTimer::singleShot(2000, &mainwindow, &MainWindow::show);
     return a.exec();
 }
