@@ -87,7 +87,7 @@ void SettingsManager::loadFrom(QSettings& store, Settings& settings)
     store.endGroup();
 
     store.beginGroup(QStringLiteral("Simulation"));
-        settings.simulation.logFile     = store.value(QStringLiteral("LogFile"), settings.simulation.logFile).toString();
+        settings.simulation.logFile     = expandEnvVars(store.value(QStringLiteral("LogFile"), settings.simulation.logFile).toString());
         settings.simulation.speedFactor = store.value(QStringLiteral("SpeedFactor"), settings.simulation.speedFactor).toDouble();
     store.endGroup();
 
@@ -99,8 +99,8 @@ void SettingsManager::loadFrom(QSettings& store, Settings& settings)
         settings.save_measure_window_position_on_exit = store.value(QStringLiteral("save_measure_window_position_on_exit"), true).toBool();
         settings.measure_window_position = store.value(QStringLiteral("measure_window_position"), QRect()).toRect();
         settings.language = store.value(QStringLiteral("language"), settings.language).toString();
-        settings.directory_save_dxf = store.value(QStringLiteral("directory_save_dxf"), "c:/").toString();
-        settings.directory_save_data = store.value(QStringLiteral("directory_save_data"), "c:/").toString();
+        settings.directory_save_dxf = expandEnvVars(store.value(QStringLiteral("directory_save_dxf"), "c:/").toString());
+        settings.directory_save_data = expandEnvVars(store.value(QStringLiteral("directory_save_data"), "c:/").toString());
     store.endGroup();
 
     store.beginGroup(QStringLiteral("Shortcuts"));
@@ -149,7 +149,7 @@ void SettingsManager::saveToStore(const Settings& settings, bool admin)
     store.endGroup();
 
     store.beginGroup(QStringLiteral("Simulation"));
-        store.setValue(QStringLiteral("LogFile"), settings.simulation.logFile);
+        store.setValue(QStringLiteral("LogFile"), replaceEnvVars(settings.simulation.logFile));
         store.setValue(QStringLiteral("SpeedFactor"), settings.simulation.speedFactor);
     store.endGroup();
 
@@ -161,8 +161,8 @@ void SettingsManager::saveToStore(const Settings& settings, bool admin)
         store.setValue(QStringLiteral("save_measure_window_position_on_exit"), settings.save_measure_window_position_on_exit);
         store.setValue(QStringLiteral("measure_window_position"), settings.measure_window_position);
         store.setValue(QStringLiteral("language"), settings.language);
-        store.setValue(QStringLiteral("directory_save_dxf"), settings.directory_save_dxf);
-        store.setValue(QStringLiteral("directory_save_data"), settings.directory_save_data);
+        store.setValue(QStringLiteral("directory_save_dxf"), replaceEnvVars(settings.directory_save_dxf));
+        store.setValue(QStringLiteral("directory_save_data"), replaceEnvVars(settings.directory_save_data));
     store.endGroup();
 
     store.beginGroup(QStringLiteral("Shortcuts"));
