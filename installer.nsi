@@ -18,6 +18,8 @@ SetCompressor /SOLID lzma
 Var InstallScope
 Var RadioAll
 Var RadioCurrent
+Var Arm1Length
+Var Arm2Length
 
 ; ==== STRÁNKY ====
 Page custom InstallScopePage InstallScopePageLeave
@@ -28,19 +30,24 @@ Page custom InstallScopePage InstallScopePageLeave
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
 
-; ==== FUNKCE: Import .reg (jen když existuje) ====
-Function ImportRegIfExists
-  Exch $0  ; $0 = cesta k .reg
-  IfFileExists "$0" +2 0
-    Goto done
-  SetRegView 64
-  DetailPrint "Importing registry file: $0"
-  nsExec::ExecToStack 'reg import "$0"'
-  Pop $1    ; exit code
-  Pop $2    ; output
-  StrCmp $1 "0" +2
-    MessageBox MB_ICONEXCLAMATION "Registry import failed ($1).$\r$\n$2"
+; ==== FUNKCE: Načti arms.cfg a zapiš délky ramen do registru ====
+Function WriteArmLengths
+  Exch $0  ; $0 = cesta k arms.cfg
+  IfFileExists "$0" 0 done
+  ReadINIStr $Arm1Length "$0" "Arms" "ARM1"
+  ReadINIStr $Arm2Length "$0" "Arms" "ARM2"
+  ${If} $Arm1Length != ""
+  ${AndIf} $Arm2Length != ""
+    ${If} $InstallScope == "all"
+      WriteRegStr HKLM "Software\LiborSoft\Digitizer2\Program" "arm1_length" "$Arm1Length"
+      WriteRegStr HKLM "Software\LiborSoft\Digitizer2\Program" "arm2_length" "$Arm2Length"
+    ${Else}
+      WriteRegStr HKCU "Software\LiborSoft\Digitizer2\Program" "arm1_length" "$Arm1Length"
+      WriteRegStr HKCU "Software\LiborSoft\Digitizer2\Program" "arm2_length" "$Arm2Length"
+    ${EndIf}
+  ${EndIf}
 done:
+  Pop $0
 FunctionEnd
 
 ; ==== INSTALACE ====
@@ -65,17 +72,11 @@ Section "Application (required)" SecMain
   CreateShortCut "$SMPROGRAMS\${APP_NAME}\${APP_NAME}.lnk" "$INSTDIR\digitizer2.exe"
   CreateShortCut "$DESKTOP\${APP_NAME}.lnk" "$INSTDIR\digitizer2.exe"
 
-  ; --- REGISTR: import jen pokud existuje user.reg ---
-  ; 1) user.reg vedle instalátoru
-  Push "$EXEDIR\user.reg"
-  Call ImportRegIfExists
+  ; --- REGISTR: načti délky ramen z arms.cfg (pokud existuje) ---
+  Push "$EXEDIR\configs\arms.cfg"
+  Call WriteArmLengths
 
-  ; 2) nebo v podsložce configs\user.reg (nepovinné)
-  Push "$EXEDIR\configs\user.reg"
-  Call ImportRegIfExists
-
-  ; (ŽÁDNÝ jiný zápis do registru se neprovádí.
-  ;  Pokud user.reg neexistuje, appka si vytvoří defaulty sama přes QSettings.)
+  ; Pokud arms.cfg neexistuje, appka si vytvoří defaulty sama přes QSettings.
 
   ; Odinstalátor + položka v „Programs and Features“
   WriteUninstaller "$INSTDIR\Uninstall.exe"
