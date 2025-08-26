@@ -490,6 +490,8 @@ void SettingsDialog::onExportConfig()
 {
     if (!sm_) return;
 
+    pullFromUi();
+
     const QString defDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     const QString path = QFileDialog::getSaveFileName(
         this,
@@ -499,7 +501,7 @@ void SettingsDialog::onExportConfig()
     if (path.isEmpty()) return;
 
     QString err;
-    if (!sm_->exportJson(path, &err)) {
+    if (!sm_->exportJson(path, tmp_settings, &err)) {
         QMessageBox::warning(this, tr("Export failed"),
                              tr("Cannot export settings:\n%1").arg(err));
         return;

@@ -23,6 +23,7 @@ public:
 
     // export/import JSON (optional)
     bool exportJson(const QString& filePath, QString* err = nullptr) const;
+    bool exportJson(const QString& filePath, const Settings& st, QString* err = nullptr) const;
     bool importJson(const QString& filePath, QString* err = nullptr);
 
 signals:

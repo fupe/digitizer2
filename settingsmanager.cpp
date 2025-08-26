@@ -228,56 +228,60 @@ QString SettingsManager::expandEnvVars(const QString& path) {
 }
 
 bool SettingsManager::exportJson(const QString& filePath, QString* err) const {
-    const Settings& st = current_;
+    return exportJson(filePath, current_, err);
+}
+
+bool SettingsManager::exportJson(const QString& filePath, const Settings& st, QString* err) const {
+    const Settings& s = st;
     QJsonObject root, comm, serial, modbus, simulation, ui, program;
 
     // Communication
-    comm[QStringLiteral("DataSource")] = dataSourceToString(st.datasource);
+    comm[QStringLiteral("DataSource")] = dataSourceToString(s.datasource);
 
-    serial[QStringLiteral("PortName")] = st.serial.portName;
-    serial[QStringLiteral("Baud")]     = st.serial.baudRate;
-    serial[QStringLiteral("DataBits")] = st.serial.dataBits;
-    serial[QStringLiteral("StopBits")] = st.serial.stopBits;
-    serial[QStringLiteral("Parity")]   = st.serial.parity;
-    serial[QStringLiteral("Flow")]     = st.serial.flow;
+    serial[QStringLiteral("PortName")] = s.serial.portName;
+    serial[QStringLiteral("Baud")]     = s.serial.baudRate;
+    serial[QStringLiteral("DataBits")] = s.serial.dataBits;
+    serial[QStringLiteral("StopBits")] = s.serial.stopBits;
+    serial[QStringLiteral("Parity")]   = s.serial.parity;
+    serial[QStringLiteral("Flow")]     = s.serial.flow;
 
-    modbus[QStringLiteral("IsTcp")]      = st.modbus.isTcp;
-    modbus[QStringLiteral("SerialPort")] = st.modbus.serialPort;
-    modbus[QStringLiteral("Baud")]       = st.modbus.baudRate;
-    modbus[QStringLiteral("Host")]       = st.modbus.host;
-    modbus[QStringLiteral("Port")]       = st.modbus.port;
-    modbus[QStringLiteral("ServerId")]   = st.modbus.serverId;
+    modbus[QStringLiteral("IsTcp")]      = s.modbus.isTcp;
+    modbus[QStringLiteral("SerialPort")] = s.modbus.serialPort;
+    modbus[QStringLiteral("Baud")]       = s.modbus.baudRate;
+    modbus[QStringLiteral("Host")]       = s.modbus.host;
+    modbus[QStringLiteral("Port")]       = s.modbus.port;
+    modbus[QStringLiteral("ServerId")]   = s.modbus.serverId;
 
-    simulation[QStringLiteral("LogFile")]     = replaceEnvVars(st.simulation.logFile);
-    simulation[QStringLiteral("SpeedFactor")] = st.simulation.speedFactor;
+    simulation[QStringLiteral("LogFile")]     = replaceEnvVars(s.simulation.logFile);
+    simulation[QStringLiteral("SpeedFactor")] = s.simulation.speedFactor;
 
-    ui[QStringLiteral("Units")] = unitsToString(st.units);
-    ui[QStringLiteral("ArmsColor")] = st.arms_color.name(QColor::HexArgb);
-    ui[QStringLiteral("SaveMainWindowPos")] = st.save_main_window_position_on_exit;
-    ui[QStringLiteral("SaveMeasureWindowPos")] = st.save_measure_window_position_on_exit;
+    ui[QStringLiteral("Units")] = unitsToString(s.units);
+    ui[QStringLiteral("ArmsColor")] = s.arms_color.name(QColor::HexArgb);
+    ui[QStringLiteral("SaveMainWindowPos")] = s.save_main_window_position_on_exit;
+    ui[QStringLiteral("SaveMeasureWindowPos")] = s.save_measure_window_position_on_exit;
     QJsonObject mainRect, measureRect;
-    mainRect[QStringLiteral("x")] = st.main_window_position.x();
-    mainRect[QStringLiteral("y")] = st.main_window_position.y();
-    mainRect[QStringLiteral("w")] = st.main_window_position.width();
-    mainRect[QStringLiteral("h")] = st.main_window_position.height();
-    measureRect[QStringLiteral("x")] = st.measure_window_position.x();
-    measureRect[QStringLiteral("y")] = st.measure_window_position.y();
-    measureRect[QStringLiteral("w")] = st.measure_window_position.width();
-    measureRect[QStringLiteral("h")] = st.measure_window_position.height();
+    mainRect[QStringLiteral("x")] = s.main_window_position.x();
+    mainRect[QStringLiteral("y")] = s.main_window_position.y();
+    mainRect[QStringLiteral("w")] = s.main_window_position.width();
+    mainRect[QStringLiteral("h")] = s.main_window_position.height();
+    measureRect[QStringLiteral("x")] = s.measure_window_position.x();
+    measureRect[QStringLiteral("y")] = s.measure_window_position.y();
+    measureRect[QStringLiteral("w")] = s.measure_window_position.width();
+    measureRect[QStringLiteral("h")] = s.measure_window_position.height();
     ui[QStringLiteral("MainWindow")] = mainRect;
     ui[QStringLiteral("MeasureWindow")] = measureRect;
-    ui[QStringLiteral("Language")] = st.language;
-    ui[QStringLiteral("DirectorySaveDxf")] = replaceEnvVars(st.directory_save_dxf);
-    ui[QStringLiteral("DirectorySaveData")] = replaceEnvVars(st.directory_save_data);
+    ui[QStringLiteral("Language")] = s.language;
+    ui[QStringLiteral("DirectorySaveDxf")] = replaceEnvVars(s.directory_save_dxf);
+    ui[QStringLiteral("DirectorySaveData")] = replaceEnvVars(s.directory_save_data);
 
-    program[QStringLiteral("Arm1Length")]   = st.arm1_length;
-    program[QStringLiteral("Arm2Length")]   = st.arm2_length;
-    program[QStringLiteral("AutoStep")]     = st.auto_step;
-    program[QStringLiteral("AlfaOffset")]   = st.alfa_offset;
-    program[QStringLiteral("BetaOffset")]   = st.beta_offset;
-    program[QStringLiteral("DocumentModified")] = st.document_modified;
-    program[QStringLiteral("DocumentSaved")]    = st.document_saved;
-    program[QStringLiteral("UnitsScale")]  = st.units_scale;
+    program[QStringLiteral("Arm1Length")]   = s.arm1_length;
+    program[QStringLiteral("Arm2Length")]   = s.arm2_length;
+    program[QStringLiteral("AutoStep")]     = s.auto_step;
+    program[QStringLiteral("AlfaOffset")]   = s.alfa_offset;
+    program[QStringLiteral("BetaOffset")]   = s.beta_offset;
+    program[QStringLiteral("DocumentModified")] = s.document_modified;
+    program[QStringLiteral("DocumentSaved")]    = s.document_saved;
+    program[QStringLiteral("UnitsScale")]  = s.units_scale;
 
     root[QStringLiteral("Comm")]       = comm;
     root[QStringLiteral("Serial")]     = serial;
@@ -285,7 +289,7 @@ bool SettingsManager::exportJson(const QString& filePath, QString* err) const {
     root[QStringLiteral("Simulation")] = simulation;
     root[QStringLiteral("UI")]         = ui;
     root[QStringLiteral("Program")]    = program;
-    root[QStringLiteral("Shortcuts")]  = shortcutsToJson(st.shortcuts);
+    root[QStringLiteral("Shortcuts")]  = shortcutsToJson(s.shortcuts);
 
     QFile f(filePath);
     if (!f.open(QIODevice::WriteOnly)) { if (err) *err = QStringLiteral("Nelze otevřít k zápisu"); return false; }
