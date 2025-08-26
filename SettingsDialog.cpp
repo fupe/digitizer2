@@ -1,9 +1,13 @@
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 #include "shortcutsdialog.h"
+#include "settingsmanager.h"
 #include <QSerialPortInfo>
 #include <QColor>
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QStandardPaths>
+#include <QDir>
 #include <QShortcut>
 #include <QKeySequence>
 #include <QSettings>
@@ -368,6 +372,11 @@ Settings SettingsDialog::result() const {
     return out;
 }
 
+void SettingsDialog::setSettingsManager(SettingsManager* sm)
+{
+    settingsManager_ = sm;
+}
+
 void SettingsDialog::populate() {
     // TODO: Optionally enumerate available ports via QSerialPortInfo
     ui->auto_step->setValue(tmp_settings.auto_step);
@@ -445,8 +454,30 @@ void SettingsDialog::on_button_browse_dxf_clicked()
 
     if (!dir.isEmpty()) {
         ui->lineEdit_dxf_dir->setText(dir);
-        tmp_settings.directory_save_dxf = dir;  // hned uložit do dočasných settings
+  tmp_settings.directory_save_dxf = dir;  // hned uložit do dočasných settings
+  }
+}
+
+void SettingsDialog::on_exportJsonButton_clicked()
+{
+    if (!settingsManager_) return;
+    const QString defDir =
+        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    const QString path = QFileDialog::getSaveFileName(
+        this,
+        tr("Export settings to JSON"),
+        QDir(defDir).filePath("settings.json"),
+        tr("JSON files (*.json)")
+    );
+    if (path.isEmpty()) return;
+    QString err;
+    if (!settingsManager_->exportJson(path, &err)) {
+        QMessageBox::warning(this, tr("Export failed"),
+                             tr("Cannot export settings:\n%1").arg(err));
+        return;
     }
+    QMessageBox::information(this, tr("Export successful"),
+                             tr("Settings exported to %1").arg(QDir::toNativeSeparators(path)));
 }
 
 void SettingsDialog::unlockHiddenTab()

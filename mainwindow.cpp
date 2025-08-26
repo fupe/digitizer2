@@ -891,7 +891,8 @@ void MainWindow::on_actionSetup_triggered(bool /*checked*/)
 
     qDebug()<<"on_actionSetup_triggered";
     SettingsDialog dlg(this);
-        dlg.setSettings(sm->currentSettings());      // KOPIE do dialogu
+    dlg.setSettingsManager(sm);
+    dlg.setSettings(sm->currentSettings());      // KOPIE do dialogu
 
         if (dlg.exec() == QDialog::Accepted) {
             qDebug()<<"ACCEPT";

@@ -6,6 +6,7 @@
 #include "settings.h"
 
 class QPen;
+class SettingsManager;
 
 namespace Ui {
 class SettingsDialog;
@@ -55,9 +56,10 @@ public:
     void save_SettingsExitMeasure (void);
     void save_Arms(void);
     void retranslate (void);
-    void changeunits (const QString&);
-    void setSettings(const Settings& s); // předání kopie k editaci
-    Settings result() const;             // vrátí zeditovanou kopii
+      void changeunits (const QString&);
+      void setSettings(const Settings& s); // předání kopie k editaci
+      Settings result() const;             // vrátí zeditovanou kopii
+      void setSettingsManager(SettingsManager* sm);
 
 
 public slots:
@@ -82,14 +84,16 @@ private slots:
 
     void on_buttonBox_accepted();
 
-    void on_button_browse_dxf_clicked();
+      void on_button_browse_dxf_clicked();
+      void on_exportJsonButton_clicked();
 
 private:
     Ui::SettingsDialog *ui;
     void fillPortsInfo();
-    Settings tmp_settings ;// lokální pracovní kopie
-    int hiddenTabIndex_ = -1;  //index skryte zalozky
-    QWidget* hiddenTabWidget_ = nullptr; //ukazatel skryte zalozky
+      Settings tmp_settings ;// lokální pracovní kopie
+      int hiddenTabIndex_ = -1;  //index skryte zalozky
+      QWidget* hiddenTabWidget_ = nullptr; //ukazatel skryte zalozky
+      SettingsManager* settingsManager_ = nullptr;
 
 signals:
     void signal_scene(void);
