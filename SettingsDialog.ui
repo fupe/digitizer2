@@ -421,20 +421,20 @@
         <string>Shortcuts</string>
        </property>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <property name="geometry">
         <rect>
          <x>20</x>
          <y>470</y>
-         <width>411</width>
+         <width>561</width>
          <height>30</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,2,1">
+       <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,0">
         <item>
-         <widget class="QLabel" name="label_2">
+         <widget class="QPushButton" name="button_browse_dxf">
           <property name="text">
-           <string>export dir  </string>
+           <string>Export dxf dir</string>
           </property>
          </widget>
         </item>
@@ -442,13 +442,6 @@
          <widget class="QLineEdit" name="lineEdit_dxf_dir">
           <property name="enabled">
            <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="button_browse_dxf">
-          <property name="text">
-           <string>Browse</string>
           </property>
          </widget>
         </item>
