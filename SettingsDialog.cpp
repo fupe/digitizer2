@@ -1,6 +1,7 @@
 #include "SettingsDialog.h"
 #include "ui_SettingsDialog.h"
 #include "shortcutsdialog.h"
+#include "settingsmanager.h"
 #include <QSerialPortInfo>
 #include <QColor>
 #include <QFileDialog>
@@ -9,14 +10,19 @@
 #include <QSettings>
 #include <QColorDialog>
 #include <QDebug>
+#include <QPushButton>
+#include <QMessageBox>
+#include <QStandardPaths>
+#include <QDir>
 
 
 
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
-SettingsDialog::SettingsDialog(QWidget *parent) :
+SettingsDialog::SettingsDialog(QWidget *parent, SettingsManager* sm) :
     QDialog(parent),
-    ui(new Ui::SettingsDialog)
+    ui(new Ui::SettingsDialog),
+    sm_(sm)
 {
     ui->setupUi(this);
     // schovej tab2 hned po startu
@@ -27,6 +33,13 @@ SettingsDialog::SettingsDialog(QWidget *parent) :
         // tajná klávesová zkratka Ctrl+Alt+S
         QShortcut* sc = new QShortcut(QKeySequence("Ctrl+Alt+S"), this);
         connect(sc, &QShortcut::activated, this, &SettingsDialog::unlockHiddenTab);
+
+    if (sm_) {
+        importButton_ = ui->buttonBox->addButton(tr("Import Config"), QDialogButtonBox::ActionRole);
+        exportButton_ = ui->buttonBox->addButton(tr("Export Config"), QDialogButtonBox::ActionRole);
+        connect(importButton_, &QPushButton::clicked, this, &SettingsDialog::onImportConfig);
+        connect(exportButton_, &QPushButton::clicked, this, &SettingsDialog::onExportConfig);
+    }
 
     populate();
 
@@ -447,6 +460,53 @@ void SettingsDialog::on_button_browse_dxf_clicked()
         ui->lineEdit_dxf_dir->setText(dir);
         tmp_settings.directory_save_dxf = dir;  // hned uložit do dočasných settings
     }
+}
+
+void SettingsDialog::onImportConfig()
+{
+    if (!sm_) return;
+
+    const QString defDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    const QString path = QFileDialog::getOpenFileName(
+        this,
+        tr("Import settings from JSON"),
+        QDir(defDir).filePath("settings.json"),
+        tr("JSON files (*.json)"));
+    if (path.isEmpty()) return;
+
+    QString err;
+    if (!sm_->importJson(path, &err)) {
+        QMessageBox::warning(this, tr("Import failed"),
+                             tr("Cannot import settings:\n%1").arg(err));
+        return;
+    }
+    setSettings(sm_->currentSettings());
+    QMessageBox::information(this, tr("Import settings"),
+                             tr("Settings imported from %1")
+                                 .arg(QDir::toNativeSeparators(path)));
+}
+
+void SettingsDialog::onExportConfig()
+{
+    if (!sm_) return;
+
+    const QString defDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    const QString path = QFileDialog::getSaveFileName(
+        this,
+        tr("Export settings to JSON"),
+        QDir(defDir).filePath("settings.json"),
+        tr("JSON files (*.json)"));
+    if (path.isEmpty()) return;
+
+    QString err;
+    if (!sm_->exportJson(path, &err)) {
+        QMessageBox::warning(this, tr("Export failed"),
+                             tr("Cannot export settings:\n%1").arg(err));
+        return;
+    }
+    QMessageBox::information(this, tr("Export settings"),
+                             tr("Settings exported to %1")
+                                 .arg(QDir::toNativeSeparators(path)));
 }
 
 void SettingsDialog::unlockHiddenTab()

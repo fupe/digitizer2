@@ -890,7 +890,7 @@ void MainWindow::on_actionSetup_triggered(bool /*checked*/)
         if (!sm) return;
 
     qDebug()<<"on_actionSetup_triggered";
-    SettingsDialog dlg(this);
+    SettingsDialog dlg(this, sm);
         dlg.setSettings(sm->currentSettings());      // KOPIE do dialogu
 
         if (dlg.exec() == QDialog::Accepted) {
@@ -899,27 +899,6 @@ void MainWindow::on_actionSetup_triggered(bool /*checked*/)
         }
 }
 
-
-void MainWindow::on_actionexport_settings_triggered()
-{
-        if (!appManager()->settingsManager()) return;
-        const QString defDir =
-            QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-        const QString path = QFileDialog::getSaveFileName(
-            this,
-            tr("Export settings to JSON"),
-            QDir(defDir).filePath("settings.json"),
-            tr("JSON files (*.json)")
-        );
-        if (path.isEmpty()) return;
-        QString err;
-        if (!appManager()->settingsManager()->exportJson(path, &err)) {
-            QMessageBox::warning(this, tr("Export failed"),
-                                 tr("Cannot export settings:\n%1").arg(err));
-            return;
-        }
-        statusBar()->showMessage(tr("Settings exported to %1").arg(QDir::toNativeSeparators(path)), 4000);
-}
 
 void MainWindow::on_actionConnect_triggered()
 {
@@ -989,30 +968,3 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
 }
 
 
-void MainWindow::on_actionimport_settings_triggered()
-{
-    if (!appManager()->settingsManager()) return;
-
-    const QString defDir =
-        QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    const QString path = QFileDialog::getOpenFileName(
-        this,
-        tr("Import settings from JSON"),
-        QDir(defDir).filePath("settings.json"),
-        tr("JSON files (*.json)")
-    );
-    if (path.isEmpty()) return;
-
-    QString err;
-    if (!appManager()->settingsManager()->importJson(path, &err)) {
-        QMessageBox::warning(this, tr("Import failed"),
-                             tr("Cannot import settings:\n%1").arg(err));
-        return;
-    }
-
-    statusBar()->showMessage(
-        tr("Settings imported from %1")
-            .arg(QDir::toNativeSeparators(path)),
-        4000
-    );
-}

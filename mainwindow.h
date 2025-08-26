@@ -117,11 +117,7 @@ private slots:
 
     void on_actionSetup_triggered(bool checked);
 
-    void on_actionexport_settings_triggered();
-
     void on_actionConnect_triggered();
-
-    void on_actionimport_settings_triggered();
 
 public slots:
     void Zoom_Dynamic();

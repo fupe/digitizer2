@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
                          : loadedSettings.serial.portName;
     qDebug() << "serial port je" << port ;
     if (loadedSettings.datasource == DataSource::Serial && port.trimmed().isEmpty()) {
-        SettingsDialog dlg(&mainwindow);
+        SettingsDialog dlg(&mainwindow, settingsManager);
         dlg.setSettings(loadedSettings);
         if (dlg.exec() == QDialog::Accepted) {
             settingsManager->updateSettings(dlg.result());

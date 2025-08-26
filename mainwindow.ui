@@ -153,8 +153,6 @@
      <string>Setup</string>
     </property>
     <addaction name="actionSetup"/>
-    <addaction name="actionexport_settings"/>
-    <addaction name="actionimport_settings"/>
     <addaction name="actionset_zero"/>
     <addaction name="actionCalibrate"/>
    </widget>
@@ -364,16 +362,6 @@
   <action name="actionLoad_file_data">
    <property name="text">
     <string>Load file</string>
-   </property>
-  </action>
-  <action name="actionexport_settings">
-   <property name="text">
-    <string>export settings</string>
-   </property>
-  </action>
-  <action name="actionimport_settings">
-   <property name="text">
-    <string>import settings</string>
    </property>
   </action>
  </widget>
