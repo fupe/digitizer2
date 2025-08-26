@@ -80,7 +80,7 @@ struct Shortcuts {
 // --- Settings struct ---
 struct Settings {
     // Serial
-    QString portName = "COM1";
+    QString portName ;
     int     baudRate = 115200;
     DataSource datasource = DataSource::Serial;  //prepinani komunikace
         SerialParams serial;

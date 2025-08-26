@@ -7,6 +7,7 @@
 #include <QSplashScreen>
 #include <QApplication>
 #include <QThread>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {
@@ -29,9 +30,11 @@ int main(int argc, char *argv[])
     auto* serial_mng = new SerialManager();      // bez parenta
     applicationManager->setSerialManager(serial_mng);
     const Settings loadedSettings = settingsManager->currentSettings();
+
     const QString port = loadedSettings.serial.portName.isEmpty()
                          ? loadedSettings.portName
                          : loadedSettings.serial.portName;
+    qDebug() << "serial port je" << port ;
     if (loadedSettings.datasource == DataSource::Serial && port.trimmed().isEmpty()) {
         SettingsDialog dlg(&mainwindow);
         dlg.setSettings(loadedSettings);
