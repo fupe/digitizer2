@@ -150,10 +150,11 @@ jobs:
           $nsisHome = "${env:ProgramFiles(x86)}\NSIS"
           echo "NSIS_HOME=$nsisHome" >> $env:GITHUB_ENV
           $zip = "$env:RUNNER_TEMP\nsis-uac.zip"
-          Invoke-WebRequest -Uri "https://github.com/DavidRogers/nsis-uac/releases/download/2.0/UAC.zip" -OutFile $zip
+          Invoke-WebRequest -Uri "https://nsis.sourceforge.io/mediawiki/images/8/8f/UAC.zip" -OutFile $zip
           Expand-Archive $zip -DestinationPath "$env:RUNNER_TEMP\nsis-uac"
           Copy-Item "$env:RUNNER_TEMP\nsis-uac\Plugins\UAC.dll" "$nsisHome\Plugins" -Force
           Copy-Item "$env:RUNNER_TEMP\nsis-uac\Include\UAC.nsh" "$nsisHome\Include" -Force
+
 
       - name: Build installer (NSIS)
         run: makensis installer.nsi
