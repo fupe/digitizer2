@@ -278,29 +278,16 @@ void AppManager::send(const QByteArray& data)
                                  Q_ARG(QByteArray, data));
 }
 
-<<<<<<< HEAD
-=======
+
 void AppManager::onSerialData(const Frame& frame)
 {
     emit serialData(frame.data);
 }
 
->>>>>>> pr-19
 void AppManager::onSerialLine(const QByteArray& line)
 {
     if (line.startsWith("#A:")) {
         alfa_ = line.mid(3).trimmed().toDouble();
-<<<<<<< HEAD
-    } else if (line.startsWith("#B:")) {
-        beta_ = line.mid(3).trimmed().toDouble();
-    } else if (line.startsWith("#I:")) {
-        const int index = line.mid(3).trimmed().toInt();
-        setAngles(alfa_, beta_, index);
-    }
-}
-
-
-=======
         alfaReceived_ = true;
     } else if (line.startsWith("#B:")) {
         beta_ = line.mid(3).trimmed().toDouble();
@@ -314,7 +301,6 @@ void AppManager::onSerialLine(const QByteArray& line)
     }
 }
 
->>>>>>> pr-19
 void AppManager::onSerialOpened()
 {
     qDebug() << "AppManager: opened -" << dataSourceToHuman();

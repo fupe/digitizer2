@@ -121,7 +121,6 @@ private:
 
 public slots:
     // zatím prázdné; ponecháno pro případné budoucí sloty
-    void onSerialLine(const QByteArray& line);
     void onSerialData(const Frame& frame);
     void onSerialOpened();
     void onSerialClosed();
