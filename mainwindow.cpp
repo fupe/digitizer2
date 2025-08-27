@@ -88,6 +88,7 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
     // qDebug() << " scene = new QGraphicsScene(this); = " ;
     scene = new QGraphicsScene(this);
     setup_scene();
+    qDebug()<<"konec konstruktoru";
 }
 
 MainWindow::~MainWindow()
@@ -263,7 +264,8 @@ void MainWindow::setup_scene()
 {
     qDebug() << "scene = " << scene ;
     const auto& s = settingsManager_->currentSettings();
-    scene->setSceneRect(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)));
+    scene->setSceneRect(-100,-100,200,200);
+    //scene->setSceneRect(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)));
     ui->graphicsView->setScene(scene);
     qDebug() << "scene = 1";
     ui->graphicsView->setRenderHints(QPainter::Antialiasing);
@@ -271,20 +273,21 @@ void MainWindow::setup_scene()
     ui->graphicsView->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
     ui->graphicsView->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
-    qDebug() << "scene =5 ";
+    qDebug() << "scene =5 " << s.arm1_length;
 //    ui->graphicsView->setDragMode(selectModeButton->isChecked() ? QGraphicsView::RubberBandDrag : QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
     qDebug() << "scene = 6";
     arm1  = scene->addLine(0,0,s.arm1_length,0,*s.arms_pen);
+    //scene->addLine(0,0,200,200,*s.arms_pen);
     qDebug() << "scene = 7";
     arm2  = scene->addLine(0,0,s.arm2_length,0,*s.arms_pen);
     base = scene->addEllipse(-25,-25, 50, 50,*s.arms_pen);
     arm2->setPos(s.arm1_length,0);
-    // arm1->hide();
-    // arm2->hide();
+    arm1->show();
+    arm2->show();
     ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(),Qt::KeepAspectRatio);
     //ui->graphicsView->show();
-//    qDebug() << " konecscene = " ;
+    qDebug() << " konecscene = " ;
 }
 
 void MainWindow::on_actionDelete_last_point_triggered()

@@ -19,8 +19,13 @@ SettingsManager::SettingsManager(QObject* parent)
                   QCoreApplication::applicationName())
 {
     current_ = loadFromStore();
+    current_.arms_pen = new QPen;
+    current_.arms_pen->setColor(Qt::black);
+    current_.arms_pen->setWidth(6);
+    current_.arms_pen->setCapStyle(Qt::RoundCap);
     emit settingsChanged(current_);
     emit shortcutsChanged(current_.shortcuts);
+
 }
 
 

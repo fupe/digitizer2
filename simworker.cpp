@@ -63,7 +63,7 @@ void SimWorker::close() {
 }
 
 void SimWorker::tick() {
-  qDebug() << "tick";
+  //qDebug() << "tick";
   if (file_.atEnd()) {
     qDebug() << "konec souboru";
     if (timer_)
