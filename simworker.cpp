@@ -64,54 +64,53 @@ void SimWorker::close() {
 
 void SimWorker::tick() {
   qDebug() << "tick";
-  // čteme řádky a vydáváme je podle časové značky (ts_msec)
-  while (file_.canReadLine()) {
-    const QByteArray raw = file_.readLine();
-    const QString s = QString::fromUtf8(raw).trimmed();
-    qDebug() << "čtu" << s;
-    if (s.isEmpty()) {
-      qDebug() << "prázdný řádek";
-      continue;
-    }
-
-    const QStringList parts = s.split(';');
-    if (parts.size() < 2) {
-      qDebug() << "špatný řádek" << s;
-      continue; // špatný řádek
-    }
-
-    bool ok = false;
-    qint64 ts = parts[0].toLongLong(&ok);
-    if (!ok) {
-      qDebug() << "špatný timestamp" << parts[0];
-      continue;
-    }
-    const QByteArray payload = parts.mid(1).join(";").toUtf8();
-
-    if (firstTs_ < 0) {
-      firstTs_ = ts;
-      qDebug() << "první ts" << firstTs_;
-    }
-
-    // spočítat kdy má být tento řádek vydán vzhledem k prvnímu a k speedFactor
-    const qint64 rel = ts - firstTs_;
-    const qint64 targetDelay =
-        qint64(double(rel) / qMax(0.0001, params_.speedFactor));
-    const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startWallMsec_;
-    if (elapsed < targetDelay) {
-      qDebug() << "čekám" << (targetDelay - elapsed) << "ms";
-      // ještě brzy – necháme timer doběhnout později
-      return;
-    }
-
-    Frame f{payload, QDateTime::currentMSecsSinceEpoch()};
-    qDebug() << "emit frame" << payload;
-    emit frameReceived(f);
-    // pokračujeme na další řádek (možné dohnání při zrychlení)
+  if (file_.atEnd()) {
+    qDebug() << "konec souboru";
+    if (timer_)
+      timer_->stop();
+    return;
   }
-  qDebug() << "konec souboru";
 
-  // Konec souboru
-  if (timer_)
-    timer_->stop();
+  // čteme jeden řádek a vydáváme ho podle časové značky (ts_msec)
+  const QByteArray raw = file_.readLine();
+  const QString s = QString::fromUtf8(raw).trimmed();
+  qDebug() << "čtu" << s;
+  if (s.isEmpty()) {
+    qDebug() << "prázdný řádek";
+    return;
+  }
+
+  const QStringList parts = s.split(';');
+  if (parts.size() < 2) {
+    qDebug() << "špatný řádek" << s;
+    return; // špatný řádek
+  }
+
+  bool ok = false;
+  qint64 ts = parts[0].toLongLong(&ok);
+  if (!ok) {
+    qDebug() << "špatný timestamp" << parts[0];
+    return;
+  }
+  const QByteArray payload = parts.mid(1).join(";").toUtf8();
+
+  if (firstTs_ < 0) {
+    firstTs_ = ts;
+    qDebug() << "první ts" << firstTs_;
+  }
+
+  // spočítat kdy má být tento řádek vydán vzhledem k prvnímu a k speedFactor
+  const qint64 rel = ts - firstTs_;
+  const qint64 targetDelay =
+      qint64(double(rel) / qMax(0.0001, params_.speedFactor));
+  const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startWallMsec_;
+  if (elapsed < targetDelay) {
+    qDebug() << "čekám" << (targetDelay - elapsed) << "ms";
+    // ještě brzy – necháme timer doběhnout později
+    return;
+  }
+
+  Frame f{payload, QDateTime::currentMSecsSinceEpoch()};
+  qDebug() << "emit frame" << payload;
+  emit frameReceived(f);
 }
