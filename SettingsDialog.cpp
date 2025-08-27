@@ -40,6 +40,16 @@ SettingsDialog::SettingsDialog(QWidget *parent, SettingsManager* sm) :
         connect(importButton_, &QPushButton::clicked, this, &SettingsDialog::onImportConfig);
         connect(exportButton_, &QPushButton::clicked, this, &SettingsDialog::onExportConfig);
     }
+    // změna vybraného sériového portu
+        connect(ui->serialPortInfoListBox,
+                QOverload<int>::of(&QComboBox::currentIndexChanged),
+                this,
+                &SettingsDialog::showPortInfo);
+    // přepnutí filtru “digit port only”
+        connect(ui->checkBox_digit_port_only,
+                &QCheckBox::toggled,
+                this,
+                &SettingsDialog::fillPortsInfo);
 
     populate();
 
