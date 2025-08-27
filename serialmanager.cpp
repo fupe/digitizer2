@@ -105,7 +105,7 @@ void SerialManager::onWorkerClosed()  { emit closed(); }
 void SerialManager::onWorkerError(const QString& msg) { emit errorOccured(msg); }
 
 void SerialManager::onWorkerFrame(const Frame& f) {
-    qDebug() << "SerialManager::onWorkerFrame" << f.data;
+    //qDebug() << "SerialManager::onWorkerFrame" << f.data;
 
     // pokud je zapnuté nahrávání, ulož řádek "ts;payload\n"
     if (recording_ && recordFile_.isOpen()) {

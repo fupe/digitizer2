@@ -43,7 +43,7 @@ void SerialWorker::onReadyRead() {
     // Čteme po částech, seskládáme na řádky (A/B/I chodí „po řádcích“)
     //qDebug() << "prisly data";
     lineBuffer_.append(port_.readAll());
-    qDebug() << "SerialWorker::onReadyRead buffer" << lineBuffer_;
+    //qDebug() << "SerialWorker::onReadyRead buffer" << lineBuffer_;
 
     // sjednoť ukončení řádků: nahraď CR za LF
     lineBuffer_.replace('\r', '\n');
@@ -54,7 +54,7 @@ void SerialWorker::onReadyRead() {
         lineBuffer_.remove(0, idx + 1);
         if (line.isEmpty())
             continue;
-        qDebug() << "SerialWorker frame" << line;
+        //qDebug() << "SerialWorker frame" << line;
         // strip any binary prefix and trailing data
         int hashPos = line.indexOf('#');
         int pipePos = line.indexOf('|', hashPos + 1);
@@ -63,7 +63,7 @@ void SerialWorker::onReadyRead() {
                 line = line.mid(hashPos, pipePos - hashPos);
             else
                 line = line.mid(hashPos);
-            qDebug() << "SerialWorker frame" << line;
+            //qDebug() << "SerialWorker frame2" << line;
 
             Frame f;
             f.data = line;
