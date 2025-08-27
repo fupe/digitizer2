@@ -65,9 +65,9 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
             qWarning() << "STATUSBAR error:" << e;
         });
 
-        currentSettings_ = appManager_->settingsManager()->currentSettings();
-        if (currentSettings_.main_window_position.isValid()) {
-            setGeometry(currentSettings_.main_window_position);
+        const auto& cs = settingsManager_->currentSettings();
+        if (cs.main_window_position.isValid()) {
+            setGeometry(cs.main_window_position);
         }
     //-----
     connect(settingsManager_, &SettingsManager::settingsChanged,
@@ -101,9 +101,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     qDebug()<<"MainWindow::closeEvent " << &event  ;
     {
         if (!appManager()) return QWidget::closeEvent(event);
-        if (currentSettings_.save_main_window_position_on_exit) {
-            currentSettings_.main_window_position = this->geometry();  // QRect jako dřív
-            appManager()->settingsManager()->updateSettings(currentSettings_);               // commit (uloží do QSettings přes SettingsManager)
+        auto s = settingsManager_->currentSettings();
+        if (s.save_main_window_position_on_exit) {
+            s.main_window_position = this->geometry();  // QRect jako dřív
+            settingsManager_->updateSettings(s);               // commit (uloží do QSettings přes SettingsManager)
         }
         QWidget::closeEvent(event);
     }
@@ -204,7 +205,8 @@ void MainWindow::Zoom_Dynamic()
 
 void MainWindow::Zoom_All()
 {
-    ui->graphicsView->fitInView(QRect(-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length)),Qt::KeepAspectRatio);
+    const auto& s = settingsManager_->currentSettings();
+    ui->graphicsView->fitInView(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)),Qt::KeepAspectRatio);
 }
 
 void MainWindow::Zoom_User()
@@ -260,7 +262,8 @@ void MainWindow::initMenu()
 void MainWindow::setup_scene()
 {
     qDebug() << "scene = " << scene ;
-    scene->setSceneRect(QRect(-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length)));
+    const auto& s = settingsManager_->currentSettings();
+    scene->setSceneRect(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)));
     ui->graphicsView->setScene(scene);
     qDebug() << "scene = 1";
     ui->graphicsView->setRenderHints(QPainter::Antialiasing);
@@ -272,11 +275,11 @@ void MainWindow::setup_scene()
 //    ui->graphicsView->setDragMode(selectModeButton->isChecked() ? QGraphicsView::RubberBandDrag : QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
     qDebug() << "scene = 6";
-    arm1  = scene->addLine(0,0,currentSettings_.arm1_length,0,*currentSettings_.arms_pen);
+    arm1  = scene->addLine(0,0,s.arm1_length,0,*s.arms_pen);
     qDebug() << "scene = 7";
-    arm2  = scene->addLine(0,0,currentSettings_.arm2_length,0,*currentSettings_.arms_pen);
-    base = scene->addEllipse(-25,-25, 50, 50,*currentSettings_.arms_pen);
-    arm2->setPos(currentSettings_.arm1_length,0);
+    arm2  = scene->addLine(0,0,s.arm2_length,0,*s.arms_pen);
+    base = scene->addEllipse(-25,-25, 50, 50,*s.arms_pen);
+    arm2->setPos(s.arm1_length,0);
     // arm1->hide();
     // arm2->hide();
     ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(),Qt::KeepAspectRatio);
@@ -470,13 +473,14 @@ void MainWindow::on_actionSave_dxf_triggered()
 {
     QDateTime date = QDateTime::currentDateTime();
     QString formattedTime = date.toString("yyyy-MM-dd-hh-mm-ss");
-    QString export_file = QFileDialog::getSaveFileName(this, tr("Export DXF"), currentSettings_.directory_save_dxf + "/" + formattedTime, "DXF files (*.dxf)");
+    auto settings = settingsManager_->currentSettings();
+    QString export_file = QFileDialog::getSaveFileName(this, tr("Export DXF"), settings.directory_save_dxf + "/" + formattedTime, "DXF files (*.dxf)");
     if (export_file.isEmpty()) {
         return;
     }
     QDir d = QFileInfo(export_file).absoluteDir();
-    currentSettings_.directory_save_dxf = d.absolutePath();
-    appManager()->settingsManager()->updateSettings(currentSettings_);
+    settings.directory_save_dxf = d.absolutePath();
+    settingsManager_->updateSettings(settings);
 
     DL_Dxf dxf;
     QByteArray filenameArray = export_file.toLocal8Bit();
@@ -490,8 +494,8 @@ void MainWindow::on_actionSave_dxf_triggered()
     dw->sectionEnd();
     dw->sectionEntities();
 
-    dxf.writeComment(*dw, QString("ARM1: %1").arg(currentSettings_.arm1_length).toStdString());
-    dxf.writeComment(*dw, QString("ARM2: %1").arg(currentSettings_.arm2_length).toStdString());
+    dxf.writeComment(*dw, QString("ARM1: %1").arg(settings.arm1_length).toStdString());
+    dxf.writeComment(*dw, QString("ARM2: %1").arg(settings.arm2_length).toStdString());
     dxf.writePoint(*dw, DL_PointData(0.0, 0.0, 0.0), DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
 
     for (QGraphicsItem* item : scene->items()) {
@@ -510,10 +514,10 @@ void MainWindow::on_actionSave_dxf_triggered()
 void MainWindow::on_actionset_zero_triggered()
 {
 
-
-    currentSettings_.alfa_offset = appManager()->getAlfa();
-    currentSettings_.beta_offset = appManager()->getBeta();
-    //currentSettings_.save_Settings();
+    auto s = settingsManager_->currentSettings();
+    s.alfa_offset = appManager()->getAlfa();
+    s.beta_offset = appManager()->getBeta();
+    settingsManager_->updateSettings(s);
 }
 
 void MainWindow::on_actionAuto_triggered()
@@ -687,19 +691,20 @@ void loadScene(QGraphicsScene *scene, const QString &filename)
 
 void MainWindow::on_actionLoad_file_data_triggered()
 {
-    qDebug() << "load add " << currentSettings_.directory_save_data;
+    auto settings = settingsManager_->currentSettings();
+    qDebug() << "load add " << settings.directory_save_data;
     QString filename = QFileDialog::getOpenFileName(
         this,
         tr("Načíst data"),
-        currentSettings_.directory_save_data,
+        settings.directory_save_data,
         "DIG files (*.dig)"
     );
     if (filename.isEmpty())
         return;
     QDir d = QFileInfo(filename).absoluteDir();
     qDebug() << "dir=" << d.absolutePath();
-    currentSettings_.directory_save_data = d.absolutePath();
-    appManager()->settingsManager()->updateSettings(currentSettings_); // ulozit do reg
+    settings.directory_save_data = d.absolutePath();
+    settingsManager_->updateSettings(settings); // ulozit do reg
     qDebug() << "Načítám soubor:" << filename;
     // Vymaž staré položky, pokud je třeba
     scene->clear();  // nebo ui->graphicsView->scene()->clear();
@@ -740,13 +745,14 @@ void MainWindow::updateArms(double Arm1Angle, double Arm2Angle,QPointF endPointA
     ui->enc1value->setText(s);
     s = "beta " +QString::number(Arm2Angle, 'f', 4) + " deg";
     ui->enc2value->setText(s);
-    s = QString::number(endPointArm1.x()/currentSettings_.units_scale, 'f', 8);
+    const auto& st = settingsManager_->currentSettings();
+    s = QString::number(endPointArm1.x()/st.units_scale, 'f', 8);
     ui->position1x->setText(s);
-    s = QString::number(endPointArm1.y()/currentSettings_.units_scale, 'f', 8);
+    s = QString::number(endPointArm1.y()/st.units_scale, 'f', 8);
     ui->position1y->setText(s);
-    s = QString::number(endPointArm2.x()/currentSettings_.units_scale, 'f', 8);
+    s = QString::number(endPointArm2.x()/st.units_scale, 'f', 8);
     ui->position2x->setText(s);
-    s = QString::number(endPointArm2.y()/currentSettings_.units_scale, 'f', 8);
+    s = QString::number(endPointArm2.y()/st.units_scale, 'f', 8);
     ui->position2y->setText(s);
     lastEndArm2_ = endPointArm2;   // ⬅ uložit pro Zoom_Dynamic()
 
@@ -848,7 +854,8 @@ void MainWindow::on_actionCalibrate_toggled(bool arg1)
     connect(calibrate, &CalibrateWindow::button_calibrate_clicked,this, &MainWindow::handleCalibrateButtonClicked);
     //connect(calibrate, &CalibrateWindow::close_calibrate ,this, &MainWindow::calibrateWindowClosed);
     calibrate->show();
-    calibrate->set_arms(currentSettings_.arm1_length,currentSettings_.arm2_length);
+    const auto& s = settingsManager_->currentSettings();
+    calibrate->set_arms(s.arm1_length,s.arm2_length);
 
     }
     else
@@ -875,7 +882,8 @@ void MainWindow::show_measure_value(double Arm1Angle, double Arm2Angle,QPointF e
     if  (measure->mode==1)
     {
         double distance;
-        distance= double(qSqrt(double(qPow(measure->start_position.x()-endPointArm2.x(),2))+double(qPow(measure->start_position.y()-endPointArm2.y(),2))))/currentSettings_.units_scale;
+        const auto& st = settingsManager_->currentSettings();
+        distance= double(qSqrt(double(qPow(measure->start_position.x()-endPointArm2.x(),2))+double(qPow(measure->start_position.y()-endPointArm2.y(),2))))/st.units_scale;
         measure->set_value(distance);
     }
     else if (measure->mode==0)
@@ -913,7 +921,7 @@ void MainWindow::on_actionConnect_triggered()
 
 void MainWindow::onSettingsChanged(const Settings& s)
 {
-currentSettings_ = s ;
+    Q_UNUSED(s);
 }
 
 void MainWindow::onAddPointModeChanged(AddPointMode mode)

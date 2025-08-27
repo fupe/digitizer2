@@ -43,7 +43,6 @@ public:
     ~MainWindow();
     AppManager* appManager() const { return appManager_; }
     SettingsManager* settingsManager() const { return settingsManager_; }
-    Settings currentSettings_;
     void onAddPointModeChanged(AddPointMode mode);
     void updateUiForMode(AddPointMode mode);
     MeasureDialog* measure = nullptr;
