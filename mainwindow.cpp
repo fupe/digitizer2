@@ -88,6 +88,7 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
     // qDebug() << " scene = new QGraphicsScene(this); = " ;
     scene = new QGraphicsScene(this);
     setup_scene();
+    connect(appManager_, &AppManager::armsUpdated, this, &MainWindow::updateArms);
     qDebug()<<"konec konstruktoru";
 }
 
