@@ -87,6 +87,7 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
     /*graphics*/
     // qDebug() << " scene = new QGraphicsScene(this); = " ;
     scene = new QGraphicsScene(this);
+    setup_scene();
 }
 
 MainWindow::~MainWindow()
@@ -258,17 +259,21 @@ void MainWindow::initMenu()
 
 void MainWindow::setup_scene()
 {
-    qDebug() << "scene = " ;
+    qDebug() << "scene = " << scene ;
     scene->setSceneRect(QRect(-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),-1.05*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length),2.1*(currentSettings_.arm1_length+currentSettings_.arm2_length)));
     ui->graphicsView->setScene(scene);
+    qDebug() << "scene = 1";
     ui->graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->graphicsView->setDragMode(GraphicsView::RubberBandDrag);
     ui->graphicsView->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
     ui->graphicsView->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
+    qDebug() << "scene =5 ";
 //    ui->graphicsView->setDragMode(selectModeButton->isChecked() ? QGraphicsView::RubberBandDrag : QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
+    qDebug() << "scene = 6";
     arm1  = scene->addLine(0,0,currentSettings_.arm1_length,0,*currentSettings_.arms_pen);
+    qDebug() << "scene = 7";
     arm2  = scene->addLine(0,0,currentSettings_.arm2_length,0,*currentSettings_.arms_pen);
     base = scene->addEllipse(-25,-25, 50, 50,*currentSettings_.arms_pen);
     arm2->setPos(currentSettings_.arm1_length,0);
