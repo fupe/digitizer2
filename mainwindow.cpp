@@ -478,6 +478,7 @@ void MainWindow::on_actionSave_dxf_triggered()
     QDateTime date = QDateTime::currentDateTime();
     QString formattedTime = date.toString("yyyy-MM-dd-hh-mm-ss");
     auto settings = settingsManager_->currentSettings();
+    double scale = 1.0 / settings.units_scale;
     QString export_file = QFileDialog::getSaveFileName(this, tr("Export DXF"), settings.directory_save_dxf + "/" + formattedTime, "DXF files (*.dxf)");
     if (export_file.isEmpty()) {
         return;
@@ -495,6 +496,9 @@ void MainWindow::on_actionSave_dxf_triggered()
     }
 
     dxf.writeHeader(*dw);
+    int insUnits = (settings.units_scale == 1.0) ? 4 : 1;
+    dw->dxfString(9, "$INSUNITS");
+    dw->dxfInt(70, insUnits);
     dw->sectionEnd();
     dw->sectionEntities();
 
@@ -504,7 +508,7 @@ void MainWindow::on_actionSave_dxf_triggered()
 
     for (QGraphicsItem* item : scene->items()) {
         if (auto fm = dynamic_cast<GraphicsItems*>(item)) {
-            fm->export_dxf(dxf, *dw);
+            fm->export_dxf(dxf, *dw, scale);
         }
     }
 

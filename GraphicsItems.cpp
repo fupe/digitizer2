@@ -28,10 +28,11 @@ void GraphicsItems::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     Q_UNUSED(widget);
 }
 
-void GraphicsItems::export_dxf(DL_Dxf& dxf, DL_WriterA& dw)
+void GraphicsItems::export_dxf(DL_Dxf& dxf, DL_WriterA& dw, double scale)
 {
     Q_UNUSED(dxf);
     Q_UNUSED(dw);
+    Q_UNUSED(scale);
     qDebug() << "export mygraphicsitem" << this->pen;
 }
 
@@ -82,12 +83,12 @@ void mypoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     painter->drawPoint(1,1);
 }
 
-void mypoint::export_dxf(DL_Dxf& dxf, DL_WriterA& dw)
+void mypoint::export_dxf(DL_Dxf& dxf, DL_WriterA& dw, double scale)
 {
     qDebug() << "export mypoint" << this->pos();
     dxf.writeComment(dw, QString("alfa: %1").arg(-alfa).toStdString());
     dxf.writeComment(dw, QString("beta: %1").arg(-beta).toStdString());
-    DL_PointData data(this->pos().x(), this->pos().y() * (-1), 0.0);
+    DL_PointData data(this->pos().x() * scale, this->pos().y() * (-scale), 0.0);
     dxf.writePoint(dw, data, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
 }
 
@@ -186,16 +187,16 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
 }
 
-void mypolyline::export_dxf(DL_Dxf& dxf, DL_WriterA& dw)
+void mypolyline::export_dxf(DL_Dxf& dxf, DL_WriterA& dw, double scale)
 {
     qDebug() << "export mypolyline" << this->pen;
     for (int i = 0; i < mypolygon->count() - 1; i++) {
         DL_LineData lineData(
-            mypolygon->at(i).x() + pos().x(),
-            (mypolygon->at(i).y() + pos().y()) * (-1),
+            (mypolygon->at(i).x() + pos().x()) * scale,
+            (mypolygon->at(i).y() + pos().y()) * (-scale),
             0.0,
-            mypolygon->at(i + 1).x() + pos().x(),
-            (mypolygon->at(i + 1).y() + pos().y()) * (-1),
+            (mypolygon->at(i + 1).x() + pos().x()) * scale,
+            (mypolygon->at(i + 1).y() + pos().y()) * (-scale),
             0.0);
         dxf.writeLine(dw, lineData, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
     }
@@ -310,12 +311,12 @@ QRectF mycircle::boundingRect() const
 
 }
 
-void mycircle::export_dxf(DL_Dxf& dxf, DL_WriterA& dw)
+void mycircle::export_dxf(DL_Dxf& dxf, DL_WriterA& dw, double scale)
 {
     qDebug() << "export mycircle" << this->pen;
-    DL_CircleData circleData(center.x(), center.y() * (-1), 0.0, radius);
+    DL_CircleData circleData(center.x() * scale, center.y() * (-scale), 0.0, radius * scale);
     dxf.writeCircle(dw, circleData, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
-    DL_PointData pointData(center.x(), center.y() * (-1), 0.0);
+    DL_PointData pointData(center.x() * scale, center.y() * (-scale), 0.0);
     dxf.writePoint(dw, pointData, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
 }
 
