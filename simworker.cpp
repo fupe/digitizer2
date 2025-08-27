@@ -3,28 +3,6 @@
 #include <QDateTime>
 #include <QStringList>
 
-<<<<<<< HEAD
-SimWorker::SimWorker(const SimulationParams& params, QObject* parent)
-    : IDataSourceWorker(parent)
-    , params_(params)
-    , timer_(this)
-{
-    connect(&timer_, &QTimer::timeout, this, &SimWorker::tick);
-}
-
-void SimWorker::open() {
-    qDebug()<< "open emulate";
-    if (file_.isOpen()) file_.close();
-    file_.setFileName(params_.logFile);
-    if (!file_.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        emit errorOccured(QStringLiteral("Nelze otevřít log %1").arg(params_.logFile));
-        return;
-    }
-    startWallMsec_ = QDateTime::currentMSecsSinceEpoch();
-    firstTs_ = -1;
-    timer_.start(1); // rychlý tick – dávkujeme sami dle časů v souboru
-    emit opened();
-=======
 SimWorker::SimWorker(const SimulationParams &params, QObject *parent)
     : IDataSourceWorker(parent), params_(params) {}
 
@@ -45,7 +23,6 @@ void SimWorker::open() {
   }
   timer_->start(1); // rychlý tick – dávkujeme sami dle časů v souboru
   emit opened();
->>>>>>> pr-23
 }
 
 void SimWorker::close() {
@@ -57,22 +34,13 @@ void SimWorker::close() {
 }
 
 void SimWorker::tick() {
-<<<<<<< HEAD
-    // čteme řádky a vydáváme je podle časové značky (ts_msec)
-    qDebug()<<"tick";
-    while (file_.canReadLine()) {
-        const QByteArray raw = file_.readLine();
-        const QString s = QString::fromUtf8(raw).trimmed();
-        if (s.isEmpty()) continue;
-=======
+
   // čteme řádky a vydáváme je podle časové značky (ts_msec)
   while (file_.canReadLine()) {
     const QByteArray raw = file_.readLine();
     const QString s = QString::fromUtf8(raw).trimmed();
     if (s.isEmpty())
       continue;
->>>>>>> pr-23
-
     const QStringList parts = s.split(';');
     if (parts.size() < 2)
       continue; // špatný řádek
