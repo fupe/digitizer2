@@ -121,6 +121,7 @@ public slots:
     // zatím prázdné; ponecháno pro případné budoucí sloty
     void onSerialOpened();
     void onSerialClosed();
+    void onSerialLine(const QByteArray& line);
 };
 
 #endif // APPMANAGER_H

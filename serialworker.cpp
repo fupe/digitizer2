@@ -41,6 +41,7 @@ void SerialWorker::send(const QByteArray& bytes) {
 
 void SerialWorker::onReadyRead() {
     // Čteme po částech, seskládáme na řádky (A/B/I chodí „po řádcích“)
+    //qDebug() << "prisly data";
     lineBuffer_.append(port_.readAll());
     int idx;
     while ((idx = lineBuffer_.indexOf('\n')) >= 0) {

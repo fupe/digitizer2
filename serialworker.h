@@ -3,6 +3,7 @@
 #include "idatasourceworker.h"
 #include <QSerialPort>
 #include <QTimer>
+#include <QDebug>
 
 class SerialWorker : public IDataSourceWorker {
     Q_OBJECT

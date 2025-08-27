@@ -13,7 +13,7 @@ namespace {
 
 AppManager::AppManager(QObject* parent) : QObject(parent) {
      serialmanager_ = new SerialManager(this);
-     serialmanager_->open();
+     //serialmanager_->open();
      QObject::connect(qApp, &QCoreApplication::aboutToQuit, serialmanager_, &SerialManager::close);
 }
 
@@ -35,7 +35,7 @@ double AppManager::getBeta()
 void AppManager::setAngles(double alfa, double beta, int index)
 {
     endPointBefore_ = endPointArm2_;
-
+    qDebug() << "appmanager alfa" << alfa_ << "beta" << beta_ << "index" << index;
     alfa_ = alfa;
     beta_ = beta;
 
@@ -242,6 +242,11 @@ void AppManager::setSerialManager(SerialManager* sm)
             this, [this](const Frame& f){
                 emit serialData(f.data);   // převod Frame -> QByteArray
             }, Qt::UniqueConnection);
+    //parsovani A B I
+    connect(this, &AppManager::serialData,
+                this, &AppManager::onSerialLine,
+                Qt::UniqueConnection);
+
 
     // korektní ukončení při zavření aplikace – stačí JEDNO připojení
     connect(qApp, &QCoreApplication::aboutToQuit, this, [this]{
@@ -273,6 +278,19 @@ void AppManager::send(const QByteArray& data)
        QMetaObject::invokeMethod(serialmanager_, "send", Qt::QueuedConnection,
                                  Q_ARG(QByteArray, data));
 }
+
+void AppManager::onSerialLine(const QByteArray& line)
+{
+    if (line.startsWith("#A:")) {
+        alfa_ = line.mid(3).trimmed().toDouble();
+    } else if (line.startsWith("#B:")) {
+        beta_ = line.mid(3).trimmed().toDouble();
+    } else if (line.startsWith("#I:")) {
+        const int index = line.mid(3).trimmed().toInt();
+        setAngles(alfa_, beta_, index);
+    }
+}
+
 
 void AppManager::onSerialOpened()
 {
