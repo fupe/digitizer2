@@ -11,11 +11,7 @@ namespace {
     constexpr double kPi = 3.14159265358979323846;
 }
 
-AppManager::AppManager(QObject* parent) : QObject(parent) {
-     serialmanager_ = new SerialManager(this);
-     //serialmanager_->open();
-     QObject::connect(qApp, &QCoreApplication::aboutToQuit, serialmanager_, &SerialManager::close);
-}
+AppManager::AppManager(QObject* parent) : QObject(parent) {}
 
 /*ShapeManager& AppManager::shapeManager()
 {
@@ -248,9 +244,9 @@ void AppManager::setSerialManager(SerialManager* sm)
 
 
     // korektní ukončení při zavření aplikace – stačí JEDNO připojení
-    connect(qApp, &QCoreApplication::aboutToQuit, this, [this]{
-        if (serialmanager_) serialmanager_->close();
-    });
+     connect(qApp, &QCoreApplication::aboutToQuit, this, [this]{
+         if (serialmanager_) serialmanager_->close();
+     }, Qt::UniqueConnection);
 }
 
 void AppManager::openSerial()
