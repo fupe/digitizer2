@@ -18,6 +18,16 @@ inline Units stringToUnits(const QString& s) {
         : Units::Millimeters;
 }
 
+inline double mmToUnits(double value, Units u) {
+    constexpr double k = 25.4;
+    return (u == Units::Millimeters) ? value : value / k;
+}
+
+inline double unitsToMm(double value, Units u) {
+    constexpr double k = 25.4;
+    return (u == Units::Millimeters) ? value : value * k;
+}
+
 //------------komunikace
 enum class DataSource {
     Serial,     // klasický COM

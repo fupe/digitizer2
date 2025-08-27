@@ -750,13 +750,13 @@ void MainWindow::updateArms(double Arm1Angle, double Arm2Angle,QPointF endPointA
     s = "beta " +QString::number(Arm2Angle, 'f', 4) + " deg";
     ui->enc2value->setText(s);
     const auto& st = settingsManager_->currentSettings();
-    s = QString::number(endPointArm1.x()/st.units_scale, 'f', 8);
+    s = QString::number(mmToUnits(endPointArm1.x(), st.units), 'f', 8);
     ui->position1x->setText(s);
-    s = QString::number(endPointArm1.y()/st.units_scale, 'f', 8);
+    s = QString::number(mmToUnits(endPointArm1.y(), st.units), 'f', 8);
     ui->position1y->setText(s);
-    s = QString::number(endPointArm2.x()/st.units_scale, 'f', 8);
+    s = QString::number(mmToUnits(endPointArm2.x(), st.units), 'f', 8);
     ui->position2x->setText(s);
-    s = QString::number(endPointArm2.y()/st.units_scale, 'f', 8);
+    s = QString::number(mmToUnits(endPointArm2.y(), st.units), 'f', 8);
     ui->position2y->setText(s);
     lastEndArm2_ = endPointArm2;   // ⬅ uložit pro Zoom_Dynamic()
 
@@ -887,7 +887,9 @@ void MainWindow::show_measure_value(double Arm1Angle, double Arm2Angle,QPointF e
     {
         double distance;
         const auto& st = settingsManager_->currentSettings();
-        distance= double(qSqrt(double(qPow(measure->start_position.x()-endPointArm2.x(),2))+double(qPow(measure->start_position.y()-endPointArm2.y(),2))))/st.units_scale;
+        distance = mmToUnits(qSqrt(qPow(measure->start_position.x() - endPointArm2.x(), 2) +
+                                   qPow(measure->start_position.y() - endPointArm2.y(), 2)),
+                              st.units);
         measure->set_value(distance);
     }
     else if (measure->mode==0)

@@ -255,9 +255,10 @@ void SettingsDialog::changeunits(const QString& jednotky)
         ui->auto_step->setSingleStep(0.1);
     }
     qDebug() << "units_scale " << units_scale;
-    ui->doubleSpinBox_arm1_length->setValue(this->arm1_length/units_scale);
-    ui->doubleSpinBox_arm2_length->setValue(this->arm2_length/units_scale);
-    ui->auto_step->setValue(this->auto_step/units_scale);
+    Units u = stringToUnits(jednotky);
+    ui->doubleSpinBox_arm1_length->setValue(mmToUnits(this->arm1_length, u));
+    ui->doubleSpinBox_arm2_length->setValue(mmToUnits(this->arm2_length, u));
+    ui->auto_step->setValue(mmToUnits(this->auto_step, u));
 
 }
 
@@ -435,10 +436,10 @@ void SettingsDialog::populate() {
 void SettingsDialog::pullFromUi()
 {
    qDebug()<<"accept v settings dialog" << ui->unit_select->currentText();
-   tmp_settings.auto_step=ui->auto_step->value();
-   tmp_settings.units=stringToUnits(ui->unit_select->currentText());
-   tmp_settings.arm1_length=ui->doubleSpinBox_arm1_length->value();
-   tmp_settings.arm2_length=ui->doubleSpinBox_arm2_length->value();
+   tmp_settings.units = stringToUnits(ui->unit_select->currentText());
+   tmp_settings.auto_step = unitsToMm(ui->auto_step->value(), tmp_settings.units);
+   tmp_settings.arm1_length = unitsToMm(ui->doubleSpinBox_arm1_length->value(), tmp_settings.units);
+   tmp_settings.arm2_length = unitsToMm(ui->doubleSpinBox_arm2_length->value(), tmp_settings.units);
    //tmp_settings.arms_color=  QColor(arms_color).name();
 
    //UI
