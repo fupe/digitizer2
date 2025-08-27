@@ -90,16 +90,18 @@ void MeasureDialog::set_value(double value)
 {
     // get units from settings
     int decimals = 2; // default
+    QString unitText = QStringLiteral("mm");
     if (settingsManager_) {
         const auto& s = settingsManager_->currentSettings();
-        // Assume Units::Millimeters => mm, Units::Inches => inches
         if (s.units == Units::Millimeters) {
             decimals = 1;
         } else {
             decimals = 2;
         }
+        unitText = unitsToString(s.units);
     }
     ui->lcdNumber->display(QString::number(value, 'f', decimals));
+    ui->unitLabel->setText(unitText);
 }
 
 void MeasureDialog::set_color(QColor color)
