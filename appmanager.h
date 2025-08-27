@@ -106,6 +106,8 @@ private:
     double Arm1Angle_{};
     double Arm2Angle_{};
     double alfa_{}, beta_{};
+    bool   alfaReceived_ = false;
+    bool   betaReceived_ = false;
     double x_value_{}, y_value_{};      // koncová pozice prvního ramene
     double x_value2_{}, y_value2_{};    // koncová pozice druhého ramene
     QPointF endPointArm1_;
@@ -119,6 +121,8 @@ private:
 
 public slots:
     // zatím prázdné; ponecháno pro případné budoucí sloty
+    void onSerialLine(const QByteArray& line);
+    void onSerialData(const Frame& frame);
     void onSerialOpened();
     void onSerialClosed();
 };

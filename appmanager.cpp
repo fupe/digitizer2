@@ -237,11 +237,14 @@ void AppManager::setSerialManager(SerialManager* sm)
     connect(serialmanager_, &SerialManager::errorOccured,
             this, &AppManager::serialError, Qt::UniqueConnection);
 
-    // POZOR: frameReceived(const Frame&) -> my chceme dál poslat QByteArray
+    // napojení přijatých rámců na slot, který je převádí na QByteArray
     connect(serialmanager_, &SerialManager::frameReceived,
-            this, [this](const Frame& f){
-                emit serialData(f.data);   // převod Frame -> QByteArray
-            }, Qt::UniqueConnection);
+            this, &AppManager::onSerialData,
+            Qt::UniqueConnection);
+
+    connect(this, &AppManager::serialData,
+            this, &AppManager::onSerialLine,
+            Qt::UniqueConnection);
 
     // korektní ukončení při zavření aplikace – stačí JEDNO připojení
     connect(qApp, &QCoreApplication::aboutToQuit, this, [this]{
@@ -272,6 +275,28 @@ void AppManager::send(const QByteArray& data)
     if (!serialmanager_) return;
        QMetaObject::invokeMethod(serialmanager_, "send", Qt::QueuedConnection,
                                  Q_ARG(QByteArray, data));
+}
+
+void AppManager::onSerialData(const Frame& frame)
+{
+    emit serialData(frame.data);
+}
+
+void AppManager::onSerialLine(const QByteArray& line)
+{
+    if (line.startsWith("#A:")) {
+        alfa_ = line.mid(3).trimmed().toDouble();
+        alfaReceived_ = true;
+    } else if (line.startsWith("#B:")) {
+        beta_ = line.mid(3).trimmed().toDouble();
+        betaReceived_ = true;
+    } else if (line.startsWith("#I:")) {
+        const int index = line.mid(3).trimmed().toInt();
+        if (alfaReceived_ && betaReceived_) {
+            setAngles(alfa_, beta_, index);
+            alfaReceived_ = betaReceived_ = false;
+        }
+    }
 }
 
 void AppManager::onSerialOpened()
