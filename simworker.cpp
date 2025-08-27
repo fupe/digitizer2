@@ -63,26 +63,32 @@ void SimWorker::close() {
 }
 
 void SimWorker::tick() {
-  //qDebug() << "tick";
-  if (file_.atEnd()) {
-    qDebug() << "konec souboru";
-    if (timer_)
-      timer_->stop();
-    return;
+  qDebug() << "tick";
+
+  if (pendingLine_.isEmpty()) {
+    if (file_.atEnd()) {
+      qDebug() << "konec souboru";
+      if (timer_)
+        timer_->stop();
+      return;
+    }
+
+    // načti nový řádek a ulož si ho pro případné pozdější odeslání
+    const QByteArray raw = file_.readLine();
+    pendingLine_ = QString::fromUtf8(raw).trimmed();
+    qDebug() << "čtu" << pendingLine_;
+    if (pendingLine_.isEmpty()) {
+      qDebug() << "prázdný řádek";
+      timer_->start(1);
+      return;
+    }
   }
 
-  // čteme jeden řádek a vydáváme ho podle časové značky (ts_msec)
-  const QByteArray raw = file_.readLine();
-  const QString s = QString::fromUtf8(raw).trimmed();
-  qDebug() << "čtu" << s;
-  if (s.isEmpty()) {
-    qDebug() << "prázdný řádek";
-    return;
-  }
-
-  const QStringList parts = s.split(';');
+  const QStringList parts = pendingLine_.split(';');
   if (parts.size() < 2) {
-    qDebug() << "špatný řádek" << s;
+    qDebug() << "špatný řádek" << pendingLine_;
+    pendingLine_.clear();
+    timer_->start(1);
     return; // špatný řádek
   }
 
@@ -90,6 +96,8 @@ void SimWorker::tick() {
   qint64 ts = parts[0].toLongLong(&ok);
   if (!ok) {
     qDebug() << "špatný timestamp" << parts[0];
+    pendingLine_.clear();
+    timer_->start(1);
     return;
   }
   const QByteArray payload = parts.mid(1).join(";").toUtf8();
@@ -105,12 +113,17 @@ void SimWorker::tick() {
       qint64(double(rel) / qMax(0.0001, params_.speedFactor));
   const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startWallMsec_;
   if (elapsed < targetDelay) {
-    qDebug() << "čekám" << (targetDelay - elapsed) << "ms";
-    // ještě brzy – necháme timer doběhnout později
+    const qint64 wait = targetDelay - elapsed;
+    qDebug() << "čekám" << wait << "ms";
+    // ještě brzy – restartujeme timer na zbytek zpoždění a necháme řádek v bufferu
+    timer_->start(wait);
     return;
   }
 
   Frame f{payload, QDateTime::currentMSecsSinceEpoch()};
   qDebug() << "emit frame" << payload;
   emit frameReceived(f);
+  pendingLine_.clear();
+  // zkusíme hned načíst další řádek
+  timer_->start(1);
 }
