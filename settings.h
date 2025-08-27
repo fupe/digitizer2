@@ -66,6 +66,7 @@ struct ModbusParams {
 struct SimulationParams {
     QString logFile;        // cesta k logu s časovými značkami
     double speedFactor = 1; // 1.0 = realtime, >1 zrychlení
+    bool loggingEnabled = false; // zda je povolen záznam
 };
 
 

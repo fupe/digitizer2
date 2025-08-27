@@ -90,6 +90,7 @@ void SettingsManager::loadFrom(QSettings& store, Settings& settings)
     store.beginGroup(QStringLiteral("Simulation"));
         settings.simulation.logFile     = store.value(QStringLiteral("LogFile"), settings.simulation.logFile).toString();
         settings.simulation.speedFactor = store.value(QStringLiteral("SpeedFactor"), settings.simulation.speedFactor).toDouble();
+        settings.simulation.loggingEnabled = store.value(QStringLiteral("LoggingEnabled"), settings.simulation.loggingEnabled).toBool();
     store.endGroup();
 
     store.beginGroup(QStringLiteral("UI"));
@@ -152,6 +153,7 @@ void SettingsManager::saveToStore(const Settings& settings, bool admin)
     store.beginGroup(QStringLiteral("Simulation"));
         store.setValue(QStringLiteral("LogFile"), settings.simulation.logFile);
         store.setValue(QStringLiteral("SpeedFactor"), settings.simulation.speedFactor);
+        store.setValue(QStringLiteral("LoggingEnabled"), settings.simulation.loggingEnabled);
     store.endGroup();
 
     store.beginGroup(QStringLiteral("UI"));
@@ -257,6 +259,7 @@ bool SettingsManager::exportJson(const QString& filePath, const Settings& st, QS
 
     simulation[QStringLiteral("LogFile")]     = replaceEnvVars(s.simulation.logFile);
     simulation[QStringLiteral("SpeedFactor")] = s.simulation.speedFactor;
+    simulation[QStringLiteral("LoggingEnabled")] = s.simulation.loggingEnabled;
 
     ui[QStringLiteral("Units")] = unitsToString(s.units);
     ui[QStringLiteral("ArmsColor")] = s.arms_color.name(QColor::HexArgb);
@@ -342,6 +345,7 @@ bool SettingsManager::importJson(const QString& filePath, QString* err) {
         const auto o = root.value(QStringLiteral("Simulation")).toObject();
         current_.simulation.logFile     = expandEnvVars(o.value(QStringLiteral("LogFile")).toString(current_.simulation.logFile));
         current_.simulation.speedFactor = o.value(QStringLiteral("SpeedFactor")).toDouble(current_.simulation.speedFactor);
+        current_.simulation.loggingEnabled = o.value(QStringLiteral("LoggingEnabled")).toBool(current_.simulation.loggingEnabled);
     }
     if (root.contains(QStringLiteral("UI"))) {
         const auto o = root.value(QStringLiteral("UI")).toObject();

@@ -101,7 +101,10 @@ void SerialManager::setRecording(bool enabled, const QString& filePath) {
 }
 
 void SerialManager::onWorkerOpened()  { emit opened(); }
-void SerialManager::onWorkerClosed()  { emit closed(); }
+void SerialManager::onWorkerClosed()  {
+    setRecording(false, QString());
+    emit closed();
+}
 void SerialManager::onWorkerError(const QString& msg) { emit errorOccured(msg); }
 
 void SerialManager::onWorkerFrame(const Frame& f) {

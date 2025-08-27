@@ -418,6 +418,7 @@ void SettingsDialog::populate() {
         ui->serialPortInfoListBox->setCurrentText(tmp_settings.serial.portName);
         ui->comboBox_datasource->setCurrentIndex(static_cast<int>(tmp_settings.datasource));
         ui->lineEdit_simul_file->setText(tmp_settings.simulation.logFile);
+        ui->pushButton_logging_enagle->setChecked(tmp_settings.simulation.loggingEnabled);
 //----dxf dir
         ui->lineEdit_dxf_dir->setText(tmp_settings.directory_save_dxf);
 
@@ -450,6 +451,7 @@ void SettingsDialog::pullFromUi()
    tmp_settings.serial.portName = ui->serialPortInfoListBox->currentText();
    tmp_settings.datasource = static_cast<DataSource>(ui->comboBox_datasource->currentIndex());
    tmp_settings.simulation.logFile = ui->lineEdit_simul_file->text();
+   tmp_settings.simulation.loggingEnabled = ui->pushButton_logging_enagle->isChecked();
 
    //---dxf
    tmp_settings.directory_save_dxf = ui->lineEdit_dxf_dir->text();
@@ -515,6 +517,7 @@ void SettingsDialog::on_pushButton_logging_enagle_toggled(bool checked)
     } else {
         serialManager_->setRecording(false, QString());
     }
+    tmp_settings.simulation.loggingEnabled = checked;
 }
 
 void SettingsDialog::onImportConfig()

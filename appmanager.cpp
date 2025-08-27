@@ -311,6 +311,8 @@ void AppManager::onSerialClosed()
 {
     qDebug() << "AppManager: close -" << dataSourceToHuman();
     emit connectionNotice(tr("Odpojeno: %1").arg(dataSourceToHuman()));
+    settings_.simulation.loggingEnabled = false;
+    if (settingsManager_) settingsManager_->updateSettings(settings_);
 }
 
 // pomocná funkce – název a detaily zdroje
