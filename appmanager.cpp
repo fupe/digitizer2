@@ -31,7 +31,7 @@ double AppManager::getBeta()
 void AppManager::setAngles(double alfa, double beta, int index)
 {
     endPointBefore_ = endPointArm2_;
-    qDebug() << "appmanager alfa" << alfa_ << "beta" << beta_ << "index" << index;
+    qDebug() << "AppManager::setAngles input" << alfa << beta << index;
     alfa_ = alfa;
     beta_ = beta;
 
@@ -54,7 +54,7 @@ void AppManager::setAngles(double alfa, double beta, int index)
 
     if (endPointBefore_ != endPointArm2_) {
         emit armsUpdated(Arm1Angle_, Arm2Angle_, endPointArm1_, endPointArm2_);
-        qDebug() << "appmanager alfa" << alfa_ << "beta" << beta_ << "index" << index;
+        qDebug() << "AppManager::setAngles armsUpdated" << alfa_ << beta_ << index;
     }
 
     indexBefore_ = index;
@@ -277,11 +277,13 @@ void AppManager::send(const QByteArray& data)
 
 void AppManager::onSerialData(const Frame& frame)
 {
+    qDebug() << "AppManager::onSerialData" << frame.data;
     emit serialData(frame.data);
 }
 
 void AppManager::onSerialLine(const QByteArray& line)
 {
+    qDebug() << "AppManager::onSerialLine" << line;
     if (line.startsWith("#A:")) {
         alfa_ = line.mid(3).trimmed().toDouble();
         alfaReceived_ = true;

@@ -43,12 +43,19 @@ void SerialWorker::onReadyRead() {
     // Čteme po částech, seskládáme na řádky (A/B/I chodí „po řádcích“)
     //qDebug() << "prisly data";
     lineBuffer_.append(port_.readAll());
+    qDebug() << "SerialWorker::onReadyRead buffer" << lineBuffer_;
+
+    // sjednoť ukončení řádků: nahraď CR za LF
+    lineBuffer_.replace('\r', '\n');
+
     int idx;
     while ((idx = lineBuffer_.indexOf('\n')) >= 0) {
         QByteArray line = lineBuffer_.left(idx);
-        // odstraníme i \r případně
-        if (!line.isEmpty() && line.endsWith('\r')) line.chop(1);
-        lineBuffer_.remove(0, idx+1);
+        lineBuffer_.remove(0, idx + 1);
+        if (line.isEmpty())
+            continue;
+
+        qDebug() << "SerialWorker frame" << line;
 
         Frame f;
         f.data = line;

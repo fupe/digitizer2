@@ -4,6 +4,7 @@
 #include "simworker.h"
 #include "modbusworker.h"
 #include <QTextStream>
+#include <QDebug>
 
 SerialManager::SerialManager(QObject* parent) : QObject(parent) {
     // Vlákno držíme persistentně; workera do něj vždy přesuneme.
@@ -104,6 +105,8 @@ void SerialManager::onWorkerClosed()  { emit closed(); }
 void SerialManager::onWorkerError(const QString& msg) { emit errorOccured(msg); }
 
 void SerialManager::onWorkerFrame(const Frame& f) {
+    qDebug() << "SerialManager::onWorkerFrame" << f.data;
+
     // pokud je zapnuté nahrávání, ulož řádek "ts;payload\n"
     if (recording_ && recordFile_.isOpen()) {
         QTextStream out(&recordFile_);
