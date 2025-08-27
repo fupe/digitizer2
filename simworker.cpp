@@ -4,12 +4,15 @@
 #include <QStringList>
 
 SimWorker::SimWorker(const SimulationParams& params, QObject* parent)
-    : IDataSourceWorker(parent), params_(params)
+    : IDataSourceWorker(parent)
+    , params_(params)
+    , timer_(this)
 {
     connect(&timer_, &QTimer::timeout, this, &SimWorker::tick);
 }
 
 void SimWorker::open() {
+    qDebug()<< "open emulate";
     if (file_.isOpen()) file_.close();
     file_.setFileName(params_.logFile);
     if (!file_.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -30,6 +33,7 @@ void SimWorker::close() {
 
 void SimWorker::tick() {
     // čteme řádky a vydáváme je podle časové značky (ts_msec)
+    qDebug()<<"tick";
     while (file_.canReadLine()) {
         const QByteArray raw = file_.readLine();
         const QString s = QString::fromUtf8(raw).trimmed();
