@@ -57,6 +57,7 @@ void SimWorker::tick() {
         Frame f{ payload, QDateTime::currentMSecsSinceEpoch() };
         emit frameReceived(f);
         // pokračujeme na další řádek (možné dohnání při zrychlení)
+        qDebug() << "tick ";
     }
     // Konec souboru
     timer_.stop();

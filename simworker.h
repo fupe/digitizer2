@@ -3,6 +3,7 @@
 #include "idatasourceworker.h"
 #include <QFile>
 #include <QTimer>
+#include <QDebug>
 
 // Jednoduchý přehrávač z CSV/NDJSON, kde je sloupec ts a data.
 // Pro jednoduchost použijeme CSV: ts_msec;payload
