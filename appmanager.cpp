@@ -237,15 +237,14 @@ void AppManager::setSerialManager(SerialManager* sm)
     connect(serialmanager_, &SerialManager::errorOccured,
             this, &AppManager::serialError, Qt::UniqueConnection);
 
-    // POZOR: frameReceived(const Frame&) -> my chceme dál poslat QByteArray
+    // napojení přijatých rámců na slot, který je převádí na QByteArray
     connect(serialmanager_, &SerialManager::frameReceived,
-            this, [this](const Frame& f){
-                emit serialData(f.data);   // převod Frame -> QByteArray
-            }, Qt::UniqueConnection);
-    //parsovani A B I
+            this, &AppManager::onSerialData,
+            Qt::UniqueConnection);
+
     connect(this, &AppManager::serialData,
-                this, &AppManager::onSerialLine,
-                Qt::UniqueConnection);
+            this, &AppManager::onSerialLine,
+            Qt::UniqueConnection);
 
 
     // korektní ukončení při zavření aplikace – stačí JEDNO připojení
@@ -279,10 +278,19 @@ void AppManager::send(const QByteArray& data)
                                  Q_ARG(QByteArray, data));
 }
 
+<<<<<<< HEAD
+=======
+void AppManager::onSerialData(const Frame& frame)
+{
+    emit serialData(frame.data);
+}
+
+>>>>>>> pr-19
 void AppManager::onSerialLine(const QByteArray& line)
 {
     if (line.startsWith("#A:")) {
         alfa_ = line.mid(3).trimmed().toDouble();
+<<<<<<< HEAD
     } else if (line.startsWith("#B:")) {
         beta_ = line.mid(3).trimmed().toDouble();
     } else if (line.startsWith("#I:")) {
@@ -292,6 +300,21 @@ void AppManager::onSerialLine(const QByteArray& line)
 }
 
 
+=======
+        alfaReceived_ = true;
+    } else if (line.startsWith("#B:")) {
+        beta_ = line.mid(3).trimmed().toDouble();
+        betaReceived_ = true;
+    } else if (line.startsWith("#I:")) {
+        const int index = line.mid(3).trimmed().toInt();
+        if (alfaReceived_ && betaReceived_) {
+            setAngles(alfa_, beta_, index);
+            alfaReceived_ = betaReceived_ = false;
+        }
+    }
+}
+
+>>>>>>> pr-19
 void AppManager::onSerialOpened()
 {
     qDebug() << "AppManager: opened -" << dataSourceToHuman();
