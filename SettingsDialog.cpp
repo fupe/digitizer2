@@ -2,6 +2,7 @@
 #include "ui_SettingsDialog.h"
 #include "shortcutsdialog.h"
 #include "settingsmanager.h"
+#include "serialmanager.h"
 #include <QSerialPortInfo>
 #include <QColor>
 #include <QFileDialog>
@@ -19,10 +20,11 @@
 
 static const char blankString[] = QT_TRANSLATE_NOOP("SettingsDialog", "N/A");
 
-SettingsDialog::SettingsDialog(QWidget *parent, SettingsManager* sm) :
+SettingsDialog::SettingsDialog(QWidget *parent, SettingsManager* sm, SerialManager* serial) :
     QDialog(parent),
     ui(new Ui::SettingsDialog),
-    sm_(sm)
+    sm_(sm),
+    serialManager_(serial)
 {
     ui->setupUi(this);
     // schovej tab2 hned po startu
@@ -415,6 +417,7 @@ void SettingsDialog::populate() {
 //---------SERIAL---------
         ui->serialPortInfoListBox->setCurrentText(tmp_settings.serial.portName);
         ui->comboBox_datasource->setCurrentIndex(static_cast<int>(tmp_settings.datasource));
+        ui->lineEdit_simul_file->setText(tmp_settings.simulation.logFile);
 //----dxf dir
         ui->lineEdit_dxf_dir->setText(tmp_settings.directory_save_dxf);
 
@@ -446,6 +449,7 @@ void SettingsDialog::pullFromUi()
    //------------------SERIAL------------
    tmp_settings.serial.portName = ui->serialPortInfoListBox->currentText();
    tmp_settings.datasource = static_cast<DataSource>(ui->comboBox_datasource->currentIndex());
+   tmp_settings.simulation.logFile = ui->lineEdit_simul_file->text();
 
    //---dxf
    tmp_settings.directory_save_dxf = ui->lineEdit_dxf_dir->text();
@@ -469,6 +473,47 @@ void SettingsDialog::on_button_browse_dxf_clicked()
     if (!dir.isEmpty()) {
         ui->lineEdit_dxf_dir->setText(dir);
         tmp_settings.directory_save_dxf = dir;  // hned uložit do dočasných settings
+    }
+}
+
+void SettingsDialog::on_button_browse_simul_clicked()
+{
+    const QString path = QFileDialog::getSaveFileName(
+        this,
+        tr("Select log file"),
+        ui->lineEdit_simul_file->text().isEmpty() ? QDir::homePath() : ui->lineEdit_simul_file->text(),
+        tr("CSV files (*.csv);;All files (*.*)"));
+
+    if (!path.isEmpty()) {
+        ui->lineEdit_simul_file->setText(path);
+        tmp_settings.simulation.logFile = path;
+        if (serialManager_ && ui->pushButton_logging_enagle->isChecked()) {
+            serialManager_->setRecording(true, path);
+        }
+    }
+}
+
+void SettingsDialog::on_pushButton_logging_enagle_toggled(bool checked)
+{
+    if (!serialManager_) return;
+    QString path = ui->lineEdit_simul_file->text();
+    if (checked) {
+        if (path.isEmpty()) {
+            path = QFileDialog::getSaveFileName(
+                this,
+                tr("Select log file"),
+                QDir::homePath(),
+                tr("CSV files (*.csv);;All files (*.*)"));
+            if (path.isEmpty()) {
+                ui->pushButton_logging_enagle->setChecked(false);
+                return;
+            }
+            ui->lineEdit_simul_file->setText(path);
+            tmp_settings.simulation.logFile = path;
+        }
+        serialManager_->setRecording(true, path);
+    } else {
+        serialManager_->setRecording(false, QString());
     }
 }
 

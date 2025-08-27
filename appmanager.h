@@ -55,6 +55,7 @@ public:
     void setSettingsManager(SettingsManager* m);
     void setSerialManager(SerialManager* sm);
     SettingsManager* settingsManager() const { return settingsManager_; }
+    SerialManager* serialManager() const { return serialmanager_; }
 
     // --- Jednoduché API pro UI (otevření/zavření portu, zápis dat) ---
     void openSerial();                                // vezme port/baud ze SettingsManageru

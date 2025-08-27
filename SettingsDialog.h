@@ -8,6 +8,7 @@
 class QPen;
 class QPushButton;
 class SettingsManager;
+class SerialManager;
 
 namespace Ui {
 class SettingsDialog;
@@ -18,7 +19,7 @@ class SettingsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SettingsDialog(QWidget *parent = nullptr, SettingsManager* sm = nullptr);
+    explicit SettingsDialog(QWidget *parent = nullptr, SettingsManager* sm = nullptr, SerialManager* serial = nullptr);
     ~SettingsDialog();
     bool save_main_window_position_on_exit;
     bool save_measure_window_position_on_exit;
@@ -87,6 +88,8 @@ private slots:
 
     void onImportConfig();
     void onExportConfig();
+    void on_button_browse_simul_clicked();
+    void on_pushButton_logging_enagle_toggled(bool checked);
 
 private:
     Ui::SettingsDialog *ui;
@@ -97,6 +100,7 @@ private:
     SettingsManager* sm_ = nullptr;
     QPushButton* importButton_ = nullptr;
     QPushButton* exportButton_ = nullptr;
+    SerialManager* serialManager_ = nullptr;
 
 signals:
     void signal_scene(void);
