@@ -2,6 +2,7 @@
 #pragma once
 #include <QObject>
 #include <QByteArray>
+#include <QMetaType>
 #include "settings.h"
 
 // Jednotný formát přijatého rámce/dat:
@@ -9,6 +10,8 @@ struct Frame {
     QByteArray data;
     qint64 ts_msec;  // timestamp v ms od epochy
 };
+
+Q_DECLARE_METATYPE(Frame)
 
 class IDataSourceWorker : public QObject {
     Q_OBJECT

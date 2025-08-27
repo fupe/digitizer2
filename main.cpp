@@ -4,6 +4,8 @@
 #include "serialmanager.h"
 #include "settingsmanager.h"
 #include "SettingsDialog.h"
+#include "idatasourceworker.h"
+#include <QMetaType>
 #include <QSplashScreen>
 #include <QApplication>
 #include <QThread>
@@ -12,6 +14,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    qRegisterMetaType<Frame>("Frame");
     a.setWindowIcon(QIcon(":///pic/icon.png"));
     QCoreApplication::setOrganizationName(QStringLiteral("LiborSoft"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("www.example.com"));
