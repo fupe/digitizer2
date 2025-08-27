@@ -355,6 +355,8 @@ void SettingsDialog::on_choose_arms_color_clicked()
 void SettingsDialog::on_buttonBox_rejected()
 {
     qDebug() << "reject";
+    tmp_settings = orig_settings_;
+    populate();
     this->language=this->language_tmp;
     emit signal_retranslate();
     reject();
@@ -384,6 +386,7 @@ void SettingsDialog::on_ShortCuts_clicked()
 
 
 void SettingsDialog::setSettings(const Settings& s) {
+    orig_settings_ = s;
     tmp_settings = s;
     populate();
 }
@@ -396,10 +399,12 @@ Settings SettingsDialog::result() const {
 
 void SettingsDialog::populate() {
     // TODO: Optionally enumerate available ports via QSerialPortInfo
-    ui->auto_step->setValue(tmp_settings.auto_step);
+    arm1_length = tmp_settings.arm1_length;
+    arm2_length = tmp_settings.arm2_length;
+    auto_step = tmp_settings.auto_step;
+    currentUnits_ = tmp_settings.units;
     ui->unit_select->setCurrentText(unitsToString(tmp_settings.units));
-    ui->doubleSpinBox_arm1_length->setValue(tmp_settings.arm1_length);
-    ui->doubleSpinBox_arm2_length->setValue(tmp_settings.arm2_length);
+    changeunits(unitsToString(tmp_settings.units));
 
     // náhled barvy
         ui->arms_color->setAttribute(Qt::WA_StyledBackground, true);
@@ -456,6 +461,16 @@ void SettingsDialog::pullFromUi()
 
    //---dxf
    tmp_settings.directory_save_dxf = ui->lineEdit_dxf_dir->text();
+}
+
+void SettingsDialog::on_unit_select_currentIndexChanged(const QString &text)
+{
+    Units newUnits = stringToUnits(text);
+    arm1_length = unitsToMm(ui->doubleSpinBox_arm1_length->value(), currentUnits_);
+    arm2_length = unitsToMm(ui->doubleSpinBox_arm2_length->value(), currentUnits_);
+    auto_step   = unitsToMm(ui->auto_step->value(), currentUnits_);
+    currentUnits_ = newUnits;
+    changeunits(text);
 }
 
 void SettingsDialog::on_buttonBox_accepted()

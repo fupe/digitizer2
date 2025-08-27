@@ -90,11 +90,14 @@ private slots:
     void onExportConfig();
     void on_button_browse_simul_clicked();
     void on_pushButton_logging_enagle_toggled(bool checked);
+    void on_unit_select_currentIndexChanged(const QString &text);
 
 private:
     Ui::SettingsDialog *ui;
     void fillPortsInfo();
     Settings tmp_settings ;// lokální pracovní kopie
+    Settings orig_settings_ ;// původní nastavení pro reset
+    Units currentUnits_ = Units::Millimeters;
     int hiddenTabIndex_ = -1;  //index skryte zalozky
     QWidget* hiddenTabWidget_ = nullptr; //ukazatel skryte zalozky
     SettingsManager* sm_ = nullptr;
