@@ -64,8 +64,8 @@ public:
     bool shortcutPressed(const QString &shortcutStr, QKeyEvent *keyEvent);
     void handleCalibrateButtonClicked(bool checked);
     void show_measure_value(double Arm1Angle, double Arm2Angle,QPointF endPointArm1,QPointF endPointArm2) ;
-    QGraphicsLineItem *arm1;   //rameno 1
-    QGraphicsLineItem *arm2;   //rameno 2
+    QGraphicsLineItem* arm1 = nullptr;  //rameno 1
+    QGraphicsLineItem* arm2 = nullptr;  //rameno 2
     QGraphicsEllipseItem *base;
     double x_value,y_value;  //koncova pozice prvniho ramene
     double x_value2,y_value2;  //koncova pozice druheho ramene

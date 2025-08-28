@@ -264,24 +264,24 @@ void MainWindow::initMenu()
 
 void MainWindow::setup_scene()
 {
-    qDebug() << "scene = " << scene ;
+    //qDebug() << "scene = " << scene ;
     const auto& s = settingsManager_->currentSettings();
     scene->setSceneRect(-100,-100,200,200);
     //scene->setSceneRect(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)));
     ui->graphicsView->setScene(scene);
-    qDebug() << "scene = 1";
+    //qDebug() << "scene = 1";
     ui->graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->graphicsView->setDragMode(GraphicsView::RubberBandDrag);
     ui->graphicsView->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
     ui->graphicsView->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
     ui->graphicsView->setDragMode(QGraphicsView::ScrollHandDrag);
-    qDebug() << "scene =5 " << s.arm1_length;
+    //qDebug() << "scene =5 " << s.arm1_length;
 //    ui->graphicsView->setDragMode(selectModeButton->isChecked() ? QGraphicsView::RubberBandDrag : QGraphicsView::ScrollHandDrag);
     ui->graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
-    qDebug() << "scene = 6";
+    //qDebug() << "scene = 6";
     arm1  = scene->addLine(0,0,s.arm1_length,0,*s.arms_pen);
     //scene->addLine(0,0,200,200,*s.arms_pen);
-    qDebug() << "scene = 7";
+    //qDebug() << "scene = 7";
     arm2  = scene->addLine(0,0,s.arm2_length,0,*s.arms_pen);
     base = scene->addEllipse(-25,-25, 50, 50,*s.arms_pen);
     arm2->setPos(s.arm1_length,0);
@@ -289,7 +289,7 @@ void MainWindow::setup_scene()
     arm2->show();
     ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(),Qt::KeepAspectRatio);
     //ui->graphicsView->show();
-    qDebug() << " konecscene = " ;
+    //qDebug() << " konecscene = " ;
 }
 
 void MainWindow::on_actionDelete_last_point_triggered()
@@ -936,7 +936,21 @@ void MainWindow::on_actionConnect_triggered()
 
 void MainWindow::onSettingsChanged(const Settings& s)
 {
-    Q_UNUSED(s);
+    //qDebug() << "arm1 " << s.arm1_length << " arm2 " << s.arm2_length;
+    if (arm1!=nullptr)   qDebug() << "arm1 "<< arm1 ;
+    //if (arm2!=nullptr)   qDebug() << "arm2 "<< arm2 ;
+    //if (arm1)
+    {
+        QLineF l = arm1->line();   // aktuální čára (uchová P1 i úhel)
+        l.setLength(s.arm1_length); // změní jen délku
+        arm1->setLine(l);
+    }
+    if (arm2)
+    {
+        QLineF l = arm2->line();   // aktuální čára (uchová P1 i úhel)
+        l.setLength(s.arm2_length); // změní jen délku
+        arm2->setLine(l);
+    }
 }
 
 void MainWindow::onAddPointModeChanged(AddPointMode mode)
