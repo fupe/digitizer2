@@ -37,8 +37,6 @@ public:
     bool document_saved = false;
     QString units;  //*
     double units_scale;
-    QString language;
-    QString language_tmp;
     QString directory_save_dxf; //*
     QString directory_save_data;//*
     //shortcuts
@@ -57,7 +55,6 @@ public:
     void save_SettingsExitMain (void);
     void save_SettingsExitMeasure (void);
     void save_Arms(void);
-    void retranslate (void);
     void changeunits (const QString&);
     void setSettings(const Settings& s); // předání kopie k editaci
     Settings result() const;             // vrátí zeditovanou kopii
@@ -76,7 +73,7 @@ private slots:
 
     void on_buttonBox_rejected();
 
-    void on_ComboBox_language_activated(const QString &arg1);
+    void on_ComboBox_language_currentIndexChanged(const QString &arg1);
 
     void on_ShortCuts_clicked();
 
@@ -95,6 +92,8 @@ private slots:
 private:
     Ui::SettingsDialog *ui;
     void fillPortsInfo();
+    void assignLanguageCodes();
+    void refreshTranslations();
     Settings tmp_settings ;// lokální pracovní kopie
     Settings orig_settings_ ;// původní nastavení pro reset
     Units currentUnits_ = Units::Millimeters;
@@ -110,7 +109,6 @@ signals:
     void signal_reconnect(void);
     void signal_retranslate (void);
     //void documentModifiedChanged(bool newValue);
-
 };
 
 #endif // MYSETTINGS_H

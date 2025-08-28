@@ -124,12 +124,12 @@ public slots:
     void Zoom_User();
     void status_bar_print(QString,int);
     void setup_scene ();
-    //void retranslate();
    // void handleDocumentModifiedChanged(bool newValue);
 
 private:
     void initActions();
     void initMenu();
+    void retranslate(const QString& language);
 
     QMenu* ZoomMenu;
     CustomToolButton* ZoomToolButton;
