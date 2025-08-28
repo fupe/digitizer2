@@ -16,6 +16,7 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QSignalBlocker>
+#include <QEvent>
 
 
 
@@ -223,19 +224,6 @@ void SettingsDialog::save_SettingsExitMeasure (void)
     setting.endGroup();
 }
 
-void SettingsDialog::retranslate()
-{
-    qDebug() <<"SettingsDialog::retranslate() " ;
-    ui->retranslateUi(this);
-    assignLanguageCodes();
-    QSignalBlocker blocker(ui->ComboBox_language);
-    const int idx = ui->ComboBox_language->findData(tmp_settings.language);
-    ui->ComboBox_language->setCurrentIndex(idx < 0 ? 0 : idx);
-
-    fillPortsInfo();
-
-}
-
 void SettingsDialog::changeunits(const QString& jednotky)
 {
     //qDebug() << "necum " << jednotky;
@@ -265,6 +253,19 @@ void SettingsDialog::changeunits(const QString& jednotky)
     ui->doubleSpinBox_arm2_length->setValue(mmToUnits(this->arm2_length, u));
     ui->auto_step->setValue(mmToUnits(this->auto_step, u));
 
+}
+
+void SettingsDialog::changeEvent(QEvent* e)
+{
+    QDialog::changeEvent(e);
+    if (e->type() == QEvent::LanguageChange) {
+        ui->retranslateUi(this);
+        assignLanguageCodes();
+        QSignalBlocker blocker(ui->ComboBox_language);
+        const int idx = ui->ComboBox_language->findData(tmp_settings.language);
+        ui->ComboBox_language->setCurrentIndex(idx < 0 ? 0 : idx);
+        fillPortsInfo();
+    }
 }
 
 void SettingsDialog::showPortInfo(int idx)

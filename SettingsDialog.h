@@ -5,6 +5,8 @@
 #include <QColor>
 #include "settings.h"
 
+class QEvent;
+
 class QPen;
 class QPushButton;
 class SettingsManager;
@@ -55,7 +57,6 @@ public:
     void save_SettingsExitMain (void);
     void save_SettingsExitMeasure (void);
     void save_Arms(void);
-    void retranslate (void);
     void changeunits (const QString&);
     void setSettings(const Settings& s); // předání kopie k editaci
     Settings result() const;             // vrátí zeditovanou kopii
@@ -110,6 +111,8 @@ signals:
     void signal_retranslate (void);
     //void documentModifiedChanged(bool newValue);
 
+protected:
+    void changeEvent(QEvent* e) override;
 };
 
 #endif // MYSETTINGS_H

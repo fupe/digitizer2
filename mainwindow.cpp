@@ -922,7 +922,6 @@ void MainWindow::on_actionSetup_triggered(bool /*checked*/)
     SettingsDialog dlg(this, sm, appManager()->serialManager());
     dlg.setSettings(sm->currentSettings());      // KOPIE do dialogu
 
-    connect(&dlg, &SettingsDialog::signal_retranslate, &dlg, &SettingsDialog::retranslate);
     connect(&dlg, &SettingsDialog::signal_retranslate, this, [this, &dlg]() {
         retranslate(dlg.result().language);
     });
