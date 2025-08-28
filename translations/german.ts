@@ -2,6 +2,44 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
+    <name>AppManager</name>
+    <message>
+        <location filename="../appmanager.cpp" line="307"/>
+        <source>Připojeno: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../appmanager.cpp" line="313"/>
+        <source>Odpojeno: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../appmanager.cpp" line="329"/>
+        <source>Sériový port %1 @ %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../appmanager.cpp" line="333"/>
+        <source>Modbus/TCP %1:%2 (UnitId %3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../appmanager.cpp" line="338"/>
+        <source>Modbus/RTU %1 @ %2 (UnitId %3)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../appmanager.cpp" line="345"/>
+        <source>Simulace: %1 (×%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../appmanager.cpp" line="350"/>
+        <source>Žádný zdroj</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CalibrateWindow</name>
     <message>
         <location filename="../calibratewindow.ui" line="14"/>
@@ -16,91 +54,132 @@
     <message>
         <location filename="../calibratewindow.ui" line="78"/>
         <location filename="../calibratewindow.ui" line="123"/>
+        <location filename="../calibratewindow.ui" line="379"/>
+        <location filename="../calibratewindow.ui" line="392"/>
+        <location filename="../calibratewindow.ui" line="457"/>
+        <location filename="../calibratewindow.ui" line="470"/>
+        <location filename="../calibratewindow.ui" line="483"/>
+        <location filename="../calibratewindow.ui" line="509"/>
         <source>max chyba</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.ui" line="136"/>
-        <source>pocet bobu</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../calibratewindow.ui" line="149"/>
-        <source>procento</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../calibratewindow.ui" line="162"/>
-        <source>pocet setu</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../calibratewindow.ui" line="175"/>
         <source>clear</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.ui" line="188"/>
+        <location filename="../calibratewindow.ui" line="162"/>
         <source>Arm2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../calibratewindow.ui" line="201"/>
-        <source>step</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../calibratewindow.ui" line="214"/>
-        <source>prumer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../calibratewindow.ui" line="227"/>
         <source>calculate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.ui" line="266"/>
+        <location filename="../calibratewindow.ui" line="230"/>
         <source>pocet bodu</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.ui" line="279"/>
-        <source>pocet iteraci</source>
+        <location filename="../calibratewindow.ui" line="136"/>
+        <source>--</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.ui" line="292"/>
+        <location filename="../calibratewindow.ui" line="175"/>
+        <source>Initial step</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="188"/>
+        <source>Ref diameter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="243"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.ui" line="305"/>
+        <location filename="../calibratewindow.ui" line="256"/>
         <source>Error on circle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.ui" line="320"/>
+        <location filename="../calibratewindow.ui" line="269"/>
+        <source>delete max err</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="282"/>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="299"/>
+        <source>engine</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="353"/>
+        <source>grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="366"/>
+        <source>derivate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="405"/>
+        <source>Diameter ref circle</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="418"/>
+        <source>refcircle_grid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="431"/>
+        <source>refcircle_diff</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="444"/>
+        <source>avg err </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="496"/>
+        <source>suma err </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../calibratewindow.ui" line="524"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.ui" line="330"/>
+        <location filename="../calibratewindow.ui" line="534"/>
         <source>Load calibration data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.ui" line="335"/>
+        <location filename="../calibratewindow.ui" line="539"/>
         <source>Save calibration data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.cpp" line="761"/>
+        <location filename="../calibratewindow.cpp" line="703"/>
         <source>Load calib data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../calibratewindow.cpp" line="793"/>
+        <location filename="../calibratewindow.cpp" line="735"/>
         <source>Save calib data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -143,232 +222,206 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="128"/>
-        <source>Read</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="139"/>
-        <source>lang</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="156"/>
+        <location filename="../mainwindow.ui" line="141"/>
         <source>Device</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="168"/>
-        <location filename="../mainwindow.ui" line="262"/>
+        <location filename="../mainwindow.ui" line="153"/>
+        <location filename="../mainwindow.ui" line="247"/>
         <source>Setup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="176"/>
+        <location filename="../mainwindow.ui" line="161"/>
         <source>Draw</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="187"/>
+        <location filename="../mainwindow.ui" line="172"/>
         <source>Tools</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="199"/>
+        <location filename="../mainwindow.ui" line="184"/>
         <source>toolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="213"/>
+        <location filename="../mainwindow.ui" line="198"/>
         <source>toolBar_2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="235"/>
+        <location filename="../mainwindow.ui" line="220"/>
         <source>Connect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="244"/>
+        <location filename="../mainwindow.ui" line="229"/>
         <source>Disconnect</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="253"/>
+        <location filename="../mainwindow.ui" line="238"/>
         <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="271"/>
+        <location filename="../mainwindow.ui" line="256"/>
         <source>Add point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="274"/>
+        <location filename="../mainwindow.ui" line="259"/>
         <source>Add new Point</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="286"/>
-        <location filename="../mainwindow.cpp" line="1066"/>
+        <location filename="../mainwindow.ui" line="271"/>
+        <location filename="../mainwindow.cpp" line="832"/>
         <source>Add polyline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="298"/>
+        <location filename="../mainwindow.ui" line="283"/>
+        <location filename="../mainwindow.cpp" line="850"/>
         <source>Add circle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="307"/>
-        <location filename="../mainwindow.ui" line="310"/>
+        <location filename="../mainwindow.ui" line="292"/>
+        <location filename="../mainwindow.ui" line="295"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="322"/>
+        <location filename="../mainwindow.ui" line="307"/>
         <source>Measure</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="327"/>
+        <location filename="../mainwindow.ui" line="312"/>
         <source>Export DXF file ...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="332"/>
+        <location filename="../mainwindow.ui" line="317"/>
         <source>Set zero</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="344"/>
+        <location filename="../mainwindow.ui" line="329"/>
         <source>Mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="353"/>
+        <location filename="../mainwindow.ui" line="338"/>
         <source>New file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="358"/>
+        <location filename="../mainwindow.ui" line="346"/>
         <source>Calibrate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="363"/>
+        <location filename="../mainwindow.ui" line="351"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="368"/>
+        <location filename="../mainwindow.ui" line="356"/>
         <source>Save file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="371"/>
-        <location filename="../mainwindow.cpp" line="1713"/>
+        <location filename="../mainwindow.ui" line="359"/>
+        <location filename="../mainwindow.cpp" line="634"/>
         <source>Save data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="376"/>
+        <location filename="../mainwindow.ui" line="364"/>
         <source>Load file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="140"/>
-        <source>Address: %1, Value: %2</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="154"/>
-        <source>Read response error: %1 (Modbus exception: 0x%2)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="158"/>
-        <source>Read response error: %1 (code: 0x%2)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="240"/>
-        <source>Read error: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="262"/>
-        <source>Connected to %1 </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="276"/>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="277"/>
-        <source>Open error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="296"/>
-        <source>Disconnected</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="413"/>
+        <location filename="../mainwindow.cpp" line="245"/>
         <source>Zoom All orig</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="414"/>
+        <location filename="../mainwindow.cpp" line="246"/>
         <source>Zoom Dynamic orig</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="878"/>
-        <source>Zoom Dynamic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="879"/>
-        <source>Zoom All</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.cpp" line="1039"/>
+        <location filename="../mainwindow.cpp" line="832"/>
         <source>End polyline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1392"/>
+        <location filename="../mainwindow.cpp" line="483"/>
         <source>Export DXF</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1544"/>
+        <location filename="../mainwindow.cpp" line="835"/>
+        <source>konec polyline (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="835"/>
+        <source>Přidat polyline (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="850"/>
         <source>End circle</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1584"/>
+        <location filename="../mainwindow.cpp" line="989"/>
+        <source>Konec měření</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="989"/>
+        <location filename="../mainwindow.cpp" line="1016"/>
+        <source>Měření</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="995"/>
+        <source>Konec měření (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="996"/>
+        <source>Měření (%1)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="556"/>
         <source>Critical Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1594"/>
+        <location filename="../mainwindow.cpp" line="83"/>
+        <location filename="../mainwindow.cpp" line="568"/>
+        <location filename="../mainwindow.cpp" line="976"/>
         <source>Digitizer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1594"/>
+        <location filename="../mainwindow.cpp" line="568"/>
         <source>The document has been modified.
 Do you want to save your changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1805"/>
+        <location filename="../mainwindow.cpp" line="712"/>
         <source>Načíst data</source>
         <translation type="unfinished"></translation>
     </message>
@@ -385,166 +438,306 @@ Do you want to save your changes?</source>
     <name>SettingsDialog</name>
     <message>
         <location filename="../SettingsDialog.ui" line="20"/>
+        <location filename="../SettingsDialog.ui" line="30"/>
         <source>Setup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="288"/>
+        <location filename="../SettingsDialog.ui" line="48"/>
         <source>Select Serial Port</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="294"/>
+        <location filename="../SettingsDialog.ui" line="91"/>
         <source>Location:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="301"/>
+        <location filename="../SettingsDialog.ui" line="98"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="308"/>
+        <location filename="../SettingsDialog.ui" line="129"/>
         <source>Show digitizer port only</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="315"/>
+        <location filename="../SettingsDialog.ui" line="122"/>
         <source>Vendor ID:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="325"/>
+        <location filename="../SettingsDialog.ui" line="105"/>
         <source>Product ID:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="332"/>
+        <location filename="../SettingsDialog.ui" line="112"/>
         <source>Manufacturer:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="339"/>
+        <location filename="../SettingsDialog.ui" line="84"/>
         <source>Serial Number:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="354"/>
+        <location filename="../SettingsDialog.ui" line="62"/>
         <source>Version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="367"/>
+        <location filename="../SettingsDialog.ui" line="75"/>
         <source>Version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="46"/>
+        <location filename="../SettingsDialog.ui" line="185"/>
         <source>Arm 1 Lenght</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="69"/>
-        <location filename="../SettingsDialog.ui" line="106"/>
-        <location filename="../SettingsDialog.ui" line="137"/>
-        <location filename="../SettingsDialog.ui" line="258"/>
+        <location filename="../SettingsDialog.ui" line="397"/>
         <source>mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="83"/>
+        <location filename="../SettingsDialog.ui" line="222"/>
         <source>Arm 2 Lenght</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="117"/>
+        <location filename="../SettingsDialog.ui" line="208"/>
+        <location filename="../SettingsDialog.ui" line="245"/>
+        <location filename="../SettingsDialog.ui" line="276"/>
+        <source>inch/mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.ui" line="256"/>
         <source>Step</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="161"/>
+        <location filename="../SettingsDialog.ui" line="300"/>
         <source>Language</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="173"/>
-        <location filename="../SettingsDialog.ui" line="177"/>
+        <location filename="../SettingsDialog.ui" line="312"/>
+        <location filename="../SettingsDialog.ui" line="316"/>
         <source>English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="182"/>
+        <location filename="../SettingsDialog.ui" line="321"/>
         <source>German</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="187"/>
+        <location filename="../SettingsDialog.ui" line="326"/>
         <source>Czech</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="205"/>
+        <location filename="../SettingsDialog.ui" line="344"/>
         <source>choose color pen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="250"/>
+        <location filename="../SettingsDialog.ui" line="389"/>
         <source>Units</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="263"/>
+        <location filename="../SettingsDialog.ui" line="402"/>
         <source>inch</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="275"/>
+        <location filename="../SettingsDialog.ui" line="437"/>
+        <source>Export dxf dir</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.ui" line="453"/>
+        <source>security</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.ui" line="466"/>
+        <source>Serial</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.ui" line="471"/>
+        <source>Modbus</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.ui" line="476"/>
+        <source>Emulate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.ui" line="490"/>
+        <source>Data source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.ui" line="506"/>
+        <source>Export simul file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.ui" line="529"/>
+        <source>loging</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.ui" line="158"/>
         <source>Save Main window position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="389"/>
+        <location filename="../SettingsDialog.ui" line="145"/>
         <source>Save Measure window position</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.ui" line="26"/>
+        <location filename="../SettingsDialog.ui" line="421"/>
         <source>Shortcuts</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="11"/>
+        <location filename="../SettingsDialog.cpp" line="22"/>
         <source>N/A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="265"/>
+        <location filename="../SettingsDialog.cpp" line="41"/>
+        <source>Import Config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="42"/>
+        <source>Export Config</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="276"/>
         <source>Description: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="266"/>
+        <location filename="../SettingsDialog.cpp" line="277"/>
         <source>Manufacturer: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="267"/>
+        <location filename="../SettingsDialog.cpp" line="278"/>
         <source>Serial number: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="268"/>
+        <location filename="../SettingsDialog.cpp" line="279"/>
         <source>Location: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="269"/>
+        <location filename="../SettingsDialog.cpp" line="280"/>
         <source>Vendor Identifier: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="270"/>
+        <location filename="../SettingsDialog.cpp" line="281"/>
         <source>Product Identifier: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="342"/>
+        <source>Choose color</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="491"/>
+        <source>Select DXF Export Directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="505"/>
+        <location filename="../SettingsDialog.cpp" line="526"/>
+        <source>Select log file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="507"/>
+        <location filename="../SettingsDialog.cpp" line="528"/>
+        <source>CSV files (*.csv);;All files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="550"/>
+        <source>Import settings from JSON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="552"/>
+        <location filename="../SettingsDialog.cpp" line="578"/>
+        <source>JSON files (*.json)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="557"/>
+        <source>Import failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="558"/>
+        <source>Cannot import settings:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="562"/>
+        <source>Import settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="563"/>
+        <source>Settings imported from %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="576"/>
+        <source>Export settings to JSON</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="583"/>
+        <source>Export failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="584"/>
+        <source>Cannot export settings:
+%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="587"/>
+        <source>Export settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="588"/>
+        <source>Settings exported to %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../SettingsDialog.cpp" line="595"/>
+        <source>Security</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -601,13 +794,8 @@ Do you want to save your changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../shortcutsdialog.cpp" line="169"/>
-        <source>Duplicitní zkratka</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../shortcutsdialog.cpp" line="170"/>
-        <source>Některé klávesové zkratky se opakují!</source>
+        <location filename="../shortcutsdialog.cpp" line="12"/>
+        <source>Shortcuts</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

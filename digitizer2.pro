@@ -68,8 +68,9 @@ FORMS += \
     mainwindow.ui \
     shortcutsdialog.ui
 
-TRANSLATIONS += \
-    digitizer2_cs_CZ.ts
+TRANSLATIONS += translations/english.ts \
+                translations/czech.ts \
+                translations/german.ts
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
