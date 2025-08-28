@@ -403,6 +403,9 @@ void SettingsDialog::populate() {
     arm2_length = tmp_settings.arm2_length;
     auto_step = tmp_settings.auto_step;
     currentUnits_ = tmp_settings.units;
+    ui->doubleSpinBox_arm1_length->setValue(mmToUnits(this->arm1_length, currentUnits_));
+    ui->doubleSpinBox_arm2_length->setValue(mmToUnits(this->arm2_length, currentUnits_));
+    qDebug()<<"populate" << unitsToString(currentUnits_) ;
     ui->unit_select->setCurrentText(unitsToString(tmp_settings.units));
     changeunits(unitsToString(tmp_settings.units));
 
@@ -415,7 +418,7 @@ void SettingsDialog::populate() {
             QStringLiteral("background-color:%1; border:1px solid #888; border-radius:6px;")
                 .arg(c.name(QColor::HexArgb)));
 
-        qDebug() << "populate color =" << c.name(QColor::HexArgb);
+        //qDebug() << "populate color =" << c.name(QColor::HexArgb);
  //UI
         ui->checkBox_main_position_save_on_exit->setChecked(tmp_settings.save_main_window_position_on_exit);
         ui->checkBox_measure_position_save_on_exit->setChecked(tmp_settings.save_measure_window_position_on_exit);
