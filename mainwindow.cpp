@@ -933,6 +933,7 @@ void MainWindow::on_actionSetup_triggered(bool /*checked*/)
 
 void MainWindow::onLanguageChanged(const QString &language)
 {
+    qDebug()<<"aaaaaaaaa";
     qApp->removeTranslator(&translator);
     qApp->removeTranslator(&guitranslator);
 
