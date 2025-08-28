@@ -30,19 +30,8 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
     // až teď existují všechny prvky z UI → můžeš nastavovat akce, signály, shortcuty…
     settingsManager_ = appManager_->settingsManager();
     Q_ASSERT(settingsManager_);
-    auto modes = new QActionGroup(this);
-    modes->setExclusive(true);
-    ui->actionAdd_polyline->setCheckable(true);
-    ui->actionAdd_circle->setCheckable(true);
-    ui->actionMeasure->setCheckable(true);
-    ui->actionCalibrate->setCheckable(true);
 
-    modes->addAction(ui->actionAdd_polyline);
-    modes->addAction(ui->actionAdd_circle);
-
-    ui->actionConnect->setEnabled(true);
-    ui->actionDisconnect->setEnabled(false);
-
+    qDebug()<<"konstruktoru";
     // mapování UI → AppManager
     connect(ui->actionConnect,   &QAction::triggered, this, [this](bool){appManager_->openSerial(); });  // zavolá metodu bez argumentů
     connect(ui->actionDisconnect, &QAction::triggered, this, [this](bool){appManager_->closeSerial();});
@@ -50,14 +39,17 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
         ui->actionConnect->setEnabled(false);
         ui->actionDisconnect->setEnabled(true);
     });
+    qDebug()<<"konstruktoru 2";
     connect(appManager_, &AppManager::serialClosed, this, [this](){
         ui->actionConnect->setEnabled(true);
         ui->actionDisconnect->setEnabled(false);
     });
+    qDebug()<<"konstruktoru 3";
     connect(ui->actionAdd_polyline, &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Polyline); });
     connect(ui->actionAdd_circle,   &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Circle);   });
     connect(ui->actionCalibrate,    &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Calibrate);});
     connect(appManager(), &AppManager::modeAddPointChanged,this, &MainWindow::onAddPointModeChanged); //reakce na zmenu modu
+    qDebug()<<"konstruktoru 4";
     // UI → AppManager
         // AppManager → status bab
         connect(appManager_, &AppManager::connectionNotice, this, [this](const QString& msg){
@@ -67,20 +59,24 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
             statusBar()->showMessage(e, 8000);
             qWarning() << "STATUSBAR error:" << e;
         });
-
+qDebug()<<"konstruktoru5 ";
         const auto& cs = settingsManager_->currentSettings();
         if (cs.main_window_position.isValid()) {
             setGeometry(cs.main_window_position);
         }
     //-----
+        qDebug()<<"konstruktoru 6";
     connect(settingsManager_, &SettingsManager::settingsChanged,
             this, &MainWindow::onSettingsChanged);
+    qDebug()<<"konstruktoru 66";
     // inicializace z aktuálních Settings (např. zkratky, stavy checkboxů…)
-    onSettingsChanged(settingsManager_->currentSettings()); // nebo jak se u tebe jmenuje getter
+    //onSettingsChanged(settingsManager_->currentSettings()); // nebo jak se u tebe jmenuje getter
+     qDebug()<<"konstruktoru 666";
     connect(ui->actionExit, &QAction::triggered, this, [this]() {
         qDebug() << "Menu Exit triggered";
         this->close();  // vyvolá closeEvent()
     });
+    qDebug()<<"konstruktoru 7";
     this->setWindowTitle(tr("Digitizer"));
     //qApp->installEventFilter(this);
     //this->installEventFilter(this);

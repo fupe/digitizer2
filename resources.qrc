@@ -17,5 +17,11 @@
         <file>pic/splash.png</file>
         <file>pic/zoom_all.png</file>
         <file>pic/zoom_select.png</file>
+        <file>translations/czech.qm</file>
+        <file>translations/czech.ts</file>
+        <file>translations/english.qm</file>
+        <file>translations/english.ts</file>
+        <file>translations/german.qm</file>
+        <file>translations/german.ts</file>
     </qresource>
 </RCC>
