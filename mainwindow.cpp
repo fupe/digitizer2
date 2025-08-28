@@ -7,6 +7,7 @@
 #include <QtMath>
 #include <QApplication>
 #include <QCoreApplication>
+#include <QMouseEvent>
 #include "3rdparty/dxflib/src/dl_dxf.h"
 
 #include "appmanager.h"
@@ -331,6 +332,23 @@ void GraphicsView::wheelEvent(QWheelEvent *e)
         qDebug() << "anchor " << anchor ;
         qDebug() << "transform " << transform() ;
     //}
+}
+
+void GraphicsView::mousePressEvent(QMouseEvent *event)
+{
+    MainWindow *mw = qobject_cast<MainWindow*>(this->window());
+    if (mw && mw->appManager()->getAddPointMode() == AddPointMode::Polyline) {
+        if (event->button() == Qt::LeftButton) {
+            mw->appManager()->addpointfrommainwindow();
+            event->accept();
+            return;
+        } else if (event->button() == Qt::RightButton) {
+            mw->appManager()->finishCurrentShape();
+            event->accept();
+            return;
+        }
+    }
+    QGraphicsView::mousePressEvent(event);
 }
 
 /*void GraphicsView::mousePressEvent(QMouseEvent *event)

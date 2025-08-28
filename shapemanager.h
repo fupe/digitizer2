@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QVector>
 #include <QGraphicsItem>
+#include <QPointF>
 #include "GraphicsItems.h"
 #include <memory>
 
@@ -20,11 +21,17 @@ public:
     void deleteLastShape();
     void printlistitems(void);
 
+    // nový API pro tvorbu složitějších tvarů
+    void startShape(GraphicsItems* shape);
+    void appendToCurrent(const QPointF& point);
+    void finishCurrent();
+
 signals:
     void shapesChanged();
 
 private:
     QVector<GraphicsItems*> shapes_;
+    GraphicsItems* currentShape_ = nullptr;
 };
 
 #endif // SHAPEMANAGER_H

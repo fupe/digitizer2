@@ -39,3 +39,26 @@ void ShapeManager::printlistitems()
         qDebug() << item->typeName();
     }
 }
+
+void ShapeManager::startShape(GraphicsItems* shape)
+{
+    if (!shape) return;
+    currentShape_ = shape;
+    addShape(shape);
+}
+
+void ShapeManager::appendToCurrent(const QPointF& point)
+{
+    if (currentShape_) {
+        currentShape_->addPointToShape(point);
+    }
+}
+
+void ShapeManager::finishCurrent()
+{
+    if (currentShape_) {
+        currentShape_->finished = true;
+        currentShape_ = nullptr;
+        emit shapesChanged();
+    }
+}

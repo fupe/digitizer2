@@ -78,6 +78,7 @@ public:
     void addPointtoMeasuru(void);
     void addPointtoShapeManager(void);
     void addPolylinetoShapeManager(void);
+    void finishCurrentShape();
 
     double distance;
     QPointF lastpoint;
