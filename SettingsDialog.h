@@ -5,8 +5,6 @@
 #include <QColor>
 #include "settings.h"
 
-class QEvent;
-
 class QPen;
 class QPushButton;
 class SettingsManager;
@@ -95,6 +93,7 @@ private:
     Ui::SettingsDialog *ui;
     void fillPortsInfo();
     void assignLanguageCodes();
+    void refreshTranslations();
     Settings tmp_settings ;// lokální pracovní kopie
     Settings orig_settings_ ;// původní nastavení pro reset
     Units currentUnits_ = Units::Millimeters;
@@ -110,9 +109,6 @@ signals:
     void signal_reconnect(void);
     void signal_retranslate (void);
     //void documentModifiedChanged(bool newValue);
-
-protected:
-    void changeEvent(QEvent* e) override;
 };
 
 #endif // MYSETTINGS_H

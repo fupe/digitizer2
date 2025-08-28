@@ -16,7 +16,6 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QSignalBlocker>
-#include <QEvent>
 
 
 
@@ -255,19 +254,6 @@ void SettingsDialog::changeunits(const QString& jednotky)
 
 }
 
-void SettingsDialog::changeEvent(QEvent* e)
-{
-    QDialog::changeEvent(e);
-    if (e->type() == QEvent::LanguageChange) {
-        ui->retranslateUi(this);
-        assignLanguageCodes();
-        QSignalBlocker blocker(ui->ComboBox_language);
-        const int idx = ui->ComboBox_language->findData(tmp_settings.language);
-        ui->ComboBox_language->setCurrentIndex(idx < 0 ? 0 : idx);
-        fillPortsInfo();
-    }
-}
-
 void SettingsDialog::showPortInfo(int idx)
 {
 
@@ -364,6 +350,7 @@ void SettingsDialog::on_buttonBox_rejected()
     tmp_settings = orig_settings_;
     populate();
     emit signal_retranslate();
+    refreshTranslations();
     reject();
 
 }
@@ -374,6 +361,7 @@ void SettingsDialog::on_ComboBox_language_currentIndexChanged(const QString &/*t
     tmp_settings.language = ui->ComboBox_language->currentData().toString();
     qDebug() << "on_ComboBox_language_currentIndexChanged" << tmp_settings.language;
     emit signal_retranslate();
+    refreshTranslations();
 }
 
 void SettingsDialog::on_ShortCuts_clicked()
@@ -445,6 +433,16 @@ void SettingsDialog::assignLanguageCodes()
     ui->ComboBox_language->setItemData(0, QStringLiteral("English"));
     ui->ComboBox_language->setItemData(1, QStringLiteral("German"));
     ui->ComboBox_language->setItemData(2, QStringLiteral("Czech"));
+}
+
+void SettingsDialog::refreshTranslations()
+{
+    ui->retranslateUi(this);
+    assignLanguageCodes();
+    QSignalBlocker blocker(ui->ComboBox_language);
+    const int idx = ui->ComboBox_language->findData(tmp_settings.language);
+    ui->ComboBox_language->setCurrentIndex(idx < 0 ? 0 : idx);
+    fillPortsInfo();
 }
 
 
