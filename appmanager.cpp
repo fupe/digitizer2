@@ -6,6 +6,7 @@
 #include "serialmanager.h"
 #include "settingsmanager.h"
 #include "idatasourceworker.h"
+#include "GraphicsItems.h"
 
 namespace {
     constexpr double kPi = 3.14159265358979323846;
@@ -84,7 +85,10 @@ void AppManager::setAddPointMode(AddPointMode mode) {
     qDebug() << "nastaven mode "  << modeAddPointToString(mode);
     if (currentAddPointMode_ == AddPointMode::Polyline)  //prvni bod do polyline
     {
-        addPolylinetoShapeManager();
+        auto *pl = new mypolyline();
+        scene_->addItem(pl);
+        shapeManager_.startShape(pl);
+        shapeManager_.appendToCurrent(endPointArm2_);
     }
     emit modeAddPointChanged(mode);
 }
@@ -135,6 +139,7 @@ void AppManager::addpointfrommainwindow(void)
             break;
         case AddPointMode::Polyline:
             qDebug() << "polyline add point";
+            shapeManager_.appendToCurrent(endPointArm2_);
             break;
         case AddPointMode::Measure:
             qDebug() << "case measure add point";
@@ -149,6 +154,12 @@ void AppManager::addpointfrommainwindow(void)
 void AppManager::addPolylinetoShapeManager()
 {
     // TODO: tvůj kód pro polyline (ponecháno zakomentované v původní verzi)
+}
+
+void AppManager::finishCurrentShape()
+{
+    shapeManager_.finishCurrent();
+    setAddPointMode(AddPointMode::None);
 }
 
 void AppManager::addPointtoShapeManager()
