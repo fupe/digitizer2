@@ -12,7 +12,11 @@ namespace {
     constexpr double kPi = 3.14159265358979323846;
 }
 
-AppManager::AppManager(QObject* parent) : QObject(parent) {}
+AppManager::AppManager(QObject* parent) : QObject(parent)
+{
+    connect(&shapeManager_, &ShapeManager::shapesChanged,
+            this, &AppManager::onShapesChanged);
+}
 
 /*ShapeManager& AppManager::shapeManager()
 {
@@ -192,9 +196,25 @@ void AppManager::addPointtoMeasuru()
     emit armsUpdated(Arm1Angle_, Arm2Angle_, endPointArm1_, endPointArm2_);
 }
 
+void AppManager::onShapesChanged()
+{
+    if (!scene_) return;
+
+    for (QGraphicsItem* item : scene_->items()) {
+        if (dynamic_cast<GraphicsItems*>(item)) {
+            scene_->removeItem(item);
+        }
+    }
+
+    for (auto* shape : shapeManager_.getShapes()) {
+        scene_->addItem(shape);
+    }
+}
+
 void AppManager::setScene(QGraphicsScene *scene)
 {
     scene_ = scene;
+    onShapesChanged();
 }
 
 void AppManager::setMeasure(MeasureDialog *measure)

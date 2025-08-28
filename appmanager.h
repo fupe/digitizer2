@@ -127,6 +127,7 @@ public slots:
     void onSerialOpened();
     void onSerialClosed();
     void onSerialLine(const QByteArray& line);
+    void onShapesChanged();
 };
 
 #endif // APPMANAGER_H

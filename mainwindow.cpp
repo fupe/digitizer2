@@ -269,6 +269,7 @@ void MainWindow::setup_scene()
     scene->setSceneRect(-100,-100,200,200);
     //scene->setSceneRect(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)));
     ui->graphicsView->setScene(scene);
+    appManager_->setScene(scene);
     //qDebug() << "scene = 1";
     ui->graphicsView->setRenderHints(QPainter::Antialiasing);
     ui->graphicsView->setDragMode(GraphicsView::RubberBandDrag);
