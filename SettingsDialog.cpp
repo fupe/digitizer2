@@ -54,6 +54,7 @@ SettingsDialog::SettingsDialog(QWidget *parent, SettingsManager* sm, SerialManag
                 &SettingsDialog::fillPortsInfo);
 
     populate();
+    retranslate();
 
     connect(this, &SettingsDialog::languageChanged, this, &SettingsDialog::retranslate);
 
@@ -226,6 +227,7 @@ void SettingsDialog::save_SettingsExitMeasure (void)
 void SettingsDialog::retranslate()
 {
     qDebug() <<"SettingsDialog::retranslate() " ;
+    //emit languageChanged(tmp_settings.language);
     ui->retranslateUi(this);
     ui->ComboBox_language->setCurrentText(tmp_settings.language);
 
@@ -370,6 +372,7 @@ void SettingsDialog::on_ComboBox_language_activated(const QString &arg1)
     qDebug() << "on_ComboBox_language_activated " << arg1 ;
     tmp_settings.language = arg1;
     emit languageChanged(arg1);
+    retranslate();
 }
 
 void SettingsDialog::on_ShortCuts_clicked()

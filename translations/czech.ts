@@ -282,13 +282,13 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="271"/>
-        <location filename="../mainwindow.cpp" line="832"/>
+        <location filename="../mainwindow.cpp" line="829"/>
         <source>Add polyline</source>
         <translation>Přidat polyline</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="283"/>
-        <location filename="../mainwindow.cpp" line="850"/>
+        <location filename="../mainwindow.cpp" line="847"/>
         <source>Add circle</source>
         <translation>Přidat kruřnici</translation>
     </message>
@@ -340,7 +340,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="359"/>
-        <location filename="../mainwindow.cpp" line="634"/>
+        <location filename="../mainwindow.cpp" line="631"/>
         <source>Save data</source>
         <translation>Uložit data</translation>
     </message>
@@ -350,12 +350,12 @@
         <translation>Načístdata</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="245"/>
+        <location filename="../mainwindow.cpp" line="242"/>
         <source>Zoom All orig</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="246"/>
+        <location filename="../mainwindow.cpp" line="243"/>
         <source>Zoom Dynamic orig</source>
         <translation type="unfinished"></translation>
     </message>
@@ -368,71 +368,70 @@
         <translation type="vanished">Zoom na vše</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="832"/>
+        <location filename="../mainwindow.cpp" line="829"/>
         <source>End polyline</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="483"/>
+        <location filename="../mainwindow.cpp" line="480"/>
         <source>Export DXF</source>
         <translation type="unfinished">Export DXF</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="835"/>
+        <location filename="../mainwindow.cpp" line="832"/>
         <source>konec polyline (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="835"/>
+        <location filename="../mainwindow.cpp" line="832"/>
         <source>Přidat polyline (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="850"/>
+        <location filename="../mainwindow.cpp" line="847"/>
         <source>End circle</source>
         <translation>Konec kružnice</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="989"/>
+        <location filename="../mainwindow.cpp" line="981"/>
         <source>Konec měření</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="989"/>
-        <location filename="../mainwindow.cpp" line="1016"/>
+        <location filename="../mainwindow.cpp" line="981"/>
+        <location filename="../mainwindow.cpp" line="1008"/>
         <source>Měření</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="995"/>
+        <location filename="../mainwindow.cpp" line="987"/>
         <source>Konec měření (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="996"/>
+        <location filename="../mainwindow.cpp" line="988"/>
         <source>Měření (%1)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="556"/>
+        <location filename="../mainwindow.cpp" line="553"/>
         <source>Critical Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="83"/>
-        <location filename="../mainwindow.cpp" line="568"/>
-        <location filename="../mainwindow.cpp" line="976"/>
+        <location filename="../mainwindow.cpp" line="80"/>
+        <location filename="../mainwindow.cpp" line="565"/>
         <source>Digitizer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="568"/>
+        <location filename="../mainwindow.cpp" line="565"/>
         <source>The document has been modified.
 Do you want to save your changes?</source>
         <translation type="unfinished">Dokument se změnil Uložit?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="712"/>
+        <location filename="../mainwindow.cpp" line="709"/>
         <source>Načíst data</source>
         <translation>Načíst data</translation>
     </message>
@@ -451,7 +450,7 @@ Do you want to save your changes?</source>
         <location filename="../SettingsDialog.ui" line="20"/>
         <location filename="../SettingsDialog.ui" line="30"/>
         <source>Setup</source>
-        <translation type="unfinished">Nastavení</translation>
+        <translation>Nastavení</translation>
     </message>
     <message>
         <source>Save Window position on exit</source>
@@ -460,7 +459,7 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../SettingsDialog.ui" line="48"/>
         <source>Select Serial Port</source>
-        <translation type="unfinished"></translation>
+        <translation>vyber port</translation>
     </message>
     <message>
         <location filename="../SettingsDialog.ui" line="91"/>
@@ -627,17 +626,17 @@ Do you want to save your changes?</source>
         <translation>Klávesové zkratky</translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="22"/>
+        <location filename="../SettingsDialog.cpp" line="21"/>
         <source>N/A</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="41"/>
+        <location filename="../SettingsDialog.cpp" line="40"/>
         <source>Import Config</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="42"/>
+        <location filename="../SettingsDialog.cpp" line="41"/>
         <source>Export Config</source>
         <translation type="unfinished"></translation>
     </message>
@@ -677,82 +676,82 @@ Do you want to save your changes?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="491"/>
+        <location filename="../SettingsDialog.cpp" line="490"/>
         <source>Select DXF Export Directory</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="505"/>
-        <location filename="../SettingsDialog.cpp" line="526"/>
+        <location filename="../SettingsDialog.cpp" line="504"/>
+        <location filename="../SettingsDialog.cpp" line="525"/>
         <source>Select log file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="507"/>
-        <location filename="../SettingsDialog.cpp" line="528"/>
+        <location filename="../SettingsDialog.cpp" line="506"/>
+        <location filename="../SettingsDialog.cpp" line="527"/>
         <source>CSV files (*.csv);;All files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="550"/>
+        <location filename="../SettingsDialog.cpp" line="549"/>
         <source>Import settings from JSON</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="552"/>
-        <location filename="../SettingsDialog.cpp" line="578"/>
+        <location filename="../SettingsDialog.cpp" line="551"/>
+        <location filename="../SettingsDialog.cpp" line="577"/>
         <source>JSON files (*.json)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="557"/>
+        <location filename="../SettingsDialog.cpp" line="556"/>
         <source>Import failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="558"/>
+        <location filename="../SettingsDialog.cpp" line="557"/>
         <source>Cannot import settings:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="562"/>
+        <location filename="../SettingsDialog.cpp" line="561"/>
         <source>Import settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="563"/>
+        <location filename="../SettingsDialog.cpp" line="562"/>
         <source>Settings imported from %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="576"/>
+        <location filename="../SettingsDialog.cpp" line="575"/>
         <source>Export settings to JSON</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="583"/>
+        <location filename="../SettingsDialog.cpp" line="582"/>
         <source>Export failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="584"/>
+        <location filename="../SettingsDialog.cpp" line="583"/>
         <source>Cannot export settings:
 %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="587"/>
+        <location filename="../SettingsDialog.cpp" line="586"/>
         <source>Export settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="588"/>
+        <location filename="../SettingsDialog.cpp" line="587"/>
         <source>Settings exported to %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../SettingsDialog.cpp" line="595"/>
+        <location filename="../SettingsDialog.cpp" line="594"/>
         <source>Security</source>
         <translation type="unfinished"></translation>
     </message>

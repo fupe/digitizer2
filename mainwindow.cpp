@@ -68,6 +68,7 @@ qDebug()<<"konstruktoru5 ";
         qDebug()<<"konstruktoru 6";
     connect(settingsManager_, &SettingsManager::settingsChanged,
             this, &MainWindow::onSettingsChanged);
+    onLanguageChanged(cs.language);
     qDebug()<<"konstruktoru 66";
     // inicializace z aktuálních Settings (např. zkratky, stavy checkboxů…)
     //onSettingsChanged(settingsManager_->currentSettings()); // nebo jak se u tebe jmenuje getter
@@ -933,14 +934,19 @@ void MainWindow::onLanguageChanged(const QString &language)
     qApp->removeTranslator(&translator);
     qApp->removeTranslator(&guitranslator);
 
-    const QString base = language.toLower();
-    const QString appDir = QCoreApplication::applicationDirPath();
-    if (translator.load(appDir + "/translations/" + base + ".qm"))
-        qApp->installTranslator(&translator);
-    if (guitranslator.load(appDir + "/translations/qtbase_" + base + ".qm"))
-        qApp->installTranslator(&guitranslator);
+    const QString app = QStringLiteral(":/translations/%1.qm").arg(language.toLower());
 
-    ui->retranslateUi(this);
+    const QString qt  = QStringLiteral(":/translations/qtbase_%1.qm").arg(language.toLower());
+    qDebug()<<" app= "   << app + "         qt= " + qt  ;
+        if (translator.load(app))
+        {   qDebug()<<"load app";
+            qApp->installTranslator(&translator);
+        }
+        if (guitranslator.load(qt))
+            qApp->installTranslator(&guitranslator);
+
+        ui->retranslateUi(this);
+        setWindowTitle(tr("Digitizer"));
 }
 
 
