@@ -132,6 +132,7 @@ void AppManager::addpointfrommainwindow(void)
     lastpoint = endPointArm2_;
     switch (currentAddPointMode_) {
         case AddPointMode::None:
+            qDebug() << "add point" << modeAddPointToString(currentAddPointMode_);
             addPointtoShapeManager();
             break;
         case AddPointMode::Circle:
@@ -165,9 +166,9 @@ void AppManager::finishCurrentShape()
 void AppManager::addPointtoShapeManager()
 {
     lastpoint = endPointArm2_;
-    mypoint* point = new mypoint();
+    auto* point = new mypoint;
     point->setPos(endPointArm2_);
-    scene_->addItem(point);
+    shapeManager_.addShape(point);
 }
 
 void AppManager::addPointtoMeasuru()
