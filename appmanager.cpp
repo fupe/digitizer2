@@ -154,9 +154,9 @@ void AppManager::addPolylinetoShapeManager()
 void AppManager::addPointtoShapeManager()
 {
     lastpoint = endPointArm2_;
-    mypoint* point = new mypoint();
+    auto* point = new mypoint;
     point->setPos(endPointArm2_);
-    scene_->addItem(point);
+    shapeManager_.addShape(point);
 }
 
 void AppManager::addPointtoMeasuru()
