@@ -37,8 +37,6 @@ public:
     bool document_saved = false;
     QString units;  //*
     double units_scale;
-    QString language;
-    QString language_tmp;
     QString directory_save_dxf; //*
     QString directory_save_data;//*
     //shortcuts
@@ -76,7 +74,7 @@ private slots:
 
     void on_buttonBox_rejected();
 
-    void on_ComboBox_language_activated(const QString &arg1);
+    void on_ComboBox_language_currentIndexChanged(const QString &arg1);
 
     void on_ShortCuts_clicked();
 

@@ -15,6 +15,7 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QDir>
+#include <QSignalBlocker>
 
 
 
@@ -225,7 +226,8 @@ void SettingsDialog::retranslate()
 {
     qDebug() <<"SettingsDialog::retranslate() " ;
     ui->retranslateUi(this);
-    ui->ComboBox_language->setCurrentText(language);
+    QSignalBlocker blocker(ui->ComboBox_language);
+    ui->ComboBox_language->setCurrentText(tmp_settings.language);
 
     fillPortsInfo();
 
@@ -357,18 +359,16 @@ void SettingsDialog::on_buttonBox_rejected()
     qDebug() << "reject";
     tmp_settings = orig_settings_;
     populate();
-    this->language=this->language_tmp;
     emit signal_retranslate();
     reject();
 
 }
 
 
-void SettingsDialog::on_ComboBox_language_activated(const QString &arg1)
+void SettingsDialog::on_ComboBox_language_currentIndexChanged(const QString &arg1)
 {
-    qDebug() << "on_ComboBox_language_activated " << arg1 ;
-    this->language_tmp=this->language;
-    this->language=arg1;
+    qDebug() << "on_ComboBox_language_currentIndexChanged" << arg1;
+    tmp_settings.language = arg1;
     emit signal_retranslate();
 }
 
@@ -422,7 +422,8 @@ void SettingsDialog::populate() {
  //UI
         ui->checkBox_main_position_save_on_exit->setChecked(tmp_settings.save_main_window_position_on_exit);
         ui->checkBox_measure_position_save_on_exit->setChecked(tmp_settings.save_measure_window_position_on_exit);
-        ui->language->setText(tmp_settings.language);
+        QSignalBlocker blocker(ui->ComboBox_language);
+        ui->ComboBox_language->setCurrentText(tmp_settings.language);
 //---------SERIAL---------
         ui->serialPortInfoListBox->setCurrentText(tmp_settings.serial.portName);
         ui->comboBox_datasource->setCurrentIndex(static_cast<int>(tmp_settings.datasource));
@@ -453,8 +454,8 @@ void SettingsDialog::pullFromUi()
    //UI
    tmp_settings.save_main_window_position_on_exit=ui->checkBox_main_position_save_on_exit->isChecked();
    qDebug()<<"pull save_main_window_position_on_exit " << tmp_settings.save_main_window_position_on_exit;
-   tmp_settings.save_measure_window_position_on_exit=ui->checkBox_measure_position_save_on_exit->isChecked();
-   tmp_settings.language=ui->language->text();
+    tmp_settings.save_measure_window_position_on_exit=ui->checkBox_measure_position_save_on_exit->isChecked();
+    tmp_settings.language = ui->ComboBox_language->currentText();
 
    //------------------SERIAL------------
    tmp_settings.serial.portName = ui->serialPortInfoListBox->currentText();

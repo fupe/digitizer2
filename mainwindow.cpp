@@ -5,6 +5,7 @@
 #include <QFileDialog>     //save dxf
 #include <QDir>
 #include <QtMath>
+#include <QApplication>
 #include "3rdparty/dxflib/src/dl_dxf.h"
 
 #include "appmanager.h"
@@ -919,12 +920,17 @@ void MainWindow::on_actionSetup_triggered(bool /*checked*/)
 
     qDebug()<<"on_actionSetup_triggered";
     SettingsDialog dlg(this, sm, appManager()->serialManager());
-        dlg.setSettings(sm->currentSettings());      // KOPIE do dialogu
+    dlg.setSettings(sm->currentSettings());      // KOPIE do dialogu
 
-        if (dlg.exec() == QDialog::Accepted) {
-            qDebug()<<"ACCEPT";
-            sm->updateSettings(dlg.result());        // commit uvnitř SettingsManageru
-        }
+    connect(&dlg, &SettingsDialog::signal_retranslate, &dlg, &SettingsDialog::retranslate);
+    connect(&dlg, &SettingsDialog::signal_retranslate, this, [this, &dlg]() {
+        retranslate(dlg.result().language);
+    });
+
+    if (dlg.exec() == QDialog::Accepted) {
+        qDebug()<<"ACCEPT";
+        sm->updateSettings(dlg.result());        // commit uvnitř SettingsManageru
+    }
 }
 
 
@@ -936,22 +942,40 @@ void MainWindow::on_actionConnect_triggered()
 
 void MainWindow::onSettingsChanged(const Settings& s)
 {
-    //qDebug() << "arm1 " << s.arm1_length << " arm2 " << s.arm2_length;
-    if (arm1!=nullptr)   qDebug() << "arm1 "<< arm1 ;
-    //if (arm2!=nullptr)   qDebug() << "arm2 "<< arm2 ;
-    //if (arm1)
+    retranslate(s.language);
+
+    if (arm1)
     {
-        QLineF l = arm1->line();   // aktuální čára (uchová P1 i úhel)
-        l.setLength(s.arm1_length); // změní jen délku
+        QLineF l = arm1->line();
+        l.setLength(s.arm1_length);
         arm1->setLine(l);
     }
     if (arm2)
     {
-        QLineF l = arm2->line();   // aktuální čára (uchová P1 i úhel)
-        l.setLength(s.arm2_length); // změní jen délku
+        QLineF l = arm2->line();
+        l.setLength(s.arm2_length);
         arm2->setLine(l);
     }
 }
+
+void MainWindow::retranslate(const QString& language)
+{
+    qApp->removeTranslator(&translator);
+    qApp->removeTranslator(&guitranslator);
+
+    const QString base = QStringLiteral(":/translations/");
+    const QString lang = language.toLower();
+
+    if (translator.load(base + lang + QStringLiteral(".qm")))
+        qApp->installTranslator(&translator);
+
+    if (guitranslator.load(base + QStringLiteral("qt_") + lang + QStringLiteral(".qm")))
+        qApp->installTranslator(&guitranslator);
+
+    ui->retranslateUi(this);
+    setWindowTitle(tr("Digitizer"));
+}
+
 
 void MainWindow::onAddPointModeChanged(AddPointMode mode)
 {
