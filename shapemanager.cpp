@@ -15,6 +15,7 @@ void ShapeManager::addShape(GraphicsItems* shape)
 
 const QVector<GraphicsItems*>& ShapeManager::getShapes() const
 {
+    qDebug() <<"ShapeManager::getShapes";
     return shapes_;
 }
 
@@ -46,7 +47,7 @@ void ShapeManager::printShapesInfo() const
 {
     int index = 0;
     for (const GraphicsItems* item : shapes_) {
-        qDebug().noquote() << index++ << ": " << shapeInfo(item);
+        qDebug().noquote() << index++ << ":::: " << shapeInfo(item);
     }
 }
 
@@ -56,13 +57,16 @@ QString ShapeManager::shapeInfo(const GraphicsItems* item) const
         return QString("<null>");
 
     QRectF rect = item->boundingRect();
-    return QString("%1 [x:%2 y:%3 w:%4 h:%5 fin:%6]")
-            .arg(item->typeName())
-            .arg(rect.x())
-            .arg(rect.y())
-            .arg(rect.width())
-            .arg(rect.height())
-            .arg(item->finished ? "true" : "false");
+    QPointF pos = item->pos();
+       return QString("%1 [posx:%2 posy:%3 x:%4 y:%5 w:%6 h:%7 finished:%8]")
+               .arg(item->typeName())
+               .arg(pos.x())
+               .arg(pos.y())
+               .arg(rect.x())
+               .arg(rect.y())
+               .arg(rect.width())
+               .arg(rect.height())
+               .arg(item->finished ? "true" : "false");
 }
 
 void ShapeManager::startShape(GraphicsItems* shape)

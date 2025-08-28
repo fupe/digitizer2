@@ -167,8 +167,10 @@ void AppManager::addPointtoShapeManager()
 {
     lastpoint = endPointArm2_;
     auto* point = new mypoint;
+    qDebug()<<"position " << endPointArm2_ ;
     point->setPos(endPointArm2_);
     shapeManager_.addShape(point);
+    shapeManager_.printShapesInfo();
 }
 
 void AppManager::addPointtoMeasuru()
