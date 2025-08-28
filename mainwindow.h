@@ -126,6 +126,7 @@ public slots:
     void setup_scene ();
     //void retranslate();
    // void handleDocumentModifiedChanged(bool newValue);
+    void onLanguageChanged(const QString &language);
 
 private:
     void initActions();

@@ -37,8 +37,6 @@ public:
     bool document_saved = false;
     QString units;  //*
     double units_scale;
-    QString language;
-    QString language_tmp;
     QString directory_save_dxf; //*
     QString directory_save_data;//*
     //shortcuts
@@ -108,7 +106,7 @@ private:
 signals:
     void signal_scene(void);
     void signal_reconnect(void);
-    void signal_retranslate (void);
+    void languageChanged(const QString &language);
     //void documentModifiedChanged(bool newValue);
 
 };

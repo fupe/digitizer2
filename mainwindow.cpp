@@ -5,6 +5,8 @@
 #include <QFileDialog>     //save dxf
 #include <QDir>
 #include <QtMath>
+#include <QApplication>
+#include <QCoreApplication>
 #include "3rdparty/dxflib/src/dl_dxf.h"
 
 #include "appmanager.h"
@@ -919,12 +921,29 @@ void MainWindow::on_actionSetup_triggered(bool /*checked*/)
 
     qDebug()<<"on_actionSetup_triggered";
     SettingsDialog dlg(this, sm, appManager()->serialManager());
-        dlg.setSettings(sm->currentSettings());      // KOPIE do dialogu
+    connect(&dlg, &SettingsDialog::languageChanged,
+            this, &MainWindow::onLanguageChanged);
+    dlg.setSettings(sm->currentSettings());      // KOPIE do dialogu
 
-        if (dlg.exec() == QDialog::Accepted) {
-            qDebug()<<"ACCEPT";
-            sm->updateSettings(dlg.result());        // commit uvnitř SettingsManageru
-        }
+    if (dlg.exec() == QDialog::Accepted) {
+        qDebug()<<"ACCEPT";
+        sm->updateSettings(dlg.result());        // commit uvnitř SettingsManageru
+    }
+}
+
+void MainWindow::onLanguageChanged(const QString &language)
+{
+    qApp->removeTranslator(&translator);
+    qApp->removeTranslator(&guitranslator);
+
+    const QString base = language.toLower();
+    const QString appDir = QCoreApplication::applicationDirPath();
+    if (translator.load(appDir + "/translations/" + base + ".qm"))
+        qApp->installTranslator(&translator);
+    if (guitranslator.load(appDir + "/translations/qtbase_" + base + ".qm"))
+        qApp->installTranslator(&guitranslator);
+
+    ui->retranslateUi(this);
 }
 
 

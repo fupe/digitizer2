@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
     qDebug() << "serial port je" << port ;
     if (loadedSettings.datasource == DataSource::Serial && port.trimmed().isEmpty()) {
         SettingsDialog dlg(&mainwindow, settingsManager, serial_mng);
+        QObject::connect(&dlg, &SettingsDialog::languageChanged,
+                         &mainwindow, &MainWindow::onLanguageChanged);
         dlg.setSettings(loadedSettings);
         if (dlg.exec() == QDialog::Accepted) {
             settingsManager->updateSettings(dlg.result());
