@@ -28,6 +28,7 @@ SettingsDialog::SettingsDialog(QWidget *parent, SettingsManager* sm, SerialManag
     serialManager_(serial)
 {
     ui->setupUi(this);
+    assignLanguageCodes();
     // schovej tab2 hned po startu
         hiddenTabWidget_ = ui->tabWidget->widget(1);   // uložíme widget tab2
         hiddenTabIndex_ = 1;
@@ -226,8 +227,10 @@ void SettingsDialog::retranslate()
 {
     qDebug() <<"SettingsDialog::retranslate() " ;
     ui->retranslateUi(this);
+    assignLanguageCodes();
     QSignalBlocker blocker(ui->ComboBox_language);
-    ui->ComboBox_language->setCurrentText(tmp_settings.language);
+    const int idx = ui->ComboBox_language->findData(tmp_settings.language);
+    ui->ComboBox_language->setCurrentIndex(idx < 0 ? 0 : idx);
 
     fillPortsInfo();
 
@@ -365,10 +368,10 @@ void SettingsDialog::on_buttonBox_rejected()
 }
 
 
-void SettingsDialog::on_ComboBox_language_currentIndexChanged(const QString &arg1)
+void SettingsDialog::on_ComboBox_language_currentIndexChanged(const QString &/*text*/)
 {
-    qDebug() << "on_ComboBox_language_currentIndexChanged" << arg1;
-    tmp_settings.language = arg1;
+    tmp_settings.language = ui->ComboBox_language->currentData().toString();
+    qDebug() << "on_ComboBox_language_currentIndexChanged" << tmp_settings.language;
     emit signal_retranslate();
 }
 
@@ -423,7 +426,8 @@ void SettingsDialog::populate() {
         ui->checkBox_main_position_save_on_exit->setChecked(tmp_settings.save_main_window_position_on_exit);
         ui->checkBox_measure_position_save_on_exit->setChecked(tmp_settings.save_measure_window_position_on_exit);
         QSignalBlocker blocker(ui->ComboBox_language);
-        ui->ComboBox_language->setCurrentText(tmp_settings.language);
+        int idx = ui->ComboBox_language->findData(tmp_settings.language);
+        ui->ComboBox_language->setCurrentIndex(idx < 0 ? 0 : idx);
 //---------SERIAL---------
         ui->serialPortInfoListBox->setCurrentText(tmp_settings.serial.portName);
         ui->comboBox_datasource->setCurrentIndex(static_cast<int>(tmp_settings.datasource));
@@ -433,6 +437,13 @@ void SettingsDialog::populate() {
         ui->lineEdit_dxf_dir->setText(tmp_settings.directory_save_dxf);
 
 
+}
+
+void SettingsDialog::assignLanguageCodes()
+{
+    ui->ComboBox_language->setItemData(0, QStringLiteral("English"));
+    ui->ComboBox_language->setItemData(1, QStringLiteral("German"));
+    ui->ComboBox_language->setItemData(2, QStringLiteral("Czech"));
 }
 
 
@@ -455,7 +466,7 @@ void SettingsDialog::pullFromUi()
    tmp_settings.save_main_window_position_on_exit=ui->checkBox_main_position_save_on_exit->isChecked();
    qDebug()<<"pull save_main_window_position_on_exit " << tmp_settings.save_main_window_position_on_exit;
     tmp_settings.save_measure_window_position_on_exit=ui->checkBox_measure_position_save_on_exit->isChecked();
-    tmp_settings.language = ui->ComboBox_language->currentText();
+   tmp_settings.language = ui->ComboBox_language->currentData().toString();
 
    //------------------SERIAL------------
    tmp_settings.serial.portName = ui->serialPortInfoListBox->currentText();

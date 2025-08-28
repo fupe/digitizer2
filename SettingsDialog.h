@@ -93,6 +93,7 @@ private slots:
 private:
     Ui::SettingsDialog *ui;
     void fillPortsInfo();
+    void assignLanguageCodes();
     Settings tmp_settings ;// lokální pracovní kopie
     Settings orig_settings_ ;// původní nastavení pro reset
     Units currentUnits_ = Units::Millimeters;
