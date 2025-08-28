@@ -15,6 +15,7 @@
 #include "SettingsDialog.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "settings.h"
 
 MainWindow::MainWindow(AppManager* app, QWidget* parent)
     : QMainWindow(parent)
@@ -495,16 +496,24 @@ void MainWindow::on_actionSave_dxf_triggered()
     }
 
     dxf.writeHeader(*dw);
+    dw->dxfString(9, "$INSUNITS");
+    dw->dxfInt(70, settings.units == Units::Millimeters ? 4 : 1);
     dw->sectionEnd();
     dw->sectionEntities();
 
-    dxf.writeComment(*dw, QString("ARM1: %1").arg(settings.arm1_length).toStdString());
-    dxf.writeComment(*dw, QString("ARM2: %1").arg(settings.arm2_length).toStdString());
+    dxf.writeComment(*dw, QString("ARM1: %1 %2")
+                               .arg(mmToUnits(settings.arm1_length, settings.units))
+                               .arg(unitsToString(settings.units))
+                               .toStdString());
+    dxf.writeComment(*dw, QString("ARM2: %1 %2")
+                               .arg(mmToUnits(settings.arm2_length, settings.units))
+                               .arg(unitsToString(settings.units))
+                               .toStdString());
     dxf.writePoint(*dw, DL_PointData(0.0, 0.0, 0.0), DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
 
     for (QGraphicsItem* item : scene->items()) {
         if (auto fm = dynamic_cast<GraphicsItems*>(item)) {
-            fm->export_dxf(dxf, *dw);
+            fm->export_dxf(dxf, *dw, settings.units);
         }
     }
 
