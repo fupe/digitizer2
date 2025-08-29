@@ -60,7 +60,7 @@ void AppManager::setAngles(double alfa, double beta, int index)
     if (endPointBefore_ != endPointArm2_) {
         emit armsUpdated(Arm1Angle_, Arm2Angle_, endPointArm1_, endPointArm2_);
         emit positionChanged(endPointArm2_);
-        qDebug() << "AppManager::setAngles armsUpdated" << alfa_ << beta_ << endPointArm1_ << endPointArm2_;
+        //qDebug() << "AppManager::setAngles armsUpdated" << alfa_ << beta_ << endPointArm1_ << endPointArm2_;
     }
 
     indexBefore_ = index;
@@ -86,15 +86,13 @@ void AppManager::setAngles(double alfa, double beta, int index)
 
 void AppManager::setAddPointMode(AddPointMode mode) {
     if (mode == currentAddPointMode_) return;
+
+    if (currentAddPointMode_ == AddPointMode::Polyline && mode != AddPointMode::Polyline) {
+        shapeManager_.finishCurrent();
+    }
+
     currentAddPointMode_ = mode;
     qDebug() << "nastaven mode "  << modeAddPointToString(mode);
-    if (currentAddPointMode_ == AddPointMode::Polyline)  //prvni bod do polyline
-    {
-        auto *pl = new mypolyline();
-        scene_->addItem(pl);
-        shapeManager_.startShape(pl);
-        shapeManager_.appendToCurrent(endPointArm2_);
-    }
     emit modeAddPointChanged(mode);
 }
 
@@ -145,6 +143,11 @@ void AppManager::addpointfrommainwindow(void)
             break;
         case AddPointMode::Polyline:
             qDebug() << "polyline add point";
+            if (!shapeManager_.hasCurrent()) {
+                auto *pl = new mypolyline();
+                scene_->addItem(pl);
+                shapeManager_.startShape(pl);
+            }
             shapeManager_.appendToCurrent(endPointArm2_);
             break;
         case AddPointMode::Measure:

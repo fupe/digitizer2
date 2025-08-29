@@ -91,3 +91,8 @@ void ShapeManager::finishCurrent()
         emit shapesChanged();
     }
 }
+
+bool ShapeManager::hasCurrent() const
+{
+    return currentShape_ != nullptr;
+}

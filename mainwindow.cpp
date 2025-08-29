@@ -344,7 +344,7 @@ void GraphicsView::mousePressEvent(QMouseEvent *event)
             event->accept();
             return;
         } else if (event->button() == Qt::RightButton) {
-            mw->appManager()->finishCurrentShape();
+            mw->appManager()->cancelCurrentAction();
             event->accept();
             return;
         }
@@ -974,9 +974,22 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
 {
     qDebug() << " onAddPointModeChanged" << appManager()->modeAddPointToString(mode);
     const bool on_measure = (mode == AddPointMode::Measure);
+    const bool on_polyline = (mode == AddPointMode::Polyline);
 
     // UI: update akce
     {
+        {
+            QSignalBlocker block_action_polyline(ui->actionAdd_polyline);
+            ui->actionAdd_polyline->setChecked(on_polyline);
+            ui->actionAdd_polyline->setText(on_polyline ? tr("End polyline") : tr("Add polyline"));
+            QKeySequence seq = appManager()->settingsManager()->currentSettings().shortcuts.map
+                                 .value(QStringLiteral("action.polyline"));
+            QString shortcut = seq.toString(QKeySequence::PortableText);
+            ui->actionAdd_polyline->setToolTip(on_polyline
+                ? tr("konec polyline (%1)").arg(shortcut)
+                : tr("Přidat polyline (%1)").arg(shortcut));
+        }
+
         QSignalBlocker block_action_measure(ui->actionMeasure);
         ui->actionMeasure->setChecked(on_measure);
         ui->actionMeasure->setText(on_measure ? tr("Konec měření") : tr("Měření"));

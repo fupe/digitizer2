@@ -27,6 +27,7 @@ public:
     void startShape(GraphicsItems* shape);
     void appendToCurrent(const QPointF& point);
     void finishCurrent();
+    bool hasCurrent() const;
 
 signals:
     void shapesChanged();
