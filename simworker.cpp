@@ -67,9 +67,11 @@ void SimWorker::tick() {
 
   if (pendingLine_.isEmpty()) {
     if (file_.atEnd()) {
-      qDebug() << "konec souboru";
-      if (timer_)
-        timer_->stop();
+        qDebug() << "konec souboru – restart";
+        file_.seek(0);
+        startWallMsec_ = QDateTime::currentMSecsSinceEpoch();
+        firstTs_ = -1;
+        timer_->start(1);
       return;
     }
 
