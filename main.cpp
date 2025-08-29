@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     qRegisterMetaType<Frame>("Frame");
-    a.setWindowIcon(QIcon(":///pic/icon.png"));
+    a.setWindowIcon(QIcon(":/pic/icon.png"));
     QCoreApplication::setOrganizationName(QStringLiteral("LiborSoft"));
     QCoreApplication::setOrganizationDomain(QStringLiteral("www.example.com"));
     QCoreApplication::setApplicationName(QStringLiteral("Digitizer2"));

@@ -207,6 +207,7 @@ void AppManager::onShapesChanged()
     }
 
     for (auto* shape : shapeManager_.getShapes()) {
+        qDebug()<<"AppManager::onShapesChanged :" <<shape;
         scene_->addItem(shape);
     }
 }

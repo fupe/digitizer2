@@ -12,9 +12,14 @@ GraphicsItems::GraphicsItems()
 {
     //constructor
     pen.setColor(Qt::blue);
-    pen.setWidth(1);
+    pen.setWidth(3);
+    pen.setCosmetic(true);
     setFlag (ItemIsSelectable, true);
     setAcceptHoverEvents(true);
+    setAcceptedMouseButtons(Qt::LeftButton);
+
+    // KLÍČOVÉ: vizuální velikost bodu nezávislá na zoomu
+    setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
 }
 
 QRectF GraphicsItems::boundingRect() const
@@ -77,11 +82,12 @@ void mypoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
 
     Q_UNUSED(option);
     Q_UNUSED(widget);
-
+    pen.setWidth(3);
     painter->setPen(pen);
-    //painter->drawLine (-1,-1,1,1);
-    //painter->drawLine (1,-1,-1,1);
-    painter->drawPoint(1,1);
+    painter->drawLine (-10,-10,10,10);
+    painter->drawLine (10,-10,-10,10);
+    //painter->drawPoint(1,1);
+    qDebug()<<"point vykreslen";
 }
 
 void mypoint::export_dxf(DL_Dxf& dxf, DL_WriterA& dw, Units units)
