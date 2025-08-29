@@ -9,6 +9,7 @@
 #include "shapemanager.h"
 #include "settings.h"          // kvůli struct Settings
 #include "settingsmanager.h"
+#include <QTimer>
 #pragma once
 
 class SerialManager; // forward deklarace
@@ -119,6 +120,9 @@ private:
     AddPointMode currentAddPointMode_ = AddPointMode::None;
     ContiMode    currentContiMode_    = ContiMode::SinglePoint;
     QGraphicsScene* scene_ = nullptr;
+    QTimer dataSetTimer_;
+    int dataSetCount_ = 0;
+    void logDataSetCount();
 
 public slots:
     // zatím prázdné; ponecháno pro případné budoucí sloty

@@ -205,7 +205,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>inch/mm</string>
+             <string>mm</string>
             </property>
            </widget>
           </item>
@@ -242,7 +242,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>inch/mm</string>
+             <string>mm</string>
             </property>
            </widget>
           </item>
@@ -273,7 +273,7 @@
           <item>
            <widget class="QLabel" name="label_step_units">
             <property name="text">
-             <string>inch/mm</string>
+             <string>mm</string>
             </property>
            </widget>
           </item>

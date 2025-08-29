@@ -430,7 +430,7 @@ Do you want to save your changes?</source>
     <message>
         <location filename="../MeasureDialog.ui" line="20"/>
         <source>Dialog</source>
-        <translation type="unfinished">Shortcuts settings</translation>
+        <translation>Meassure</translation>
     </message>
 </context>
 <context>

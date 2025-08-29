@@ -16,6 +16,10 @@ AppManager::AppManager(QObject* parent) : QObject(parent)
 {
     connect(&shapeManager_, &ShapeManager::shapesChanged,
             this, &AppManager::onShapesChanged);
+    dataSetTimer_.setInterval(10000);
+    connect(&dataSetTimer_, &QTimer::timeout,
+            this, &AppManager::logDataSetCount);
+    dataSetTimer_.start();
 }
 
 /*ShapeManager& AppManager::shapeManager()
@@ -183,7 +187,7 @@ void AppManager::addPointtoShapeManager()
     qDebug()<<"position " << endPointArm2_ ;
     point->setPos(endPointArm2_);
     shapeManager_.addShape(point);
-    shapeManager_.printShapesInfo();
+    //shapeManager_.printShapesInfo();
 }
 
 void AppManager::addPointtoMeasuru()
@@ -202,7 +206,7 @@ void AppManager::onShapesChanged()
     }
 
     for (auto* shape : shapeManager_.getShapes()) {
-        qDebug()<<"AppManager::onShapesChanged :" <<shape;
+        //qDebug()<<"AppManager::onShapesChanged :" <<shape;
         scene_->addItem(shape);
     }
 }
@@ -321,8 +325,14 @@ void AppManager::onSerialLine(const QByteArray& line)
         if (alfaReceived_ && betaReceived_) {
             setAngles(alfa_, beta_, index);
             alfaReceived_ = betaReceived_ = false;
+            ++dataSetCount_;
         }
     }
+}
+
+void AppManager::logDataSetCount()
+{
+    qDebug() << "Přijaté sady dat:" << dataSetCount_;
 }
 
 void AppManager::onSerialOpened()
