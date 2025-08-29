@@ -9,8 +9,6 @@
 #include "shapemanager.h"
 #include "settings.h"          // kvůli struct Settings
 #include "settingsmanager.h"
-#include "MeasureDialog.h"
-
 #pragma once
 
 class SerialManager; // forward deklarace
@@ -74,7 +72,6 @@ public:
     void cancelCurrentAction();
     void addpointfrommainwindow(void);
     void setScene(QGraphicsScene* scene);
-    void setMeasure (MeasureDialog* measure);
     void addPointtoMeasuru(void);
     void addPointtoShapeManager(void);
     void addPolylinetoShapeManager(void);
@@ -86,6 +83,8 @@ public:
 signals:
     // stávající signály
     void armsUpdated(double arm1Angle, double arm2Angle, QPointF endPointArm1_, QPointF endPointArm2_ );
+    void positionChanged(QPointF pos);
+    void measureToggled(QPointF pos);
     void modeAddPointChanged (AddPointMode newmode);
     void modeContiChanged(ContiMode mode);
     void sceneModified(QPointF endarm2);
@@ -103,7 +102,6 @@ private:
     Settings        settings_;                          // cache aktuálních settings
     SettingsManager* settingsManager_ = nullptr;        // ukazatel na settings manager
     SerialManager*   serialmanager_         = nullptr;         // ← ukazatel na SerialManager
-    MeasureDialog*  measure_ = nullptr;
 
     double Arm1Angle_{};
     double Arm2Angle_{};

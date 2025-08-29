@@ -21,12 +21,14 @@ class MeasureDialog : public QDialog
 public:
     explicit MeasureDialog(SettingsManager* sm, QWidget* parent = nullptr);
     ~MeasureDialog();
-    int mode;  // 0-nic 1-zacatek mereni 2-zmrazeni
+    int mode = 0;  // 0-nic 1-zacatek mereni 2-zmrazeni
     QPointF start_position;
 
 public slots:
     void set_value(double value);      // units are read from SettingsManager
     void set_color(QColor color);
+    void updatePosition(QPointF pos);
+    void toggleMode(QPointF pos);
 
 protected:
     void showEvent(QShowEvent* e) override;

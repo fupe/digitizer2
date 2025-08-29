@@ -21,6 +21,8 @@ MeasureDialog::MeasureDialog(SettingsManager* sm, QWidget* parent)
 {
     ui->setupUi(this);
     Q_ASSERT(settingsManager_);
+    set_color(Qt::black);
+    set_value(0);
 }
 
 MeasureDialog::~MeasureDialog()
@@ -107,4 +109,32 @@ void MeasureDialog::set_color(QColor color)
     auto palette = ui->lcdNumber->palette();
     palette.setColor(QPalette::WindowText, color);
     ui->lcdNumber->setPalette(palette);
+}
+
+void MeasureDialog::updatePosition(QPointF pos)
+{
+    if (mode == 1) {
+        const auto& st = settingsManager_->currentSettings();
+        double dist = mmToUnits(std::hypot(start_position.x() - pos.x(),
+                                           start_position.y() - pos.y()),
+                                 st.units);
+        set_value(dist);
+    } else if (mode == 0) {
+        set_value(0);
+    }
+}
+
+void MeasureDialog::toggleMode(QPointF pos)
+{
+    mode++;
+    if (mode >= 3) mode = 1;
+
+    if (mode == 1) {
+        set_color(Qt::red);
+        start_position = pos;
+        set_value(0);
+    } else if (mode == 2) {
+        set_color(Qt::green);
+        updatePosition(pos);
+    }
 }

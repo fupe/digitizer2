@@ -902,30 +902,6 @@ void MainWindow::on_actionadd_point_triggered()
     appManager()->addpointfrommainwindow();
 }
 
-void MainWindow::show_measure_value(double Arm1Angle, double Arm2Angle,QPointF endPointArm1,QPointF endPointArm2)
-{
-
-
-    Q_UNUSED(Arm1Angle);
-    Q_UNUSED(Arm2Angle);
-    Q_UNUSED(endPointArm1);
-    if (!measure) return;
-    if  (measure->mode==1)
-    {
-        double distance;
-        const auto& st = settingsManager_->currentSettings();
-        distance = mmToUnits(qSqrt(qPow(measure->start_position.x() - endPointArm2.x(), 2) +
-                                   qPow(measure->start_position.y() - endPointArm2.y(), 2)),
-                              st.units);
-        measure->set_value(distance);
-    }
-    else if (measure->mode==0)
-    {
-        measure->set_value(0);
-    }
-}
-
-
 
 void MainWindow::on_actionSetup_triggered(bool /*checked*/)
 {
@@ -1019,6 +995,11 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
         if (!measure) {
             measure = new MeasureDialog(appManager()->settingsManager(), this);
             measure->setAttribute(Qt::WA_DeleteOnClose, true);
+
+            connect(appManager(), &AppManager::positionChanged,
+                    measure, &MeasureDialog::updatePosition);
+            connect(appManager(), &AppManager::measureToggled,
+                    measure, &MeasureDialog::toggleMode);
 
             // Jakmile se dialog zavře (OK/Cancel/křížek), vrať režim do None
             connect(measure, &QDialog::finished, this, [this](int){

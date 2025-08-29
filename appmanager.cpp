@@ -59,6 +59,7 @@ void AppManager::setAngles(double alfa, double beta, int index)
 
     if (endPointBefore_ != endPointArm2_) {
         emit armsUpdated(Arm1Angle_, Arm2Angle_, endPointArm1_, endPointArm2_);
+        emit positionChanged(endPointArm2_);
         qDebug() << "AppManager::setAngles armsUpdated" << alfa_ << beta_ << endPointArm1_ << endPointArm2_;
     }
 
@@ -179,21 +180,7 @@ void AppManager::addPointtoShapeManager()
 
 void AppManager::addPointtoMeasuru()
 {
-    measure_->mode++;
-    if (measure_->mode >= 3) measure_->mode = 1;
-
-    if (measure_->mode == 0){
-        measure_->set_color(Qt::black);
-    }
-    if (measure_->mode == 1)
-    {
-        measure_->set_color(Qt::red);
-        measure_->start_position = endPointArm2_;
-    }
-    if (measure_->mode == 2) {
-        measure_->set_color(Qt::green);
-    }
-    emit armsUpdated(Arm1Angle_, Arm2Angle_, endPointArm1_, endPointArm2_);
+    emit measureToggled(endPointArm2_);
 }
 
 void AppManager::onShapesChanged()
@@ -216,11 +203,6 @@ void AppManager::setScene(QGraphicsScene *scene)
 {
     scene_ = scene;
     onShapesChanged();
-}
-
-void AppManager::setMeasure(MeasureDialog *measure)
-{
-    measure_ = measure;
 }
 
 void AppManager::setSettingsManager(SettingsManager* m)

@@ -64,7 +64,6 @@ public:
     QElapsedTimer elapsedtimer;  //mereni casu
     bool shortcutPressed(const QString &shortcutStr, QKeyEvent *keyEvent);
     void handleCalibrateButtonClicked(bool checked);
-    void show_measure_value(double Arm1Angle, double Arm2Angle,QPointF endPointArm1,QPointF endPointArm2) ;
     QGraphicsLineItem* arm1 = nullptr;  //rameno 1
     QGraphicsLineItem* arm2 = nullptr;  //rameno 2
     QGraphicsEllipseItem *base;
@@ -73,7 +72,6 @@ public:
     QTranslator translator;
     QTranslator guitranslator;
     QStringList languages;
-    QMetaObject::Connection measureConn_;
 
 
 private:
