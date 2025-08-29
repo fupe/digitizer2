@@ -76,6 +76,7 @@ public:
     void addPointtoShapeManager(void);
     void addPolylinetoShapeManager(void);
     void finishCurrentShape();
+    void clearShapeManager();
 
     double distance;
     QPointF lastpoint;

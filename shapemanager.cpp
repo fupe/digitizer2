@@ -22,6 +22,7 @@ const QVector<GraphicsItems*>& ShapeManager::getShapes() const
 void ShapeManager::clear()
 {
     shapes_.clear();
+    currentShape_ = nullptr;
     emit shapesChanged();
 }
 

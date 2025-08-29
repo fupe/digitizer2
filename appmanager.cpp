@@ -171,6 +171,11 @@ void AppManager::finishCurrentShape()
     setAddPointMode(AddPointMode::None);
 }
 
+void AppManager::clearShapeManager()
+{
+    shapeManager_.clear();
+}
+
 void AppManager::addPointtoShapeManager()
 {
     lastpoint = endPointArm2_;

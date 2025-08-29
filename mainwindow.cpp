@@ -590,28 +590,16 @@ void MainWindow::on_actionNew_file_triggered()
         }
         if (ret==QMessageBox::Discard or (ret==QMessageBox::Save and settings.document_saved==true))
         {
-            for (QGraphicsItem* item : scene->items()) {
-                    if (auto fm = dynamic_cast<GraphicsItems*>(item)) {
-                        if (fm->scene()) {
-                            fm->scene()->removeItem(fm);
-                        }
-                    }
-                }
+            appManager()->clearShapeManager();
             settings.document_modified=false;
             ui->actionSave_dxf->setEnabled(false);
         }
     }
     else
     {
-        for (QGraphicsItem* item : scene->items()) {
-                if (auto fm = dynamic_cast<GraphicsItems*>(item)) {
-                    if (fm->scene()) {
-                        fm->scene()->removeItem(fm);
-                    }
-                }
-            }
-    settings.document_modified=false;
-    ui->actionSave_dxf->setEnabled(false);
+        appManager()->clearShapeManager();
+        settings.document_modified=false;
+        ui->actionSave_dxf->setEnabled(false);
     }
 
 }
