@@ -60,7 +60,7 @@ void AppManager::setAngles(double alfa, double beta, int index)
     if (endPointBefore_ != endPointArm2_) {
         emit armsUpdated(Arm1Angle_, Arm2Angle_, endPointArm1_, endPointArm2_);
         emit positionChanged(endPointArm2_);
-        qDebug() << "AppManager::setAngles armsUpdated" << alfa_ << beta_ << endPointArm1_ << endPointArm2_;
+        //qDebug() << "AppManager::setAngles armsUpdated" << alfa_ << beta_ << endPointArm1_ << endPointArm2_;
     }
 
     indexBefore_ = index;

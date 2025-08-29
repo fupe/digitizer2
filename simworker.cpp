@@ -63,7 +63,7 @@ void SimWorker::close() {
 }
 
 void SimWorker::tick() {
-  qDebug() << "tick";
+  //qDebug() << "tick";
 
   if (pendingLine_.isEmpty()) {
     if (file_.atEnd()) {
@@ -76,7 +76,7 @@ void SimWorker::tick() {
     // načti nový řádek a ulož si ho pro případné pozdější odeslání
     const QByteArray raw = file_.readLine();
     pendingLine_ = QString::fromUtf8(raw).trimmed();
-    qDebug() << "čtu" << pendingLine_;
+    //qDebug() << "čtu" << pendingLine_;
     if (pendingLine_.isEmpty()) {
       qDebug() << "prázdný řádek";
       timer_->start(1);
@@ -114,14 +114,14 @@ void SimWorker::tick() {
   const qint64 elapsed = QDateTime::currentMSecsSinceEpoch() - startWallMsec_;
   if (elapsed < targetDelay) {
     const qint64 wait = targetDelay - elapsed;
-    qDebug() << "čekám" << wait << "ms";
+    //qDebug() << "čekám" << wait << "ms";
     // ještě brzy – restartujeme timer na zbytek zpoždění a necháme řádek v bufferu
     timer_->start(wait);
     return;
   }
 
   Frame f{payload, QDateTime::currentMSecsSinceEpoch()};
-  qDebug() << "emit frame" << payload;
+  //qDebug() << "emit frame" << payload;
   emit frameReceived(f);
   pendingLine_.clear();
   // zkusíme hned načíst další řádek

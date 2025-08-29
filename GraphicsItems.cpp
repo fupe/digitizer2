@@ -19,7 +19,7 @@ GraphicsItems::GraphicsItems()
     setAcceptedMouseButtons(Qt::LeftButton);
 
     // KLÍČOVÉ: vizuální velikost bodu nezávislá na zoomu
-    setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
+
 }
 
 QRectF GraphicsItems::boundingRect() const
@@ -62,6 +62,7 @@ void GraphicsItems::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 mypoint::mypoint()
 {
     setFlag (ItemIsSelectable, true);
+    setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
     pen.setColor(Qt::red);
 
 }
@@ -87,7 +88,7 @@ void mypoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     painter->drawLine (-10,-10,10,10);
     painter->drawLine (10,-10,-10,10);
     //painter->drawPoint(1,1);
-    qDebug()<<"point vykreslen";
+    //qDebug()<<"point vykreslen";
 }
 
 void mypoint::export_dxf(DL_Dxf& dxf, DL_WriterA& dw, Units units)
