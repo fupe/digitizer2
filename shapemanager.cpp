@@ -86,6 +86,12 @@ void ShapeManager::appendToCurrent(const QPointF& point)
 void ShapeManager::finishCurrent()
 {
     if (currentShape_) {
+        if (auto pl = dynamic_cast<mypolyline*>(currentShape_)) {
+            if (pl->mypolygon && pl->mypolygon->size() > 1) {
+                pl->addPointToShape(pl->mypolygon->first());
+            }
+        }
+
         currentShape_->finished = true;
         currentShape_ = nullptr;
         emit shapesChanged();

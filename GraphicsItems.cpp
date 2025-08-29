@@ -166,14 +166,17 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawLine (10,-10,-10,10);
     painter->drawPolyline(*mypolygon);
 
+    // spojnice posledního a prvního bodu během kreslení
+    if (mypolygon->count() > 1 && !finished) {
+        painter->drawLine(mypolygon->last(), mypolygon->first());
+    }
+
+    // zvýraznění posledního segmentu při výběru
     if (mypolygon->count()>1 and isSelected())
     {
-    //QPen temppen=QPen(Qt::red) ;
-    //temppen.setCapStyle(Qt::RoundCap);
-    //temppen.setWidth(6);
-    //painter->setPen(temppen);
-    painter->drawLine (mypolygon->at(mypolygon->count()-1).x(),mypolygon->at(mypolygon->count()-1).y(),mypolygon->at(mypolygon->count()-2).x(),mypolygon->at(mypolygon->count()-2).y());
-    painter->setPen(pen);
+        painter->drawLine(mypolygon->at(mypolygon->count()-1),
+                          mypolygon->at(mypolygon->count()-2));
+        painter->setPen(pen);
     }
 
 /*
@@ -184,6 +187,11 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawRect(m_boundingRect);
     painter->setPen(pen);
 */
+    // označení začátku polyline
+    if (!mypolygon->isEmpty()) {
+        painter->drawEllipse(mypolygon->first(), 5, 5);
+    }
+
     if (hoveredSegmentIndex >= 0 && isSelected() ) {
             painter->setPen(QPen(Qt::red, 30));
             painter->drawLine(mypolygon->at(hoveredSegmentIndex),
