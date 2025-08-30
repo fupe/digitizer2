@@ -685,7 +685,7 @@ static void loadScene(QGraphicsScene *scene, const QString &filename, AppManager
         else if (type == "POLYLINE" && parts.size() >= 2)
         {
             mypolyline *pl = new mypolyline(app);
-            int n = parts[1].toInt();
+        ;    int n = parts[1].toInt();
             if (parts.size() >= 2 + n*2)
             {
                 for (int i = 0; i < n; i++)

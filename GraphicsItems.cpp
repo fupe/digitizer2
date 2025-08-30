@@ -184,7 +184,8 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         tempPen.setStyle(Qt::DashLine);
         painter->setPen(tempPen);
         const QPointF armEnd = appManager_->arm2EndPoint();
-        painter->drawLine(mypolygon->first(), armEnd);
+       // painter->drawLine(mypolygon->first(), armEnd);
+       // painter->drawLine(mypolygon->last(), armEnd);
         painter->setPen(pen);
     }
 
