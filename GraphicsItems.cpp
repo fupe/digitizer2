@@ -168,17 +168,17 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawPolyline(*mypolygon);
 
     // spojnice posledního a prvního bodu během kreslení
-    if (mypolygon->count() > 1 && !finished) {
+    if (mypolygon->count() > 1 ) {
         painter->drawLine(mypolygon->last(), mypolygon->first());
     }
 
     // zvýraznění posledního segmentu při výběru
-    if (mypolygon->count()>1 and isSelected())
+  /*  if (mypolygon->count()>1 and isSelected())
     {
         painter->drawLine(mypolygon->at(mypolygon->count()-1),
                           mypolygon->at(mypolygon->count()-2));
         painter->setPen(pen);
-    }
+    }*/
 
 /*
     QPen temppen=QPen(Qt::green) ;
