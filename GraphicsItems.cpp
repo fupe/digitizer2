@@ -127,6 +127,7 @@ void mypolyline::addPointToShape(const QPointF& point)
     qDebug() << "pridavam bod do mypolyline " << point ;
     prepareGeometryChange();
     mypolygon->append(point);
+    update();
     //m_boundingRect=QRectF(bounding_min_max());
 }
 
