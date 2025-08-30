@@ -97,6 +97,17 @@ void AppManager::setAddPointMode(AddPointMode mode) {
 
     currentAddPointMode_ = mode;
     qDebug() << "nastaven mode "  << modeAddPointToString(mode);
+
+    if (mode == AddPointMode::Polyline) {
+        if (!shapeManager_.hasCurrent()) {
+            auto *pl = new mypolyline();
+            scene_->addItem(pl);
+            shapeManager_.startShape(pl);
+            shapeManager_.appendToCurrent(endPointArm2_);
+            lastpoint = endPointArm2_;
+        }
+    }
+
     emit modeAddPointChanged(mode);
 }
 
@@ -147,12 +158,9 @@ void AppManager::addpointfrommainwindow(void)
             break;
         case AddPointMode::Polyline:
             qDebug() << "polyline add point";
-            if (!shapeManager_.hasCurrent()) {
-                auto *pl = new mypolyline();
-                scene_->addItem(pl);
-                shapeManager_.startShape(pl);
+            if (shapeManager_.hasCurrent()) {
+                shapeManager_.appendToCurrent(endPointArm2_);
             }
-            shapeManager_.appendToCurrent(endPointArm2_);
             break;
         case AddPointMode::Measure:
             qDebug() << "case measure add point";
