@@ -118,6 +118,7 @@ mypolyline::mypolyline()
 //    pen.setColor(Qt::green);
     pen.setCapStyle(Qt::RoundCap);
     mypolygon = new QPolygonF;
+    previewPoint = QPointF();
     m_boundingRect=QRectF(-20,-20,40,40);
     qDebug() << "konstriuktor polyline" ;
 }
@@ -127,7 +128,15 @@ void mypolyline::addPointToShape(const QPointF& point)
     qDebug() << "pridavam bod do mypolyline " << point ;
     prepareGeometryChange();
     mypolygon->append(point);
+    update();
     //m_boundingRect=QRectF(bounding_min_max());
+}
+
+void mypolyline::setPreviewPoint(const QPointF& point)
+{
+    previewPoint = point;
+    if (!finished)
+        update();
 }
 
 QPainterPath mypolyline::shape() const
@@ -166,9 +175,15 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawLine (10,-10,-10,10);
     painter->drawPolyline(*mypolygon);
 
-    // spojnice posledního a prvního bodu během kreslení
-    if (mypolygon->count() > 1 && !finished) {
-        painter->drawLine(mypolygon->last(), mypolygon->first());
+    if (!finished) {
+        // spojnice posledního a prvního bodu během kreslení
+        if (mypolygon->count() > 1) {
+            painter->drawLine(mypolygon->last(), mypolygon->first());
+        }
+        // spojnice k aktuálnímu konci ramene 2
+        if (mypolygon->count() > 0) {
+            painter->drawLine(mypolygon->last(), previewPoint);
+        }
     }
 
     // zvýraznění posledního segmentu při výběru

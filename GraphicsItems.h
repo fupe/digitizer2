@@ -76,6 +76,8 @@ public:
                return Type;
            }
     QPolygonF *mypolygon;
+    void setPreviewPoint(const QPointF& point);
+    QPointF previewPoint;
     QPainterPath shape() const override ;
     QRectF boundingRect()const override;
     void addPointToShape(const QPointF&) override ;
