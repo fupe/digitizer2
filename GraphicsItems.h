@@ -64,11 +64,12 @@ public:
 
 };
 
-class mypolyline : public GraphicsItems
+class AppManager;  // forward declaration
 
+class mypolyline : public GraphicsItems
 {
 public:
-    mypolyline();
+    explicit mypolyline(AppManager* app = nullptr);
     enum { Type = UserType + 3 }  ;
         int type() const override
            {
@@ -76,12 +77,15 @@ public:
                return Type;
            }
     QPolygonF *mypolygon;
+    AppManager* appManager_ = nullptr;
     QPainterPath shape() const override ;
     QRectF boundingRect()const override;
     void addPointToShape(const QPointF&) override ;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget) override ;
     virtual void export_dxf(DL_Dxf& dxf, DL_WriterA& dw, Units units) override;  //export to dxf file
     void save(QTextStream &out) override;
+
+    void updatePreview();
 
 
     QString typeName() const override { return "polyline"; }

@@ -4,9 +4,11 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainterPathStroker>
 #include <QDebug>
+#include <QGraphicsScene>
 #include "3rdparty/dxflib/src/dl_dxf.h"
 #include <QTextStream>
 #include "settings.h"
+#include "appmanager.h"
 
 GraphicsItems::GraphicsItems()
 {
@@ -111,15 +113,15 @@ void mypoint::save(QTextStream &out)
 
 
 
-mypolyline::mypolyline()
+mypolyline::mypolyline(AppManager* app)
+    : appManager_(app)
 {
-    setFlag (ItemIsSelectable, true);
+    setFlag(ItemIsSelectable, true);
     setAcceptHoverEvents(true);
-//    pen.setColor(Qt::green);
     pen.setCapStyle(Qt::RoundCap);
     mypolygon = new QPolygonF;
-    m_boundingRect=QRectF(-20,-20,40,40);
-    qDebug() << "konstriuktor polyline" ;
+    m_boundingRect = QRectF(-20,-20,40,40);
+    qDebug() << "konstriuktor polyline";
 }
 
 void mypolyline::addPointToShape(const QPointF& point)
@@ -149,10 +151,14 @@ QPainterPath mypolyline::shape() const
 
 QRectF mypolyline::boundingRect() const
 {
-    //return m_boundingRect;
     if (!mypolygon || mypolygon->isEmpty())
-            return QRectF();
-    return  mypolygon->boundingRect().adjusted(-3,-3,3,3);
+        return QRectF();
+
+    QPolygonF poly = *mypolygon;
+    if (!finished && appManager_) {
+        poly << appManager_->arm2EndPoint();
+    }
+    return poly.boundingRect().adjusted(-3, -3, 3, 3);
 }
 
 void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -170,6 +176,16 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     // spojnice posledního a prvního bodu během kreslení
     if (mypolygon->count() > 1 && !finished) {
         painter->drawLine(mypolygon->last(), mypolygon->first());
+    }
+
+    // pomocná čárkovaná spojnice od prvního bodu k rameni při kreslení
+    if (appManager_ && !finished && !mypolygon->isEmpty()) {
+        QPen tempPen = pen;
+        tempPen.setStyle(Qt::DashLine);
+        painter->setPen(tempPen);
+        const QPointF armEnd = appManager_->arm2EndPoint();
+        painter->drawLine(mypolygon->first(), armEnd);
+        painter->setPen(pen);
     }
 
     // zvýraznění posledního segmentu při výběru
@@ -204,6 +220,12 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
                               mypolygon->at(selectedSegmentIndex + 1));
         }
 
+}
+
+void mypolyline::updatePreview()
+{
+    prepareGeometryChange();
+    update();
 }
 
 void mypolyline::export_dxf(DL_Dxf& dxf, DL_WriterA& dw, Units units)

@@ -28,6 +28,7 @@ public:
     void appendToCurrent(const QPointF& point);
     void finishCurrent();
     bool hasCurrent() const;
+    GraphicsItems* currentShape() const;
 
 signals:
     void shapesChanged();

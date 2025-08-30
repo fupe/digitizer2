@@ -82,6 +82,9 @@ public:
     double distance;
     QPointF lastpoint;
 
+    QPointF arm2EndPoint() const { return endPointArm2_; }
+    GraphicsItems* currentShape() const { return shapeManager_.currentShape(); }
+
 signals:
     // stávající signály
     void armsUpdated(double arm1Angle, double arm2Angle, QPointF endPointArm1_, QPointF endPointArm2_ );
