@@ -100,7 +100,7 @@ void AppManager::setAddPointMode(AddPointMode mode) {
 
     if (mode == AddPointMode::Polyline) {
         if (!shapeManager_.hasCurrent()) {
-            auto *pl = new mypolyline();
+            auto *pl = new mypolyline(this);
             scene_->addItem(pl);
             shapeManager_.startShape(pl);
             shapeManager_.appendToCurrent(endPointArm2_);

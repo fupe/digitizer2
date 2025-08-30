@@ -103,3 +103,8 @@ bool ShapeManager::hasCurrent() const
 {
     return currentShape_ != nullptr;
 }
+
+GraphicsItems* ShapeManager::currentShape() const
+{
+    return currentShape_;
+}

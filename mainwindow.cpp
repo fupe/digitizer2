@@ -8,9 +8,12 @@
 #include <QApplication>
 #include <QCoreApplication>
 #include <QMouseEvent>
+#include <QPen>
+#include <QLineF>
 #include "3rdparty/dxflib/src/dl_dxf.h"
 
 #include "appmanager.h"
+#include "GraphicsItems.h"
 #include "CustomToolButton.h"
 #include "MeasureDialog.h"
 #include "calibratewindow.h"
@@ -288,6 +291,12 @@ void MainWindow::setup_scene()
     arm2->setPos(s.arm1_length,0);
     arm1->show();
     arm2->show();
+
+    QPen previewPen = *s.arms_pen;
+    previewPen.setStyle(Qt::DashLine);
+    polylinePreview = scene->addLine(QLineF(), previewPen);
+    polylinePreview->hide();
+
     ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(),Qt::KeepAspectRatio);
     //ui->graphicsView->show();
     //qDebug() << " konecscene = " ;
@@ -650,7 +659,7 @@ void MainWindow::on_actionSave_file_data_triggered()
         saveScene(scene, save_file);  // nebo ui->graphicsView->scene(), podle tvého projektu
 }
 
-void loadScene(QGraphicsScene *scene, const QString &filename)
+static void loadScene(QGraphicsScene *scene, const QString &filename, AppManager* app)
 {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -675,8 +684,8 @@ void loadScene(QGraphicsScene *scene, const QString &filename)
         }
         else if (type == "POLYLINE" && parts.size() >= 2)
         {
-            mypolyline *pl = new mypolyline();
-            int n = parts[1].toInt();
+            mypolyline *pl = new mypolyline(app);
+        ;    int n = parts[1].toInt();
             if (parts.size() >= 2 + n*2)
             {
                 for (int i = 0; i < n; i++)
@@ -728,7 +737,7 @@ void MainWindow::on_actionLoad_file_data_triggered()
     // Vymaž staré položky, pokud je třeba
     scene->clear();  // nebo ui->graphicsView->scene()->clear();
     // Načtení dat
-    loadScene(scene, filename);
+    loadScene(scene, filename, appManager());
     Zoom_All();
     qDebug() << "prekresluji" ;
 }
@@ -774,6 +783,21 @@ void MainWindow::updateArms(double Arm1Angle, double Arm2Angle,QPointF endPointA
     s = QString::number(mmToUnits(endPointArm2.y(), st.units), 'f', 8);
     ui->position2y->setText(s);
     lastEndArm2_ = endPointArm2;   // ⬅ uložit pro Zoom_Dynamic()
+
+    if (auto* pl = dynamic_cast<mypolyline*>(appManager()->currentShape())) {
+        pl->updatePreview();
+        if (pl->mypolygon && !pl->mypolygon->isEmpty()) {
+            QPen temp = pl->pen;
+            temp.setStyle(Qt::DashLine);
+            polylinePreview->setPen(temp);
+            polylinePreview->setLine(QLineF(pl->mypolygon->last(), endPointArm2));
+            polylinePreview->show();
+        } else {
+            polylinePreview->hide();
+        }
+    } else {
+        polylinePreview->hide();
+    }
 
 }
 
@@ -963,6 +987,10 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
     qDebug() << " onAddPointModeChanged" << appManager()->modeAddPointToString(mode);
     const bool on_measure = (mode == AddPointMode::Measure);
     const bool on_polyline = (mode == AddPointMode::Polyline);
+
+    if (!on_polyline && polylinePreview) {
+        polylinePreview->hide();
+    }
 
     // UI: update akce
     {
