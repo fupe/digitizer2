@@ -659,7 +659,7 @@ void MainWindow::on_actionSave_file_data_triggered()
         saveScene(scene, save_file);  // nebo ui->graphicsView->scene(), podle tvého projektu
 }
 
-void loadScene(QGraphicsScene *scene, const QString &filename)
+static void loadScene(QGraphicsScene *scene, const QString &filename, AppManager* app)
 {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -684,7 +684,7 @@ void loadScene(QGraphicsScene *scene, const QString &filename)
         }
         else if (type == "POLYLINE" && parts.size() >= 2)
         {
-            mypolyline *pl = new mypolyline(appManager());
+            mypolyline *pl = new mypolyline(app);
             int n = parts[1].toInt();
             if (parts.size() >= 2 + n*2)
             {
@@ -737,7 +737,7 @@ void MainWindow::on_actionLoad_file_data_triggered()
     // Vymaž staré položky, pokud je třeba
     scene->clear();  // nebo ui->graphicsView->scene()->clear();
     // Načtení dat
-    loadScene(scene, filename);
+    loadScene(scene, filename, appManager());
     Zoom_All();
     qDebug() << "prekresluji" ;
 }
