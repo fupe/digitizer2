@@ -173,19 +173,16 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawLine (10,-10,-10,10);
     painter->drawPolyline(*mypolygon);
 
-    // spojnice posledního a prvního bodu během kreslení
-    if (mypolygon->count() > 1 ) {
-        painter->drawLine(mypolygon->last(), mypolygon->first());
-    }
-
-    // pomocná čárkovaná spojnice od prvního bodu k rameni při kreslení
+    // pomocné čárkované spojnice k rameni při kreslení
     if (appManager_ && !finished && !mypolygon->isEmpty()) {
         QPen tempPen = pen;
         tempPen.setStyle(Qt::DashLine);
         painter->setPen(tempPen);
         const QPointF armEnd = appManager_->arm2EndPoint();
-       // painter->drawLine(mypolygon->first(), armEnd);
-       // painter->drawLine(mypolygon->last(), armEnd);
+        painter->drawLine(mypolygon->first(), armEnd);
+        if (mypolygon->count() > 1) {
+            painter->drawLine(mypolygon->last(), armEnd);
+        }
         painter->setPen(pen);
     }
 
@@ -205,7 +202,7 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawRect(m_boundingRect);
     painter->setPen(pen);
 */
-    // označení začátku polyline
+    // označení začátku polyline (malý kruh)
     if (!mypolygon->isEmpty()) {
         painter->drawEllipse(mypolygon->first(), 5, 5);
     }

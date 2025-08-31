@@ -292,11 +292,6 @@ void MainWindow::setup_scene()
     arm1->show();
     arm2->show();
 
-    QPen previewPen = *s.arms_pen;
-    previewPen.setStyle(Qt::DashLine);
-    polylinePreview = scene->addLine(QLineF(), previewPen);
-    polylinePreview->hide();
-
     ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(),Qt::KeepAspectRatio);
     //ui->graphicsView->show();
     //qDebug() << " konecscene = " ;
@@ -786,17 +781,6 @@ void MainWindow::updateArms(double Arm1Angle, double Arm2Angle,QPointF endPointA
 
     if (auto* pl = dynamic_cast<mypolyline*>(appManager()->currentShape())) {
         pl->updatePreview();
-        if (pl->mypolygon && !pl->mypolygon->isEmpty()) {
-            QPen temp = pl->pen;
-            temp.setStyle(Qt::DashLine);
-            polylinePreview->setPen(temp);
-            polylinePreview->setLine(QLineF(pl->mypolygon->last(), endPointArm2));
-            polylinePreview->show();
-        } else {
-            polylinePreview->hide();
-        }
-    } else {
-        polylinePreview->hide();
     }
 
 }
@@ -987,10 +971,6 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
     qDebug() << " onAddPointModeChanged" << appManager()->modeAddPointToString(mode);
     const bool on_measure = (mode == AddPointMode::Measure);
     const bool on_polyline = (mode == AddPointMode::Polyline);
-
-    if (!on_polyline && polylinePreview) {
-        polylinePreview->hide();
-    }
 
     // UI: update akce
     {
