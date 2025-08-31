@@ -790,7 +790,8 @@ void MainWindow::updateArms(double Arm1Angle, double Arm2Angle,QPointF endPointA
             QPen temp = pl->pen;
             temp.setStyle(Qt::DashLine);
             polylinePreview->setPen(temp);
-            polylinePreview->setLine(QLineF(pl->mypolygon->last(), endPointArm2));
+            //polylinePreview->setLine(QLineF(pl->mypolygon->last(), endPointArm2));
+            //polylinePreview->setLine(QLineF(pl->mypolygon->first(), endPointArm2));
             polylinePreview->show();
         } else {
             polylinePreview->hide();

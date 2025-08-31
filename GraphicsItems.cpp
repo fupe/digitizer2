@@ -174,7 +174,7 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawPolyline(*mypolygon);
 
     // spojnice posledního a prvního bodu během kreslení
-    if (mypolygon->count() > 1 ) {
+    if (mypolygon->count() > 1 && finished) {
         painter->drawLine(mypolygon->last(), mypolygon->first());
     }
 
