@@ -112,8 +112,8 @@ struct Settings {
     double arm1_length;
     double arm2_length;
     double auto_step;
-    double alfa_offset;
-    double beta_offset;
+    double alfa_offset = 0;
+    double beta_offset = 0;
     QString directory_save_dxf;
     QString directory_save_data;
     bool document_modified;

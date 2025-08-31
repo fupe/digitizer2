@@ -24,6 +24,7 @@ SettingsManager::SettingsManager(QObject* parent)
     current_.arms_pen->setWidth(3);
     current_.arms_pen->setCapStyle(Qt::RoundCap);
     current_.arms_pen->setCosmetic(true);
+    saveToStore(current_, false);
     emit settingsChanged(current_);
     emit shortcutsChanged(current_.shortcuts);
 
