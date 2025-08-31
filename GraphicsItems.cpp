@@ -172,8 +172,12 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->drawLine (-10,-10,10,10);
     painter->drawLine (10,-10,-10,10);
     painter->drawPolyline(*mypolygon);
+    // spojnice posledního a prvního bodu během kreslení
+    if (mypolygon->count() > 1 && finished) {
+        painter->drawLine(mypolygon->last(), mypolygon->first());
+    }
 
-    // pomocné čárkované spojnice k rameni při kreslení
+    // pomocná čárkovaná spojnice od prvního bodu k rameni při kreslení
     if (appManager_ && !finished && !mypolygon->isEmpty()) {
         QPen tempPen = pen;
         tempPen.setStyle(Qt::DashLine);
