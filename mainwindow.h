@@ -66,7 +66,6 @@ public:
     void handleCalibrateButtonClicked(bool checked);
     QGraphicsLineItem* arm1 = nullptr;  //rameno 1
     QGraphicsLineItem* arm2 = nullptr;  //rameno 2
-    QGraphicsLineItem* polylinePreview = nullptr;  // pomocná čára polyline
     QGraphicsEllipseItem *base;
     double x_value,y_value;  //koncova pozice prvniho ramene
     double x_value2,y_value2;  //koncova pozice druheho ramene
