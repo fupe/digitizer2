@@ -792,6 +792,7 @@ void MainWindow::updateUiForMode(AddPointMode mode) {
         ui->actionAdd_circle->setEnabled(false);
         ui->actionAdd_polyline->setEnabled(false);
         ui->actionMeasure->setEnabled(false);
+        ui->actionCalibrate->setEnabled(false);
 
         //-----vypnout triggered
 
@@ -808,6 +809,9 @@ void MainWindow::updateUiForMode(AddPointMode mode) {
         case AddPointMode::Measure:
             ui->actionMeasure->setEnabled(true);
             break;
+        case AddPointMode::Calibrate:
+            ui->actionCalibrate->setEnabled(true);
+            break;
         case AddPointMode::None:
             ui->actionAdd_polyline->setChecked(false);
             ui->actionAdd_polyline->setEnabled(true);
@@ -816,8 +820,7 @@ void MainWindow::updateUiForMode(AddPointMode mode) {
             ui->actionMeasure->setChecked(false);
             ui->actionMeasure->setEnabled(true);
             ui->actionCalibrate->setChecked(false);
-            //ui->actionCalibrate->setEnabled(true);
-
+            ui->actionCalibrate->setEnabled(true);
             break;
         default:
             // vše zůstává zakázané
@@ -871,25 +874,9 @@ void MainWindow::on_actionMeasure_toggled(bool on)
 
 void MainWindow::on_actionCalibrate_toggled(bool arg1)
 {
-
-
-    qDebug() << "on_actionCalibrate_toggled " << arg1 ;
-    if ( arg1)
-    {
-    appManager()->setAddPointMode(AddPointMode::Calibrate);
-    calibrate = new CalibrateWindow(this);
-    connect(calibrate, &CalibrateWindow::button_calibrate_clicked,this, &MainWindow::handleCalibrateButtonClicked);
-    //connect(calibrate, &CalibrateWindow::close_calibrate ,this, &MainWindow::calibrateWindowClosed);
-    calibrate->show();
-    const auto& s = settingsManager_->currentSettings();
-    calibrate->set_arms(s.arm1_length,s.arm2_length);
-
-    }
-    else
-    {
-        //qDebug() << " none from on_actionCalibrate_toggled" ;
-        //appManager()->setAddPointMode(AddPointMode::None);
-    }
+    qDebug() << "on_actionCalibrate_toggled " << arg1;
+    appManager()->setAddPointMode(arg1 ? AddPointMode::Calibrate
+                                       : AddPointMode::None);
 }
 
 void MainWindow::on_actionadd_point_triggered()
@@ -971,6 +958,7 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
     qDebug() << " onAddPointModeChanged" << appManager()->modeAddPointToString(mode);
     const bool on_measure = (mode == AddPointMode::Measure);
     const bool on_polyline = (mode == AddPointMode::Polyline);
+    const bool on_calibrate = (mode == AddPointMode::Calibrate);
 
     // UI: update akce
     {
@@ -996,6 +984,9 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
         ui->actionMeasure->setToolTip(on_measure
             ? tr("Konec měření (%1)").arg(seq.toString(QKeySequence::PortableText))
             : tr("Měření (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+        QSignalBlocker block_action_calibrate(ui->actionCalibrate);
+        ui->actionCalibrate->setChecked(on_calibrate);
     }
 
     // Otevřít/zavřít MeasureDialog
@@ -1035,6 +1026,43 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
             measure = nullptr;          // odpoj ukazatel hned
             dlg->close();               // vyvolá finished() → zbytek proběhne v lambda výše
             // žádné deleteLater(); dialog se smaže sám (WA_DeleteOnClose)
+        }
+    }
+
+    // Otevřít/zavřít CalibrateWindow
+    if (on_calibrate) {
+        if (!calibrate) {
+            calibrate = new CalibrateWindow(this);
+            calibrate->setAttribute(Qt::WA_DeleteOnClose, true);
+            connect(calibrate, &CalibrateWindow::button_calibrate_clicked,
+                    this, &MainWindow::handleCalibrateButtonClicked);
+            connect(calibrate, &CalibrateWindow::close_calibrate, this, [this](bool){
+                if (calibrate) {
+                    disconnect(appManager(), &AppManager::calibrationAngles, calibrate, &CalibrateWindow::addAngles);
+                    disconnect(calibrate, nullptr, this, nullptr);
+                    calibrate = nullptr;
+                }
+                if (appManager()->getAddPointMode() == AddPointMode::Calibrate) {
+                    appManager()->setAddPointMode(AddPointMode::None);
+                }
+                QSignalBlocker b(ui->actionCalibrate);
+                ui->actionCalibrate->setChecked(false);
+            });
+            connect(appManager(), &AppManager::calibrationAngles,
+                    calibrate, &CalibrateWindow::addAngles);
+            const auto& s = settingsManager_->currentSettings();
+            calibrate->set_arms(s.arm1_length, s.arm2_length);
+        }
+        calibrate->show();
+        calibrate->raise();
+        calibrate->activateWindow();
+    } else {
+        if (calibrate) {
+            disconnect(appManager(), &AppManager::calibrationAngles, calibrate, &CalibrateWindow::addAngles);
+            disconnect(calibrate, nullptr, this, nullptr);
+            auto* dlg = calibrate;
+            calibrate = nullptr;
+            dlg->close();
         }
     }
 

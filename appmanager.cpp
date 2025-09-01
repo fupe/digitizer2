@@ -61,6 +61,10 @@ void AppManager::setAngles(double alfa, double beta, int index)
     endPointArm1_ = QPointF(x_value_,  y_value_);
     endPointArm2_ = QPointF(x_value2_, y_value2_);
 
+    if (currentAddPointMode_ == AddPointMode::Calibrate) {
+        emit calibrationAngles(Arm1Angle_, Arm2Angle_);
+    }
+
     if (endPointBefore_ != endPointArm2_) {
         emit armsUpdated(Arm1Angle_, Arm2Angle_, endPointArm1_, endPointArm2_);
         emit positionChanged(endPointArm2_);
