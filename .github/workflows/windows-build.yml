@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive   # stáhne i 3rdparty/eigen
+          fetch-depth: 0          # volitelné, pro úplnou historii
 
       - name: Setup Python (stable)
         uses: actions/setup-python@v5
