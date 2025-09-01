@@ -75,6 +75,8 @@ public:
     void setAngles(const QVector<Angles>& angles);  //nastavi sadu uhlu
     void computeOpositPoints();  //najde protilehle body a jejich indexy
 
+    CalibrationResult estimateArmsLeastSquares(const QVector<QPointF>& positions);
+
     const QVector<CalibrationPoint>& points() const;
     double getArm1();
     double getArm2();

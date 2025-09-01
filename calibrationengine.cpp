@@ -1,5 +1,7 @@
 #include "calibrationengine.h"
 #include <QDebug>
+#include <Eigen/Dense>
+#include <algorithm>
 
 
 
@@ -184,6 +186,42 @@ void CalibrationEngine::computeOpositPoints() {
             maxErrorIndex_ = i;
         }
     }
+}
+
+CalibrationResult CalibrationEngine::estimateArmsLeastSquares(const QVector<QPointF>& positions)
+{
+    int n = std::min(positions.size(), angles_.size());
+    if (n == 0)
+    {
+        return {arm1_, arm2_};
+    }
+
+    Eigen::MatrixXd A(2 * n, 2);
+    Eigen::VectorXd b(2 * n);
+
+    for (int i = 0; i < n; ++i)
+    {
+        double alpha = angles_[i].alfa * M_PI / 180.0;
+        double beta = angles_[i].beta * M_PI / 180.0;
+        double c1 = std::cos(alpha);
+        double c2 = std::cos(alpha - beta - M_PI);
+        double s1 = std::sin(alpha);
+        double s2 = std::sin(alpha - beta - M_PI);
+
+        A(2 * i, 0) = c1;
+        A(2 * i, 1) = c2;
+        b(2 * i) = positions[i].x();
+
+        A(2 * i + 1, 0) = s1;
+        A(2 * i + 1, 1) = s2;
+        b(2 * i + 1) = positions[i].y();
+    }
+
+    Eigen::Vector2d arms = A.colPivHouseholderQr().solve(b);
+    arm1_ = arms[0];
+    arm2_ = arms[1];
+    CalibrationResult res{arm1_, arm2_};
+    return res;
 }
 
 

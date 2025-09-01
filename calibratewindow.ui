@@ -509,6 +509,19 @@ QPushButton:checked { background-color: red; color: white; }</string>
      <string>max chyba</string>
     </property>
    </widget>
+   <widget class="QCheckBox" name="checkBox_leastSquares">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>30</y>
+      <width>131</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Použít LS kalibraci</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -543,9 +556,10 @@ QPushButton:checked { background-color: red; color: white; }</string>
  <tabstops>
   <tabstop>doubleSpinBox_arm1</tabstop>
   <tabstop>doubleSpinBox_arm2</tabstop>
-  <tabstop>doubleSpinBox_prumer</tabstop>
-  <tabstop>doubleSpinBox_krok</tabstop>
-  <tabstop>calculate</tabstop>
+ <tabstop>doubleSpinBox_prumer</tabstop>
+ <tabstop>doubleSpinBox_krok</tabstop>
+ <tabstop>checkBox_leastSquares</tabstop>
+ <tabstop>calculate</tabstop>
   <tabstop>clear</tabstop>
  </tabstops>
  <resources/>

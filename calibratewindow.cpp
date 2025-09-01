@@ -929,6 +929,19 @@ void CalibrateWindow::on_calculate_clicked()
     QThread::msleep(100); //0.5sec
     QApplication::processEvents();
     }
+    if (ui->checkBox_leastSquares->isChecked())
+    {
+        CalibrationEngine lsEngine(ui->doubleSpinBox_arm1->value(), ui->doubleSpinBox_arm2->value());
+        lsEngine.setAngles(angleslist);
+        QVector<QPointF> positions;
+        for (const my_set_xy_points &pt : calibration_set.xy_points_list)
+            positions.append(pt.point_xy);
+        CalibrationResult lsRes = lsEngine.estimateArmsLeastSquares(positions);
+        qDebug() << "Grid arms:" << ui->doubleSpinBox_arm1->value() << ui->doubleSpinBox_arm2->value();
+        qDebug() << "Least squares arms:" << lsRes.adjustedArm1 << lsRes.adjustedArm2;
+        ui->doubleSpinBox_arm1->setValue(lsRes.adjustedArm1);
+        ui->doubleSpinBox_arm2->setValue(lsRes.adjustedArm2);
+    }
     QApplication::restoreOverrideCursor();
     ui->doubleSpinBox_krok->setValue(tempstep);
 }
