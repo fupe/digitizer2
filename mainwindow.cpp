@@ -1020,7 +1020,7 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
         }
         }
 
-    }
+
 
     if (mode == AddPointMode::Calibrate) {
         if (!calibrate) {
