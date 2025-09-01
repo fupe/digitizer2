@@ -15,13 +15,9 @@ CalibrateWindow::CalibrateWindow(AppManager* appManager, QWidget *parent)
       calibration_set(0, 0),
       ui(new Ui::CalibrateWindow),
       appManager_(appManager)
-
-
-
-
 {
     ui->setupUi(this);
-    ui->calculate->setEnabled(false);
+    //ui->calculate  ->setEnabled(false);
     scene = new QGraphicsScene(this);
     scene->setSceneRect(-100, -100, 200, 200);
     //ui->graphicsView->setScene(scene);
@@ -819,7 +815,7 @@ void CalibrateWindow::on_delete_max_error_point_clicked()
 
 void CalibrateWindow::check_calculate_enable(void)
 {
-    ui->calculate->setEnabled(angleslist.count() > 100);
+    //ui->calculate->setEnabled(angleslist.count() > 100);
 }
 
 

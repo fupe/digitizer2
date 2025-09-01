@@ -49,8 +49,8 @@
    <widget class="QDoubleSpinBox" name="doubleSpinBox_krok">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>90</y>
+      <x>650</x>
+      <y>190</y>
       <width>62</width>
       <height>22</height>
      </rect>
@@ -100,8 +100,8 @@
    <widget class="QDoubleSpinBox" name="doubleSpinBox_prumer">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>60</y>
+      <x>650</x>
+      <y>160</y>
       <width>62</width>
       <height>22</height>
      </rect>
@@ -126,8 +126,8 @@
    <widget class="QLabel" name="label_points">
     <property name="geometry">
      <rect>
-      <x>530</x>
-      <y>30</y>
+      <x>650</x>
+      <y>140</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -165,8 +165,8 @@
    <widget class="QLabel" name="label_procento_3">
     <property name="geometry">
      <rect>
-      <x>420</x>
-      <y>90</y>
+      <x>560</x>
+      <y>190</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -178,8 +178,8 @@
    <widget class="QLabel" name="label_procento_2">
     <property name="geometry">
      <rect>
-      <x>420</x>
-      <y>60</y>
+      <x>560</x>
+      <y>160</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -210,24 +210,24 @@
       <height>21</height>
      </rect>
     </property>
-   <property name="text">
-    <string>Grid calc</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="calculate_ls">
-   <property name="geometry">
-    <rect>
-     <x>680</x>
-     <y>90</y>
-     <width>80</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Least sq calc</string>
-   </property>
-  </widget>
-  <widget class="QDialogButtonBox" name="buttonBox">
+    <property name="text">
+     <string>Grid calc</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="calculate_ls">
+    <property name="geometry">
+     <rect>
+      <x>680</x>
+      <y>90</y>
+      <width>80</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Least sq calc</string>
+    </property>
+   </widget>
+   <widget class="QDialogButtonBox" name="buttonBox">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -246,8 +246,8 @@
    <widget class="QLabel" name="label_points_2">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>30</y>
+      <x>570</x>
+      <y>140</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -285,8 +285,8 @@
    <widget class="QPushButton" name="delete_max_error_point">
     <property name="geometry">
      <rect>
-      <x>680</x>
-      <y>70</y>
+      <x>640</x>
+      <y>250</y>
       <width>80</width>
       <height>21</height>
      </rect>
@@ -362,49 +362,49 @@ QPushButton:checked { background-color: red; color: white; }</string>
     <property name="minimum">
      <double>300.000000000000000</double>
     </property>
-   <property name="maximum">
-    <double>999.990000000000009</double>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="doubleSpinBox_arm1_3">
-   <property name="geometry">
-    <rect>
-     <x>380</x>
-     <y>30</y>
-     <width>81</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="decimals">
-    <number>3</number>
-   </property>
-   <property name="minimum">
-    <double>300.000000000000000</double>
-   </property>
-   <property name="maximum">
-    <double>999.990000000000009</double>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="doubleSpinBox_arm2_3">
-   <property name="geometry">
-    <rect>
-     <x>379</x>
-     <y>60</y>
-     <width>81</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="decimals">
-    <number>3</number>
-   </property>
-   <property name="minimum">
-    <double>300.000000000000000</double>
-   </property>
-   <property name="maximum">
-    <double>999.990000000000009</double>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_arm1_2">
+    <property name="maximum">
+     <double>999.990000000000009</double>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="doubleSpinBox_arm1_3">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>30</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="decimals">
+     <number>3</number>
+    </property>
+    <property name="minimum">
+     <double>300.000000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>999.990000000000009</double>
+    </property>
+   </widget>
+   <widget class="QDoubleSpinBox" name="doubleSpinBox_arm2_3">
+    <property name="geometry">
+     <rect>
+      <x>379</x>
+      <y>60</y>
+      <width>81</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="decimals">
+     <number>3</number>
+    </property>
+    <property name="minimum">
+     <double>300.000000000000000</double>
+    </property>
+    <property name="maximum">
+     <double>999.990000000000009</double>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_arm1_2">
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -416,8 +416,8 @@ QPushButton:checked { background-color: red; color: white; }</string>
     <property name="text">
      <string>grid</string>
     </property>
-  </widget>
-  <widget class="QLabel" name="label_arm1_3">
+   </widget>
+   <widget class="QLabel" name="label_arm1_3">
     <property name="geometry">
      <rect>
       <x>290</x>
@@ -426,23 +426,23 @@ QPushButton:checked { background-color: red; color: white; }</string>
       <height>13</height>
      </rect>
     </property>
-   <property name="text">
-    <string>derivate</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_arm1_4">
-   <property name="geometry">
-    <rect>
-     <x>390</x>
-     <y>10</y>
-     <width>61</width>
-     <height>13</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>least sq</string>
-   </property>
-  </widget>
+    <property name="text">
+     <string>derivate</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_arm1_4">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>10</y>
+      <width>61</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>least sq</string>
+    </property>
+   </widget>
    <widget class="QLabel" name="label_max_chyba_5">
     <property name="geometry">
      <rect>
@@ -504,24 +504,24 @@ QPushButton:checked { background-color: red; color: white; }</string>
       <height>21</height>
      </rect>
     </property>
-   <property name="text">
-    <string>refcircle_diff</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="refcircle_ls">
-   <property name="geometry">
-    <rect>
-     <x>380</x>
-     <y>140</y>
-     <width>61</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>refcircle_ls</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_max_chyba_6">
+    <property name="text">
+     <string>refcircle_diff</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="refcircle_ls">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>140</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>refcircle_ls</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_max_chyba_6">
     <property name="geometry">
      <rect>
       <x>70</x>
@@ -547,7 +547,7 @@ QPushButton:checked { background-color: red; color: white; }</string>
      <string>max chyba</string>
     </property>
    </widget>
-  <widget class="QLabel" name="avgaerrderiv">
+   <widget class="QLabel" name="avgaerrderiv">
     <property name="geometry">
      <rect>
       <x>280</x>
@@ -557,23 +557,23 @@ QPushButton:checked { background-color: red; color: white; }</string>
      </rect>
     </property>
     <property name="text">
-    <string>max chyba</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="avgaerrls">
-   <property name="geometry">
-    <rect>
-     <x>380</x>
-     <y>200</y>
-     <width>61</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>max chyba</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="sumaerrgrid">
+     <string>max chyba</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="avgaerrls">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>200</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>max chyba</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="sumaerrgrid">
     <property name="geometry">
      <rect>
       <x>180</x>
@@ -599,7 +599,7 @@ QPushButton:checked { background-color: red; color: white; }</string>
      <string>suma err </string>
     </property>
    </widget>
-  <widget class="QLabel" name="sumaerrderiv">
+   <widget class="QLabel" name="sumaerrderiv">
     <property name="geometry">
      <rect>
       <x>280</x>
@@ -609,35 +609,35 @@ QPushButton:checked { background-color: red; color: white; }</string>
      </rect>
     </property>
     <property name="text">
-    <string>max chyba</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="maxcirclerrorls">
-   <property name="geometry">
-    <rect>
-     <x>380</x>
-     <y>170</y>
-     <width>61</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>max chyba</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="sumaerrls">
-   <property name="geometry">
-    <rect>
-     <x>380</x>
-     <y>230</y>
-     <width>61</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>max chyba</string>
-   </property>
-  </widget>
+     <string>max chyba</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="maxcirclerrorls">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>170</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>max chyba</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="sumaerrls">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>230</y>
+      <width>61</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>max chyba</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -645,7 +645,7 @@ QPushButton:checked { background-color: red; color: white; }</string>
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>26</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -674,7 +674,6 @@ QPushButton:checked { background-color: red; color: white; }</string>
   <tabstop>doubleSpinBox_arm2</tabstop>
   <tabstop>doubleSpinBox_prumer</tabstop>
   <tabstop>doubleSpinBox_krok</tabstop>
-  <tabstop>calculate</tabstop>
   <tabstop>clear</tabstop>
   <tabstop>calculate_ls</tabstop>
  </tabstops>
