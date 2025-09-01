@@ -1,5 +1,21 @@
 #include "calibrationengine.h"
 #include <QDebug>
+#include <algorithm>
+#include <numeric>
+#include <Eigen/Dense>
+#include <unsupported/Eigen/NonLinearOptimization>
+#include <QPair>
+
+static QPointF forwardPoint(const Angles& angle, double arm1, double arm2)
+{
+    double alphaRad = angle.alfa * M_PI / 180.0;
+    double betaRad  = angle.beta * M_PI / 180.0;
+    double x1 = std::cos(alphaRad) * arm1;
+    double y1 = std::sin(alphaRad) * arm1;
+    double x2 = x1 + std::cos(alphaRad - betaRad - M_PI) * arm2;
+    double y2 = y1 + std::sin(alphaRad - betaRad - M_PI) * arm2;
+    return QPointF(x2, y2);
+}
 
 
 
@@ -33,8 +49,8 @@ const QVector<Angles>& CalibrationEngine::getAngles() const {
 
 
 void CalibrationEngine::computeOpositPoints() {
-    qDebug()<<"--computeOpositPoints--";
-    double delta = arm1_ * 0.01; // 1% změna pro numerickou derivaci
+    qDebug() << "--computeOpositPoints--";
+    double delta = arm1_ * 0.01;
 
     betaMinIndex_ = -1;
     betaMinOpositIndex_ = -1;
@@ -44,147 +60,123 @@ void CalibrationEngine::computeOpositPoints() {
     double minDiffArm2 = std::numeric_limits<double>::max();
 
     result_.clear();
+    QVector<double> endAngles;
+
     for (int i = 0; i < angles_.size(); ++i) {
         const Angles& angle = angles_[i];
+        QPointF pos = forwardPoint(angle, arm1_, arm2_);
+
+        CalibrationPoint pt;
+        pt.position = pos;
+        pt.index = i;
+
         double alphaRad = angle.alfa * M_PI / 180.0;
         double betaRad  = angle.beta * M_PI / 180.0;
 
-        double x1 = cos(alphaRad) * arm1_;
-        double y1 = sin(alphaRad) * arm1_;
-        double x2 = x1 + cos(alphaRad - betaRad - M_PI) * arm2_;
-        double y2 = y1 + sin(alphaRad - betaRad - M_PI) * arm2_;
+        double x1_up1 = std::cos(alphaRad) * (arm1_ + delta);
+        double y1_up1 = std::sin(alphaRad) * (arm1_ + delta);
+        double x2_up1 = x1_up1 + std::cos(alphaRad - betaRad - M_PI) * arm2_;
+        double y2_up1 = y1_up1 + std::sin(alphaRad - betaRad - M_PI) * arm2_;
+        pt.diffArm1 = QLineF(pos, QPointF(x2_up1, y2_up1)).length();
 
+        double x2_up2 = std::cos(alphaRad) * arm1_ + std::cos(alphaRad - betaRad - M_PI) * (arm2_ + delta);
+        double y2_up2 = std::sin(alphaRad) * arm1_ + std::sin(alphaRad - betaRad - M_PI) * (arm2_ + delta);
+        pt.diffArm2 = QLineF(pos, QPointF(x2_up2, y2_up2)).length();
 
-        CalibrationPoint pt;
-        pt.position = QPointF(x2, y2);
-        pt.index = i;
-        // Derivace podle arm1
-                double x1_up1 = cos(alphaRad) * (arm1_ + delta);
-                double y1_up1 = sin(alphaRad) * (arm1_ + delta);
-                double x2_up1 = x1_up1 + cos(alphaRad - betaRad - M_PI) * arm2_;
-                double y2_up1 = y1_up1 + sin(alphaRad - betaRad - M_PI) * arm2_;
-                pt.diffArm1 = QLineF(QPointF(x2, y2), QPointF(x2_up1, y2_up1)).length();
+        if (pt.diffArm1 < minDiffArm1) { minDiffArm1 = pt.diffArm1; betaMinIndex_ = i; }
+        if (pt.diffArm2 < minDiffArm2) { minDiffArm2 = pt.diffArm2; alfaMinIndex_ = i; }
 
-                // Derivace podle arm2
-                double x2_up2 = x1 + cos(alphaRad - betaRad - M_PI) * (arm2_ + delta);
-                double y2_up2 = y1 + sin(alphaRad - betaRad - M_PI) * (arm2_ + delta);
-                pt.diffArm2 = QLineF(QPointF(x2, y2), QPointF(x2_up2, y2_up2)).length();
-
-                if (pt.diffArm1 < minDiffArm1) {
-                    minDiffArm1 = pt.diffArm1;
-                    betaMinIndex_ = i;
-                }
-                if (pt.diffArm2 < minDiffArm2) {
-                    minDiffArm2 = pt.diffArm2;
-                    alfaMinIndex_ = i;
-                }
-
-                result_.append(pt);
-       }
-
-    // Fit kružnice metodou nejmenších čtverců (algebraický fit)
-    QVector<QPointF> positions;
-    for (const CalibrationPoint& pt : result_) {
-        positions.append(pt.position);
+        result_.append(pt);
+        endAngles.append(std::atan2(pos.y(), pos.x()));
     }
 
-        int N = positions.size();
-        double sumX = 0, sumY = 0, sumX2 = 0, sumY2 = 0, sumXY = 0, sumX3 = 0, sumY3 = 0, sumX1Y2 = 0, sumX2Y1 = 0;
+    // robust circle fit
+    QVector<QPointF> positions;
+    for (const CalibrationPoint& pt : result_) positions.append(pt.position);
 
-        for (const QPointF& p : positions) {
-            double x = p.x();
-            double y = p.y();
-            double x2 = x * x;
-            double y2 = y * y;
-            sumX += x;
-            sumY += y;
-            sumX2 += x2;
-            sumY2 += y2;
-            sumXY += x * y;
-            sumX3 += x2 * x;
-            sumY3 += y2 * y;
-            sumX1Y2 += x * y2;
-            sumX2Y1 += x2 * y;
+    auto fitCircle = [](const QVector<QPointF>& pts, QPointF& center, double& radius) {
+        int N = pts.size();
+        if (N < 3) { center = QPointF(); radius = 0; return; }
+        Eigen::MatrixXd A(N,3);
+        Eigen::VectorXd b(N);
+        for (int i=0;i<N;++i) {
+            double x = pts[i].x();
+            double y = pts[i].y();
+            A(i,0)=2*x; A(i,1)=2*y; A(i,2)=1.0;
+            b(i)=x*x + y*y;
         }
+        Eigen::Vector3d x = A.colPivHouseholderQr().solve(b);
+        center = QPointF(x[0], x[1]);
+        radius = std::sqrt(x[2] + x[0]*x[0] + x[1]*x[1]);
+    };
 
-        double C = N * sumX2 - sumX * sumX;
-        double D = N * sumXY - sumX * sumY;
-        double E = N * sumX3 + N * sumX1Y2 - (sumX2 + sumY2) * sumX;
-        double G = N * sumY2 - sumY * sumY;
-        double H = N * sumX2Y1 + N * sumY3 - (sumX2 + sumY2) * sumY;
+    fitCircle(positions, circleCenter_, circleRadius_);
+    QVector<double> residuals;
+    double totalErr = 0.0;
+    for (const QPointF& p : positions) {
+        double dist = QLineF(p, circleCenter_).length();
+        double err = std::abs(dist - circleRadius_);
+        residuals.append(err);
+        totalErr += err;
+    }
+    double avgErr = residuals.isEmpty()?0.0:totalErr/residuals.size();
+    double threshold = avgErr * 3.0;
+    QVector<QPointF> filtered;
+    for (int i=0;i<positions.size();++i)
+        if (residuals[i] <= threshold) filtered.append(positions[i]);
+    if (filtered.size() >=3 && filtered.size()<positions.size())
+        fitCircle(filtered, circleCenter_, circleRadius_);
 
-        double denominator = 2 * (C * G - D * D);
-        QPointF circleCenter;
-        double radius = 0.0;
-        if (std::abs(denominator) > 1e-12) {
-            double a = (E * G - D * H) / denominator;
-            double b = (C * H - D * E) / denominator;
-            circleCenter = QPointF(a, b);
-            circleCenter_ = circleCenter;
+    totalErr = 0.0;
+    maxErrorCircleIndex_ = -1;
+    maxErrorCircle_ = 0.0;
+    for (int i=0;i<result_.size();++i) {
+        double dist = QLineF(result_[i].position, circleCenter_).length();
+        double err = std::abs(dist - circleRadius_);
+        totalErr += err;
+        if (err > maxErrorCircle_) { maxErrorCircle_ = err; maxErrorCircleIndex_ = i; }
+    }
+    averageCircleFitError_ = result_.isEmpty()?0.0:totalErr/result_.size();
 
-            double rSum = 0.0;
-            for (const QPointF& p : positions) {
-                rSum += QLineF(p, circleCenter).length();
-            }
-            radius = rSum / N;
-            circleRadius_ = radius;
-        }
+    // search opposite points
+    std::vector<std::pair<double,int>> sorted;
+    sorted.reserve(endAngles.size());
+    for (int i=0;i<endAngles.size();++i) sorted.push_back({endAngles[i], i});
+    std::sort(sorted.begin(), sorted.end(), [](const auto& a, const auto& b){return a.first<b.first;});
+    auto comp = [](const std::pair<double,int>& a, const std::pair<double,int>& b){return a.first<b.first;};
 
+    for (int i=0; i<result_.size(); ++i) {
+        double target = endAngles[i] + M_PI;
+        if (target > M_PI) target -= 2*M_PI;
+        if (target < -M_PI) target += 2*M_PI;
+        auto it = std::lower_bound(sorted.begin(), sorted.end(), std::make_pair(target,-1), comp);
+        int idx1 = (it==sorted.end())? sorted.front().second : it->second;
+        int idx0 = (it==sorted.begin())? sorted.back().second : std::prev(it)->second;
+        double d1 = QLineF(result_[i].position, result_[idx1].position).length();
+        double d0 = QLineF(result_[i].position, result_[idx0].position).length();
+        int farIndex; double maxDist;
+        if (d1 > d0){ farIndex=idx1; maxDist=d1;} else {farIndex=idx0; maxDist=d0;}
 
-        double totalCircleError = 0.0;
-        maxErrorCircleIndex_ = -1;
-        maxErrorCircle_ = 0;
-        averageCircleFitError_ = 0 ;
-
-        for (int i = 0; i < result_.size(); ++i) {
-            double dist = QLineF(result_[i].position, circleCenter).length();
-            double err = std::abs(dist - radius);
-            totalCircleError += err;
-
-            if (err > maxErrorCircle_) {
-                maxErrorCircle_ = err;
-                maxErrorCircleIndex_ = i;
-            }
-        }
-        averageCircleFitError_=totalCircleError/ result_.size();
-    // Najdi protilehlé body
-    for (int i = 0; i < result_.size(); ++i) {
-        double maxDist = 0.0;
-        int farIndex = -1;
-        for (int j = 0; j < result_.size(); ++j) {
-            if (i == j) continue;
-            double d = QLineF(result_[i].position, result_[j].position).length();
-            if (d > maxDist) {
-                maxDist = d;
-                farIndex = j;
-            }
-        }
         result_[i].opposite = result_[farIndex].position;
         result_[i].oppositeIndex = farIndex;
         result_[i].distanceToOpposite = maxDist;
         result_[i].diff = maxDist;
         if (i == betaMinIndex_) betaMinOpositIndex_ = farIndex;
         if (i == alfaMinIndex_) alfaMinOpositIndex_ = farIndex;
-   //qDebug() << "Nejvzdálenější bod pro bod: " << i <<" " << result_[i].position << "  je " << result_[farIndex].position << "  opoindex " << farIndex << "vzdalenost  je  " << maxDist ;
     }
-    // Výpočet průměrné vzdálenosti
+
     double sum = 0.0;
-    for (const auto& pt : result_) {
-        sum += pt.distanceToOpposite;
-    }
-    double average = sum / result_.size();
-    average_dist_ = average;
-    // Najdi bod s největší odchylkou od průměru
+    for (const auto& pt : result_) sum += pt.distanceToOpposite;
+    average_dist_ = result_.isEmpty()?0.0:sum/result_.size();
+
     double maxError = 0.0;
     maxErrorIndex_ = -1;
-    for (int i = 0; i < result_.size(); ++i) {
-        double error = std::abs(result_[i].distanceToOpposite - average);
-        if (error > maxError) {
-            maxError = error;
-            maxErrorIndex_ = i;
-        }
+    for (int i=0;i<result_.size();++i) {
+        double error = std::abs(result_[i].distanceToOpposite - average_dist_);
+        if (error > maxError) { maxError = error; maxErrorIndex_ = i; }
     }
 }
+
 
 
 CalibrationResult CalibrationEngine::optimizeArmsGrid(double referenceDistance,
@@ -344,6 +336,66 @@ CalibrationResult CalibrationEngine::optimizeArms(double referenceDistance,
 
 
 
+struct ArmFunctor : Eigen::DenseFunctor<double> {
+    const QVector<Angles>& angles;
+    const QVector<QPair<int,int>>& pairs;
+    double reference;
+    ArmFunctor(const QVector<Angles>& a, const QVector<QPair<int,int>>& p, double ref)
+        : Eigen::DenseFunctor<double>(2, p.size()), angles(a), pairs(p), reference(ref) {}
+    int operator()(const Eigen::VectorXd &x, Eigen::VectorXd &fvec) const {
+        double a1 = x[0], a2 = x[1];
+        for (int k=0;k<pairs.size();++k) {
+            const Angles& ai = angles[pairs[k].first];
+            const Angles& aj = angles[pairs[k].second];
+            QPointF p1 = forwardPoint(ai, a1, a2);
+            QPointF p2 = forwardPoint(aj, a1, a2);
+            double dist = QLineF(p1, p2).length();
+            fvec[k] = dist - reference;
+        }
+        return 0;
+    }
+};
+
+CalibrationResult CalibrationEngine::optimizeArmsLM(double referenceDistance)
+{
+    QVector<QPair<int,int>> pairs;
+    for (int i=0;i<result_.size();++i) {
+        int j = result_[i].oppositeIndex;
+        if (i < j) pairs.append(qMakePair(i,j));
+    }
+    if (pairs.isEmpty()) return {arm1_, arm2_};
+
+    ArmFunctor functor(angles_, pairs, referenceDistance);
+    Eigen::LevenbergMarquardt<ArmFunctor> lm(functor);
+    Eigen::VectorXd x(2); x[0]=arm1_; x[1]=arm2_;
+    lm.minimize(x);
+    arm1_ = x[0]; arm2_ = x[1];
+    return {arm1_, arm2_};
+}
+
+CalibrationResult CalibrationEngine::estimateArmsLeastSquares()
+{
+    if (result_.isEmpty()) return {arm1_, arm2_};
+    int n = angles_.size();
+    Eigen::MatrixXd A(2*n,2);
+    Eigen::VectorXd b(2*n);
+    for (int i=0;i<n;++i) {
+        const Angles& angle = angles_[i];
+        double alphaRad = angle.alfa * M_PI / 180.0;
+        double betaRad  = angle.beta  * M_PI / 180.0;
+        const QPointF& p = result_[i].position;
+        A(2*i,0) = std::cos(alphaRad);
+        A(2*i,1) = std::cos(alphaRad - betaRad - M_PI);
+        b(2*i)   = p.x();
+        A(2*i+1,0) = std::sin(alphaRad);
+        A(2*i+1,1) = std::sin(alphaRad - betaRad - M_PI);
+        b(2*i+1)   = p.y();
+    }
+    Eigen::Vector2d x = A.colPivHouseholderQr().solve(b);
+    arm1_ = x[0];
+    arm2_ = x[1];
+    return {arm1_, arm2_};
+}
 const QVector<CalibrationPoint>& CalibrationEngine::points() const {
     return result_;
 }

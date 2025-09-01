@@ -8,6 +8,7 @@
 #include <QGraphicsItem>
 #include <QMessageBox>
 #include <calibrationengine.h>
+#include "calibrationcontroller.h"
 #include "settings.h"
 #include <QThread>
 

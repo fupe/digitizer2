@@ -829,106 +829,33 @@ void CalibrateWindow::on_pushButton_clicked()
 
 void CalibrateWindow::on_calculate_clicked()
 {
-
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    double stepArm = ui->doubleSpinBox_krok->value();
-    double tempstep = stepArm;
-    for (int i=1;i<100;i++){
-     CalibrationEngine engine(ui->doubleSpinBox_arm1_2->value(),ui->doubleSpinBox_arm2_2->value());
-     engine.setAngles(angleslist);
-     engine.computeOpositPoints();
-    //qDebug() << "vysledek z noveho engine arm1" << engine.getArm1() << "  arm2=" << engine.getArm2();
-    qDebug() << " circlefit " << engine.getCircleRadius();
-    double percent = 1;
-    DeviationResult DeviationResult = computeMaxDeviation(angleslist,
-                                             engine.points(),
-                                             engine.getArm1(),
-                                             engine.getArm2(),
-                                             percent);
-    qDebug() << " minIndexArm1 " << DeviationResult.minIndexArm1 << " mixDeviationArm1" << DeviationResult.minDeviationArm1 << " maxIndexArm1 " << DeviationResult.maxIndexArm1 << " maxDeviationArm1 " << DeviationResult.maxDeviationArm1;
-    qDebug() << " minIndexArm2 " << DeviationResult.minIndexArm2 << " mixDeviationArm2" << DeviationResult.minDeviationArm2 << " maxIndexArm2 " << DeviationResult.maxIndexArm2 << " maxDeviationArm2 " << DeviationResult.maxDeviationArm2;
 
-    CalibrationResult result = engine.optimizeArms(
-                ui->doubleSpinBox_prumer->value(),       // reference distance
-                stepArm,         // step arm1
-                stepArm,         // step arm2
-                10,                                      // steps
-                engine.getBetaMinIndex(),
-                engine.getBetaMinOpositIndex(),
-                engine.getAlfaMinIndex(),
-                engine.getAlfaMinOpositIndex()
-                );
-               qDebug() << " optimalizovane rameno 1 " << result.adjustedArm1 << " optimalizovane rameno 2 " << result.adjustedArm2 ;
-    qDebug() << "Součet všech odchylek diff:"  <<  engine.totalDeviationFromReference(ui->doubleSpinBox_prumer->value());
+    CalibrationController controller(ui->doubleSpinBox_arm1->value(),
+                                     ui->doubleSpinBox_arm2->value());
+    controller.setAngles(angleslist);
+    double reference = ui->doubleSpinBox_prumer->value();
 
-    qDebug() << " prumerna hodnota "  <<engine.getaverage_dist();
-    ui->doubleSpinBox_arm1_2->setValue(result.adjustedArm1);
-    ui->doubleSpinBox_arm2_2->setValue(result.adjustedArm2);
-    stepArm=stepArm*0.8;
-
-
-    QString circlerad = QString::number(engine.getCircleRadius()*2);
-    ui->refcircle_deriv->setText(circlerad);
-    QString circlerr = QString::number(engine.getmaxErrorCircle());
-    ui->maxcirclerrorderiv->setText(circlerr);
-    QString circlaverageerr = QString::number(engine.getAverageCircleFitError());
-    ui->avgaerrderiv->setText(circlaverageerr);
-    QString sumeerr = QString::number(engine.totalDeviationFromReference(ui->doubleSpinBox_prumer->value()));
-    ui->sumaerrderiv->setText(sumeerr);
-
-    //QThread::sleep(1); // pozastaví běh na 1 sekundu
-    ui->doubleSpinBox_krok->setValue(stepArm);
-    QApplication::processEvents();
-    QThread::msleep(100); //0.5sec
-
-    }
-//--------------konec deriv ---- zacatek grid
-    ui->doubleSpinBox_krok->setValue(tempstep);
-    double stepArm1 = ui->doubleSpinBox_krok->value();
-    double stepArm2 = ui->doubleSpinBox_krok->value();
-    //double percent = 0.0;
-    double percent = 1;
-    int steps = 10;
-    for (int i=0 ; stepArm1>0.0001 ;i++)
-    {
-    CalibrationEngine engine2(ui->doubleSpinBox_arm1->value(),ui->doubleSpinBox_arm2->value());
-    engine2.setAngles(angleslist);
-    engine2.computeOpositPoints();
-    DeviationResult DeviationResult = computeMaxDeviation(angleslist,
-                                             engine2.points(),
-                                             engine2.getArm1(),
-                                             engine2.getArm2(),
-                                             percent);
-    qDebug() << " minIndexArm1 " << DeviationResult.minIndexArm1 << " mixDeviationArm1" << DeviationResult.minDeviationArm1 << " maxIndexArm1 " << DeviationResult.maxIndexArm1 << " maxDeviationArm1 " << DeviationResult.maxDeviationArm1;
-    qDebug() << " minIndexArm2 " << DeviationResult.minIndexArm2 << " mixDeviationArm2" << DeviationResult.minDeviationArm2 << " maxIndexArm2 " << DeviationResult.maxIndexArm2 << " maxDeviationArm2 " << DeviationResult.maxDeviationArm2;
-    double refdist=ui->doubleSpinBox_prumer->value();
-    CalibrationResult result = engine2.optimizeArmsGrid(refdist,stepArm1, stepArm2, steps);
-
-    qDebug() << "Optimal arm1 from grid:" << result.adjustedArm1;
-    qDebug() << "Optimal arm2 from grid:" << result.adjustedArm2;
-    qDebug() << "Součet všech odchylek diff:"  <<  engine2.totalDeviationFromReference(ui->doubleSpinBox_prumer->value());
-
+    CalibrationResult result = controller.calibrate(reference);
 
     ui->doubleSpinBox_arm1->setValue(result.adjustedArm1);
     ui->doubleSpinBox_arm2->setValue(result.adjustedArm2);
-    QApplication::processEvents();
-    stepArm1=stepArm1*0.9;
-    stepArm2=stepArm2*0.9;
-    ui->doubleSpinBox_krok->setValue(stepArm1);
-    QString circlerad = QString::number(engine2.getCircleRadius()*2);
-    ui->refcircle_grid->setText(circlerad);
-    QString circlerr = QString::number(engine2.getmaxErrorCircle());
-    ui->maxcirclerrorgrid->setText(circlerr);
-    QString circlaverageerr = QString::number(engine2.getAverageCircleFitError());
-    ui->avgaerrgrid->setText(circlaverageerr);
-    QString sumeerr = QString::number(engine2.totalDeviationFromReference(ui->doubleSpinBox_prumer->value()));
-    ui->sumaerrgrid->setText(sumeerr);
+    ui->doubleSpinBox_arm1_2->setValue(result.adjustedArm1);
+    ui->doubleSpinBox_arm2_2->setValue(result.adjustedArm2);
 
+    const CalibrationEngine& engine = controller.engine();
+    QString rad = QString::number(engine.getCircleRadius()*2);
+    ui->refcircle_grid->setText(rad);
+    ui->refcircle_deriv->setText(rad);
+    QString err = QString::number(engine.getmaxErrorCircle());
+    ui->maxcirclerrorgrid->setText(err);
+    ui->maxcirclerrorderiv->setText(err);
+    QString avg = QString::number(engine.getAverageCircleFitError());
+    ui->avgaerrgrid->setText(avg);
+    ui->avgaerrderiv->setText(avg);
+    QString sum = QString::number(engine.totalDeviationFromReference(reference));
+    ui->sumaerrgrid->setText(sum);
+    ui->sumaerrderiv->setText(sum);
 
-    //QThread::sleep(1); // pozastaví běh na 1 sekundu
-    QThread::msleep(100); //0.5sec
-    QApplication::processEvents();
-    }
     QApplication::restoreOverrideCursor();
-    ui->doubleSpinBox_krok->setValue(tempstep);
 }

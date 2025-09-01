@@ -26,6 +26,7 @@ SOURCES += \
     appmanager.cpp \
     calibratewindow.cpp \
     calibrationengine.cpp \
+    calibrationcontroller.cpp \
     main.cpp \
     mainwindow.cpp \
     serialmanager.cpp \
@@ -49,6 +50,7 @@ HEADERS += \
     appmanager.h \
     calibratewindow.h \
     calibrationengine.h \
+    calibrationcontroller.h \
     idatasourceworker.h \
     mainwindow.h \
     modbusworker.h \
@@ -79,3 +81,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resources.qrc
+
+INCLUDEPATH += /usr/include/eigen3
