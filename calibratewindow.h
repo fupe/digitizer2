@@ -88,6 +88,9 @@ private slots:
     void on_pushButton_toggled(bool checked);
     void on_pushButton_clicked();
     void on_calculate_clicked();
+    void on_calculate_deriv_clicked();
+    void on_calculate_grid_clicked();
+    void on_calculate_ls_clicked();
 signals :
     void button_calibrate_clicked(bool checked);
     void close_calibrate(bool status);
@@ -96,6 +99,9 @@ protected:
 private:
     Ui::CalibrateWindow *ui;
     AppManager* appManager_ = nullptr;
+    void runDerivativeCalculation();
+    void runGridCalculation();
+    void runLeastSquaresCalculation();
 };
 
 #endif // CALIBRATEWINDOW_H

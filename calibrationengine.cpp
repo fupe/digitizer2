@@ -341,6 +341,47 @@ CalibrationResult CalibrationEngine::optimizeArms(double referenceDistance,
     return CalibrationResult{bestArm1, bestArm2};
 }
 
+CalibrationResult CalibrationEngine::optimizeArmsLeastSquares(double referenceDistance) {
+    qDebug() << "--optimizeArmsLeastSquares--";
+    const double delta = 0.001;
+    auto computeDistances = [&](double a1, double a2) {
+        CalibrationEngine eng(a1, a2);
+        eng.setAngles(angles_);
+        eng.computeOpositPoints();
+        QVector<double> dist;
+        for (const CalibrationPoint& pt : eng.points()) {
+            dist.append(pt.distanceToOpposite);
+        }
+        return dist;
+    };
+
+    QVector<double> base = computeDistances(arm1_, arm2_);
+    QVector<double> dArm1 = computeDistances(arm1_ + delta, arm2_);
+    QVector<double> dArm2 = computeDistances(arm1_, arm2_ + delta);
+
+    double a11 = 0.0, a12 = 0.0, a22 = 0.0;
+    double b1 = 0.0, b2 = 0.0;
+    for (int i = 0; i < base.size(); ++i) {
+        double e = base[i] - referenceDistance;
+        double der1 = (dArm1[i] - base[i]) / delta;
+        double der2 = (dArm2[i] - base[i]) / delta;
+        a11 += der1 * der1;
+        a12 += der1 * der2;
+        a22 += der2 * der2;
+        b1 += der1 * e;
+        b2 += der2 * e;
+    }
+
+    double det = a11 * a22 - a12 * a12;
+    double corr1 = 0.0, corr2 = 0.0;
+    if (std::abs(det) > 1e-9) {
+        corr1 = (-b1 * a22 + b2 * a12) / det;
+        corr2 = (-a11 * b2 + a12 * b1) / det;
+    }
+
+    return CalibrationResult{arm1_ + corr1, arm2_ + corr2};
+}
+
 
 
 

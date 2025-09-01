@@ -72,6 +72,7 @@ public:
                                    int betaMinOpositIndex,
                                    int alfaMinIndex,
                                    int alfaMinOpositIndex);
+    CalibrationResult optimizeArmsLeastSquares(double referenceDistance);
     void setAngles(const QVector<Angles>& angles);  //nastavi sadu uhlu
     void computeOpositPoints();  //najde protilehle body a jejich indexy
 
