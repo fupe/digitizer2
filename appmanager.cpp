@@ -76,16 +76,12 @@ void AppManager::setAngles(double alfa, double beta, int index)
     if (distance > settings_.auto_step && currentContiMode_ == ContiMode::Continous)
     {
         qDebug() << "distance " << distance;
-        if (currentAddPointMode_ == AddPointMode::None) {
-            addPointtoShapeManager();
-        }
-        if (currentAddPointMode_ == AddPointMode::Polyline) {
-            // zde případně doplnit přidání do polyline
-        }
-        lastpoint = endPointArm2_;
+        addpointfrommainwindow();
     }
-
-    emit sceneModified(endPointArm2_); // pro zoom
+    else
+    {
+        emit sceneModified(endPointArm2_); // pro zoom
+    }
 }
 
 void AppManager::setAddPointMode(AddPointMode mode) {
