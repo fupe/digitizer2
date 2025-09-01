@@ -93,6 +93,7 @@ signals:
     void modeAddPointChanged (AddPointMode newmode);
     void modeContiChanged(ContiMode mode);
     void sceneModified(QPointF endarm2);
+    void calibrateAnglesAdded(double alfaDeg, double betaDeg);
 
     // --- Nové signály související se sériovým portem ---
     void serialOpened();                         // bez argumentu (matchuje SerialManager::opened())

@@ -11,6 +11,8 @@
 #include "settings.h"
 #include <QThread>
 
+class AppManager;  // dopředná deklarace
+
 struct my_set_xy_points {
     QPointF point_xy;
     int index;
@@ -29,7 +31,7 @@ class CalibrateWindow : public QMainWindow
 
 public:
 
-    explicit CalibrateWindow(QWidget *parent = nullptr);
+    explicit CalibrateWindow(AppManager* appManager, QWidget *parent = nullptr);
     ~CalibrateWindow();
     QPen pen;
     void set_arms(double arm1, double arm2);
@@ -93,6 +95,7 @@ protected:
 
 private:
     Ui::CalibrateWindow *ui;
+    AppManager* appManager_ = nullptr;
 };
 
 #endif // CALIBRATEWINDOW_H

@@ -162,6 +162,12 @@ void AppManager::addpointfrommainwindow(void)
             qDebug() << "case measure add point";
             addPointtoMeasuru();
             break;
+        case AddPointMode::Calibrate:
+            {
+                double betaDeg = (beta_ - settings_.beta_offset) * 180.0 / kPi;
+                emit calibrateAnglesAdded(Arm1Angle_, betaDeg);
+            }
+            break;
         default:
             break;
     }

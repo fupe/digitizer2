@@ -109,7 +109,6 @@ private slots:
 
     void on_actionMeasure_toggled(bool arg1);
 
-    void on_actionCalibrate_toggled(bool arg1);
 
     void on_actionadd_point_triggered();
 

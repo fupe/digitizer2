@@ -8,10 +8,13 @@
 //#include <QThread>
 
 #include <QDebug>
-CalibrateWindow::CalibrateWindow(QWidget *parent)
+#include "appmanager.h"
+
+CalibrateWindow::CalibrateWindow(AppManager* appManager, QWidget *parent)
     : QMainWindow(parent),
       calibration_set(0, 0),
-      ui(new Ui::CalibrateWindow)
+      ui(new Ui::CalibrateWindow),
+      appManager_(appManager)
 
 
 
@@ -30,6 +33,10 @@ CalibrateWindow::CalibrateWindow(QWidget *parent)
     //ui->graphicsView->setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
     //ui->graphicsView->setHorizontalScrollBarPolicy( Qt::ScrollBarAlwaysOff );
 
+    if (appManager_) {
+        connect(appManager_, &AppManager::calibrateAnglesAdded,
+                this, &CalibrateWindow::addAngles, Qt::UniqueConnection);
+    }
 }
 
 CalibrateWindow::~CalibrateWindow()

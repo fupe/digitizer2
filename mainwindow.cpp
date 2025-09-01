@@ -51,7 +51,7 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
     qDebug()<<"konstruktoru 3";
     connect(ui->actionAdd_polyline, &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Polyline); });
     connect(ui->actionAdd_circle,   &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Circle);   });
-    connect(ui->actionCalibrate,    &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Calibrate);});
+    connect(ui->actionCalibrate,    &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Calibrate); else appManager()->setAddPointMode(AddPointMode::None);});
     connect(appManager(), &AppManager::modeAddPointChanged,this, &MainWindow::onAddPointModeChanged); //reakce na zmenu modu
     qDebug()<<"konstruktoru 4";
     // UI → AppManager
@@ -792,6 +792,7 @@ void MainWindow::updateUiForMode(AddPointMode mode) {
         ui->actionAdd_circle->setEnabled(false);
         ui->actionAdd_polyline->setEnabled(false);
         ui->actionMeasure->setEnabled(false);
+        ui->actionCalibrate->setEnabled(false);
 
         //-----vypnout triggered
 
@@ -808,6 +809,10 @@ void MainWindow::updateUiForMode(AddPointMode mode) {
         case AddPointMode::Measure:
             ui->actionMeasure->setEnabled(true);
             break;
+        case AddPointMode::Calibrate:
+            ui->actionCalibrate->setEnabled(true);
+            ui->actionCalibrate->setChecked(true);
+            break;
         case AddPointMode::None:
             ui->actionAdd_polyline->setChecked(false);
             ui->actionAdd_polyline->setEnabled(true);
@@ -816,7 +821,7 @@ void MainWindow::updateUiForMode(AddPointMode mode) {
             ui->actionMeasure->setChecked(false);
             ui->actionMeasure->setEnabled(true);
             ui->actionCalibrate->setChecked(false);
-            //ui->actionCalibrate->setEnabled(true);
+            ui->actionCalibrate->setEnabled(true);
 
             break;
         default:
@@ -867,29 +872,6 @@ void MainWindow::on_actionMeasure_toggled(bool on)
 {
 
      appManager()->setAddPointMode(on ? AddPointMode::Measure : AddPointMode::None);
-}
-
-void MainWindow::on_actionCalibrate_toggled(bool arg1)
-{
-
-
-    qDebug() << "on_actionCalibrate_toggled " << arg1 ;
-    if ( arg1)
-    {
-    appManager()->setAddPointMode(AddPointMode::Calibrate);
-    calibrate = new CalibrateWindow(this);
-    connect(calibrate, &CalibrateWindow::button_calibrate_clicked,this, &MainWindow::handleCalibrateButtonClicked);
-    //connect(calibrate, &CalibrateWindow::close_calibrate ,this, &MainWindow::calibrateWindowClosed);
-    calibrate->show();
-    const auto& s = settingsManager_->currentSettings();
-    calibrate->set_arms(s.arm1_length,s.arm2_length);
-
-    }
-    else
-    {
-        //qDebug() << " none from on_actionCalibrate_toggled" ;
-        //appManager()->setAddPointMode(AddPointMode::None);
-    }
 }
 
 void MainWindow::on_actionadd_point_triggered()
@@ -1036,8 +1018,23 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
             dlg->close();               // vyvolá finished() → zbytek proběhne v lambda výše
             // žádné deleteLater(); dialog se smaže sám (WA_DeleteOnClose)
         }
+        }
+
     }
 
+    if (mode == AddPointMode::Calibrate) {
+        if (!calibrate) {
+            calibrate = new CalibrateWindow(appManager(), this);
+            connect(calibrate, &CalibrateWindow::button_calibrate_clicked,
+                    this, &MainWindow::handleCalibrateButtonClicked);
+            const auto& s = settingsManager_->currentSettings();
+            calibrate->set_arms(s.arm1_length, s.arm2_length);
+        }
+        calibrate->show();
+    } else if (calibrate) {
+        calibrate->close();
+        calibrate = nullptr;
+    }
 }
 
 
