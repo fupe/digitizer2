@@ -1,5 +1,7 @@
 #include "calibrationengine.h"
 #include <QDebug>
+#include <QFile>
+#include <QTextStream>
 
 
 
@@ -32,7 +34,7 @@ const QVector<Angles>& CalibrationEngine::getAngles() const {
 }
 
 
-void CalibrationEngine::computeOpositPoints() {
+CalibrationResult CalibrationEngine::computeOpositPoints(double refRadius) {
     qDebug()<<"--computeOpositPoints--";
     double delta = arm1_ * 0.01; // 1% změna pro numerickou derivaci
 
@@ -128,6 +130,17 @@ void CalibrationEngine::computeOpositPoints() {
             }
             radius = rSum / N;
             circleRadius_ = radius;
+            if (refRadius > 0 && circleRadius_ > 0) {
+                double scale = refRadius / circleRadius_;
+                qDebug() << "scale factor" << scale;
+                QFile logFile("calibration_scale.log");
+                if (logFile.open(QIODevice::Append | QIODevice::Text)) {
+                    QTextStream ts(&logFile);
+                    ts << scale << "\n";
+                }
+                arm1_ *= scale;
+                arm2_ *= scale;
+            }
         }
 
 
@@ -184,6 +197,7 @@ void CalibrationEngine::computeOpositPoints() {
             maxErrorIndex_ = i;
         }
     }
+    return CalibrationResult{arm1_, arm2_};
 }
 
 
