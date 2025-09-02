@@ -32,6 +32,10 @@ struct CalibrationPoint {
 struct CalibrationResult {
     double adjustedArm1;
     double adjustedArm2;
+    double rmse = 0.0;
+    double maxResidual = 0.0;
+    double radiusDiff = 0.0;
+    double scaleFactor = 1.0;
 };
 
 struct DeviationResult {
@@ -74,7 +78,8 @@ public:
                                    int alfaMinOpositIndex);
     CalibrationResult optimizeArmsLeastSquares(double referenceDistance);
     void setAngles(const QVector<Angles>& angles);  //nastavi sadu uhlu
-    void computeOpositPoints();  //najde protilehle body a jejich indexy
+    void computeOpositPoints(double refRadius = 0.0, bool useRANSAC = false);  //najde protilehle body a jejich indexy
+    CalibrationResult evaluateCircleFit(const QPointF& refCenter, double refRadius) const;
 
     const QVector<CalibrationPoint>& points() const;
     double getArm1();
@@ -90,6 +95,8 @@ public:
     double getAverageCircleFitError() const;
     int getmaxErrorCircleIndex() const;
     double getmaxErrorCircle() const;
+    double getRadiusDiff() const;
+    double getScaleFactor() const;
 
 private:
     double arm1_;
@@ -108,6 +115,8 @@ private:
     double averageCircleFitError_ = 0.0;
     int maxErrorCircleIndex_ = -1;
     double maxErrorCircle_ = 0;
+    double radiusDiff_ = 0.0;
+    double scaleFactor_ = 1.0;
 
 
 };
