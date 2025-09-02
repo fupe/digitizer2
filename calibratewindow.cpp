@@ -841,6 +841,7 @@ void CalibrateWindow::on_calculate_clicked()
     for (int i=1;i<100;i++){
      CalibrationEngine engine(ui->doubleSpinBox_arm1_2->value(),ui->doubleSpinBox_arm2_2->value());
      engine.setAngles(angleslist);
+     engine.setReferenceRadius(ui->doubleSpinBox_prumer->value()/2.0);
      engine.computeOpositPoints();
     //qDebug() << "vysledek z noveho engine arm1" << engine.getArm1() << "  arm2=" << engine.getArm2();
     qDebug() << " circlefit " << engine.getCircleRadius();
@@ -898,6 +899,7 @@ void CalibrateWindow::on_calculate_clicked()
     {
     CalibrationEngine engine2(ui->doubleSpinBox_arm1->value(),ui->doubleSpinBox_arm2->value());
     engine2.setAngles(angleslist);
+    engine2.setReferenceRadius(ui->doubleSpinBox_prumer->value()/2.0);
     engine2.computeOpositPoints();
     DeviationResult DeviationResult = computeMaxDeviation(angleslist,
                                              engine2.points(),
@@ -946,6 +948,7 @@ void CalibrateWindow::runDerivativeCalculation()
     for (int i = 1; i < 100; i++) {
         CalibrationEngine engine(ui->doubleSpinBox_arm1_2->value(), ui->doubleSpinBox_arm2_2->value());
         engine.setAngles(angleslist);
+        engine.setReferenceRadius(ui->doubleSpinBox_prumer->value()/2.0);
         engine.computeOpositPoints();
         qDebug() << " circlefit " << engine.getCircleRadius();
         double percent = 1;
@@ -1005,6 +1008,7 @@ void CalibrateWindow::runGridCalculation()
     {
         CalibrationEngine engine2(ui->doubleSpinBox_arm1->value(),ui->doubleSpinBox_arm2->value());
         engine2.setAngles(angleslist);
+        engine2.setReferenceRadius(ui->doubleSpinBox_prumer->value()/2.0);
         engine2.computeOpositPoints();
         DeviationResult DeviationResult = computeMaxDeviation(angleslist,
                                              engine2.points(),
@@ -1049,6 +1053,7 @@ void CalibrateWindow::runLeastSquaresCalculation()
     QApplication::setOverrideCursor(Qt::WaitCursor);
     CalibrationEngine engine(ui->doubleSpinBox_arm1_3->value(), ui->doubleSpinBox_arm2_3->value());
     engine.setAngles(angleslist);
+    engine.setReferenceRadius(ui->doubleSpinBox_prumer->value()/2.0);
     engine.computeOpositPoints();
     CalibrationResult result = engine.optimizeArmsLeastSquares(ui->doubleSpinBox_prumer->value());
     ui->doubleSpinBox_arm1_3->setValue(result.adjustedArm1);

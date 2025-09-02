@@ -74,6 +74,7 @@ public:
                                    int alfaMinOpositIndex);
     CalibrationResult optimizeArmsLeastSquares(double referenceDistance);
     void setAngles(const QVector<Angles>& angles);  //nastavi sadu uhlu
+    void setReferenceRadius(double radius);
     void computeOpositPoints();  //najde protilehle body a jejich indexy
 
     const QVector<CalibrationPoint>& points() const;
@@ -96,6 +97,7 @@ private:
     double arm2_;
     QVector<Angles> angles_;
     QVector<CalibrationPoint> result_;
+    double refRadius_ = -1.0;
     int betaMinIndex_;
     int betaMinOpositIndex_;
     int alfaMinIndex_;
@@ -118,5 +120,9 @@ DeviationResult computeMaxDeviation(const QVector<Angles>& angles,
                            double arm1,
                            double arm2,
                            double percentage);
+
+bool fitCircleFixedRadius(const QVector<QPointF>& pts,
+                          double refRadius,
+                          QPointF& center);
 
 #endif // CALIBRATIONENGINE_H

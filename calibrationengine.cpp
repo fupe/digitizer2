@@ -1,7 +1,61 @@
 #include "calibrationengine.h"
 #include <QDebug>
+#include <cmath>
 
+bool fitCircleFixedRadius(const QVector<QPointF>& pts,
+                          double refRadius,
+                          QPointF& center)
+{
+    if (pts.size() < 2 || refRadius <= 0)
+        return false;
 
+    double cx = 0.0;
+    double cy = 0.0;
+    for (const QPointF& p : pts) {
+        cx += p.x();
+        cy += p.y();
+    }
+    cx /= pts.size();
+    cy /= pts.size();
+    center = QPointF(cx, cy);
+
+    const int maxIter = 100;
+    for (int iter = 0; iter < maxIter; ++iter) {
+        double J11 = 0.0, J22 = 0.0, J12 = 0.0;
+        double b1 = 0.0, b2 = 0.0;
+
+        for (const QPointF& p : pts) {
+            double dx = center.x() - p.x();
+            double dy = center.y() - p.y();
+            double dist = std::sqrt(dx * dx + dy * dy);
+            if (dist < 1e-12)
+                continue;
+            double ri = dist - refRadius;
+            double jx = dx / dist;
+            double jy = dy / dist;
+            J11 += jx * jx;
+            J22 += jy * jy;
+            J12 += jx * jy;
+            b1 += jx * ri;
+            b2 += jy * ri;
+        }
+
+        double det = J11 * J22 - J12 * J12;
+        if (std::abs(det) < 1e-12)
+            break;
+
+        double dcx = -(J22 * b1 - J12 * b2) / det;
+        double dcy = -(J11 * b2 - J12 * b1) / det;
+
+        center.rx() += dcx;
+        center.ry() += dcy;
+
+        if (dcx * dcx + dcy * dcy < 1e-12)
+            break;
+    }
+
+    return true;
+}
 
 CalibrationEngine::CalibrationEngine(double arm1, double arm2)
  : arm1_(arm1), arm2_(arm2)
@@ -31,6 +85,10 @@ const QVector<Angles>& CalibrationEngine::getAngles() const {
     return angles_;
 }
 
+
+void CalibrationEngine::setReferenceRadius(double radius) {
+    refRadius_ = radius;
+}
 
 void CalibrationEngine::computeOpositPoints() {
     qDebug()<<"--computeOpositPoints--";
@@ -82,12 +140,16 @@ void CalibrationEngine::computeOpositPoints() {
                 result_.append(pt);
        }
 
-    // Fit kružnice metodou nejmenších čtverců (algebraický fit)
     QVector<QPointF> positions;
     for (const CalibrationPoint& pt : result_) {
         positions.append(pt.position);
     }
 
+    QPointF circleCenter;
+    double radius = 0.0;
+    if (refRadius_ > 0 && fitCircleFixedRadius(positions, refRadius_, circleCenter)) {
+        radius = refRadius_;
+    } else {
         int N = positions.size();
         double sumX = 0, sumY = 0, sumX2 = 0, sumY2 = 0, sumXY = 0, sumX3 = 0, sumY3 = 0, sumX1Y2 = 0, sumX2Y1 = 0;
 
@@ -114,21 +176,20 @@ void CalibrationEngine::computeOpositPoints() {
         double H = N * sumX2Y1 + N * sumY3 - (sumX2 + sumY2) * sumY;
 
         double denominator = 2 * (C * G - D * D);
-        QPointF circleCenter;
-        double radius = 0.0;
         if (std::abs(denominator) > 1e-12) {
             double a = (E * G - D * H) / denominator;
             double b = (C * H - D * E) / denominator;
             circleCenter = QPointF(a, b);
-            circleCenter_ = circleCenter;
 
             double rSum = 0.0;
             for (const QPointF& p : positions) {
                 rSum += QLineF(p, circleCenter).length();
             }
             radius = rSum / N;
-            circleRadius_ = radius;
         }
+    }
+    circleCenter_ = circleCenter;
+    circleRadius_ = radius;
 
 
         double totalCircleError = 0.0;
@@ -210,6 +271,7 @@ CalibrationResult CalibrationEngine::optimizeArmsGrid(double referenceDistance,
 
             CalibrationEngine testEngine(testArm1, testArm2);
             testEngine.setAngles(angles_);
+            testEngine.setReferenceRadius(referenceDistance / 2.0);
             testEngine.computeOpositPoints();
 /*
             DeviationResult dev = computeMaxDeviation(testEngine.getAngles(), testEngine.points(), testArm1, testArm2, percent);
@@ -347,6 +409,7 @@ CalibrationResult CalibrationEngine::optimizeArmsLeastSquares(double referenceDi
     auto computeDistances = [&](double a1, double a2) {
         CalibrationEngine eng(a1, a2);
         eng.setAngles(angles_);
+        eng.setReferenceRadius(referenceDistance / 2.0);
         eng.computeOpositPoints();
         QVector<double> dist;
         for (const CalibrationPoint& pt : eng.points()) {
