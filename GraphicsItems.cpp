@@ -163,7 +163,7 @@ QRectF mypolyline::boundingRect() const
 
 void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-
+    //qDebug() << "-------------------poly paint------------------------";
 
     Q_UNUSED(option);
     Q_UNUSED(widget);
@@ -179,8 +179,10 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     // pomocná čárkovaná spojnice od prvního bodu k rameni při kreslení
     if (appManager_ && !finished && !mypolygon->isEmpty()) {
+        //qDebug() << "-------------------------------------------";
         QPen tempPen = pen;
         tempPen.setStyle(Qt::DashLine);
+        tempPen.setWidth(qMax(1, pen.width() - 3));
         painter->setPen(tempPen);
         const QPointF armEnd = appManager_->arm2EndPoint();
         painter->drawLine(mypolygon->first(), armEnd);
