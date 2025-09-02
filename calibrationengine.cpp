@@ -135,7 +135,7 @@ const QVector<Angles>& CalibrationEngine::getAngles() const {
 }
 
 
-void CalibrationEngine::computeOpositPoints() {
+void CalibrationEngine::computeOpositPoints(double referenceRadius) {
     qDebug()<<"--computeOpositPoints--";
     const double delta = arm1_ * 0.01; // 1% změna pro numerickou derivaci
     const double degToRad = M_PI / 180.0;
@@ -200,6 +200,15 @@ void CalibrationEngine::computeOpositPoints() {
     fitCirclePratt(positions, circleCenter, radius);
     circleCenter_ = circleCenter;
     circleRadius_ = radius;
+
+    if (referenceRadius > 0.0) {
+        double scaleFactor = referenceRadius / radius;
+        qDebug() << "Scale factor:" << scaleFactor;
+        arm1_ *= scaleFactor;
+        arm2_ *= scaleFactor;
+        computeOpositPoints(0.0);
+        return;
+    }
 
     double totalCircleError = 0.0;
     maxErrorCircleIndex_ = -1;
