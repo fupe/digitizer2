@@ -30,8 +30,14 @@ struct CalibrationPoint {
 };
 
 struct CalibrationResult {
-    double adjustedArm1;
-    double adjustedArm2;
+    double adjustedArm1 = 0.0;
+    double adjustedArm2 = 0.0;
+    double rmse = 0.0;
+    double maxResidual = 0.0;
+    double radiusDiff = 0.0;
+    double scaleFactor = 1.0;
+
+    CalibrationResult(double arm1, double arm2, double rmse = 0, double maxRes = 0, double radiusDiff = 0, double scale = 1);
 };
 
 struct DeviationResult {

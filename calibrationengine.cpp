@@ -2,6 +2,10 @@
 #include <QDebug>
 #include <algorithm>
 
+CalibrationResult::CalibrationResult(double arm1, double arm2, double rmse, double maxRes, double radiusDiff, double scale)
+    : adjustedArm1(arm1), adjustedArm2(arm2), rmse(rmse), maxResidual(maxRes), radiusDiff(radiusDiff), scaleFactor(scale)
+{}
+
 struct IndexedPoint {
     QPointF pt;
     int index;
@@ -341,7 +345,7 @@ CalibrationResult CalibrationEngine::optimizeArmsGrid(double referenceDistance,
         qDebug() << "nejlepsi odchylka:" << minDeviation << " arm1 " << bestArm1 << " arm2  " << bestArm2  ;
     }
 
-    return CalibrationResult{bestArm1, bestArm2};
+    return {bestArm1, bestArm2};
 }
 
 
@@ -437,7 +441,7 @@ CalibrationResult CalibrationEngine::optimizeArms(double referenceDistance,
     }
 
 
-    return CalibrationResult{bestArm1, bestArm2};
+    return {bestArm1, bestArm2};
 }
 
 CalibrationResult CalibrationEngine::optimizeArmsLeastSquares(double referenceDistance) {
@@ -478,7 +482,7 @@ CalibrationResult CalibrationEngine::optimizeArmsLeastSquares(double referenceDi
         corr2 = (-a11 * b2 + a12 * b1) / det;
     }
 
-    return CalibrationResult{arm1_ + corr1, arm2_ + corr2};
+    return {arm1_ + corr1, arm2_ + corr2};
 }
 
 
