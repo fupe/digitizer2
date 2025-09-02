@@ -1,9 +1,113 @@
 #include "calibrationengine.h"
 #include <QDebug>
+
 #include <QFile>
 #include <QTextStream>
 
 
+struct IndexedPoint {
+    QPointF pt;
+    int index;
+};
+
+static double cross(const QPointF &a, const QPointF &b) {
+    return a.x() * b.y() - a.y() * b.x();
+}
+
+static double cross(const QPointF &o, const QPointF &a, const QPointF &b) {
+    return cross(QPointF(a.x() - o.x(), a.y() - o.y()),
+                 QPointF(b.x() - o.x(), b.y() - o.y()));
+}
+
+static QVector<IndexedPoint> computeHull(const QVector<IndexedPoint> &points) {
+    QVector<IndexedPoint> pts = points;
+    std::sort(pts.begin(), pts.end(), [](const IndexedPoint &p1, const IndexedPoint &p2) {
+        if (p1.pt.x() == p2.pt.x())
+            return p1.pt.y() < p2.pt.y();
+        return p1.pt.x() < p2.pt.x();
+    });
+
+    QVector<IndexedPoint> hull;
+    hull.reserve(pts.size() * 2);
+
+    for (const auto &p : pts) {
+        while (hull.size() >= 2 && cross(hull[hull.size() - 2].pt, hull[hull.size() - 1].pt, p.pt) <= 0)
+            hull.pop_back();
+        hull.append(p);
+    }
+    int lowerSize = hull.size();
+    for (int i = pts.size() - 2; i >= 0; --i) {
+        const auto &p = pts[i];
+        while (hull.size() > lowerSize && cross(hull[hull.size() - 2].pt, hull[hull.size() - 1].pt, p.pt) <= 0)
+            hull.pop_back();
+        hull.append(p);
+    }
+    if (hull.size() > 1)
+        hull.pop_back();
+    return hull;
+}
+
+static QVector<int> rotatingCalipers(const QVector<IndexedPoint> &hull) {
+    int h = hull.size();
+    QVector<int> opp(h, -1);
+    if (h < 2) {
+        if (h == 1)
+            opp[0] = 0;
+        return opp;
+    }
+    int j = 1;
+    for (int i = 0; i < h; ++i) {
+        int next_i = (i + 1) % h;
+        while (std::abs(cross(hull[i].pt, hull[next_i].pt, hull[(j + 1) % h].pt)) >
+               std::abs(cross(hull[i].pt, hull[next_i].pt, hull[j].pt)))
+            j = (j + 1) % h;
+        opp[i] = j;
+    }
+    return opp;
+}
+
+static void fitCirclePratt(const QVector<QPointF> &pts, QPointF &center, double &radius) {
+    const int N = pts.size();
+    double meanX = 0.0, meanY = 0.0;
+    for (const QPointF &p : pts) {
+        meanX += p.x();
+        meanY += p.y();
+    }
+    meanX /= N;
+    meanY /= N;
+
+    double Suu = 0, Suv = 0, Svv = 0, Suuu = 0, Svvv = 0, Suvv = 0, Svuu = 0;
+    for (const QPointF &p : pts) {
+        double u = p.x() - meanX;
+        double v = p.y() - meanY;
+        double uu = u * u;
+        double vv = v * v;
+        Suu += uu;
+        Svv += vv;
+        Suv += u * v;
+        Suuu += uu * u;
+        Svvv += vv * v;
+        Suvv += u * vv;
+        Svuu += v * uu;
+    }
+
+    double A = Suu;
+    double B = Suv;
+    double C = Svv;
+    double D = 0.5 * (Suuu + Suvv);
+    double E = 0.5 * (Svvv + Svuu);
+    double denom = A * C - B * B;
+
+    if (std::abs(denom) > 1e-12) {
+        double uc = (C * D - B * E) / denom;
+        double vc = (A * E - B * D) / denom;
+        center = QPointF(uc + meanX, vc + meanY);
+        radius = std::sqrt(uc * uc + vc * vc + (Suu + Svv) / N);
+    } else {
+        center = QPointF();
+        radius = 0.0;
+    }
+}
 
 CalibrationEngine::CalibrationEngine(double arm1, double arm2)
  : arm1_(arm1), arm2_(arm2)
@@ -36,7 +140,8 @@ const QVector<Angles>& CalibrationEngine::getAngles() const {
 
 CalibrationResult CalibrationEngine::computeOpositPoints(double refRadius) {
     qDebug()<<"--computeOpositPoints--";
-    double delta = arm1_ * 0.01; // 1% změna pro numerickou derivaci
+    const double delta = arm1_ * 0.01; // 1% změna pro numerickou derivaci
+    const double degToRad = M_PI / 180.0;
 
     betaMinIndex_ = -1;
     betaMinOpositIndex_ = -1;
@@ -46,68 +151,34 @@ CalibrationResult CalibrationEngine::computeOpositPoints(double refRadius) {
     double minDiffArm2 = std::numeric_limits<double>::max();
 
     result_.clear();
+    result_.reserve(angles_.size());
     for (int i = 0; i < angles_.size(); ++i) {
         const Angles& angle = angles_[i];
-        double alphaRad = angle.alfa * M_PI / 180.0;
-        double betaRad  = angle.beta * M_PI / 180.0;
+        const double alphaRad = angle.alfa * degToRad;
+        const double betaRad  = angle.beta * degToRad;
+        const double cosAlpha = std::cos(alphaRad);
+        const double sinAlpha = std::sin(alphaRad);
+        const double cosAlphaBeta = std::cos(alphaRad - betaRad - M_PI);
+        const double sinAlphaBeta = std::sin(alphaRad - betaRad - M_PI);
 
-        double x1 = cos(alphaRad) * arm1_;
-        double y1 = sin(alphaRad) * arm1_;
-        double x2 = x1 + cos(alphaRad - betaRad - M_PI) * arm2_;
-        double y2 = y1 + sin(alphaRad - betaRad - M_PI) * arm2_;
-
+        const double x1 = cosAlpha * arm1_;
+        const double y1 = sinAlpha * arm1_;
+        const double x2 = x1 + cosAlphaBeta * arm2_;
+        const double y2 = y1 + sinAlphaBeta * arm2_;
 
         CalibrationPoint pt;
         pt.position = QPointF(x2, y2);
         pt.index = i;
-        // Derivace podle arm1
-                double x1_up1 = cos(alphaRad) * (arm1_ + delta);
-                double y1_up1 = sin(alphaRad) * (arm1_ + delta);
-                double x2_up1 = x1_up1 + cos(alphaRad - betaRad - M_PI) * arm2_;
-                double y2_up1 = y1_up1 + sin(alphaRad - betaRad - M_PI) * arm2_;
-                pt.diffArm1 = QLineF(QPointF(x2, y2), QPointF(x2_up1, y2_up1)).length();
 
-                // Derivace podle arm2
-                double x2_up2 = x1 + cos(alphaRad - betaRad - M_PI) * (arm2_ + delta);
-                double y2_up2 = y1 + sin(alphaRad - betaRad - M_PI) * (arm2_ + delta);
-                pt.diffArm2 = QLineF(QPointF(x2, y2), QPointF(x2_up2, y2_up2)).length();
+        const double x1_up1 = cosAlpha * (arm1_ + delta);
+        const double y1_up1 = sinAlpha * (arm1_ + delta);
+        const double x2_up1 = x1_up1 + cosAlphaBeta * arm2_;
+        const double y2_up1 = y1_up1 + sinAlphaBeta * arm2_;
+        pt.diffArm1 = std::hypot(x2 - x2_up1, y2 - y2_up1);
 
-                if (pt.diffArm1 < minDiffArm1) {
-                    minDiffArm1 = pt.diffArm1;
-                    betaMinIndex_ = i;
-                }
-                if (pt.diffArm2 < minDiffArm2) {
-                    minDiffArm2 = pt.diffArm2;
-                    alfaMinIndex_ = i;
-                }
-
-                result_.append(pt);
-       }
-
-    // Fit kružnice metodou nejmenších čtverců (algebraický fit)
-    QVector<QPointF> positions;
-    for (const CalibrationPoint& pt : result_) {
-        positions.append(pt.position);
-    }
-
-        int N = positions.size();
-        double sumX = 0, sumY = 0, sumX2 = 0, sumY2 = 0, sumXY = 0, sumX3 = 0, sumY3 = 0, sumX1Y2 = 0, sumX2Y1 = 0;
-
-        for (const QPointF& p : positions) {
-            double x = p.x();
-            double y = p.y();
-            double x2 = x * x;
-            double y2 = y * y;
-            sumX += x;
-            sumY += y;
-            sumX2 += x2;
-            sumY2 += y2;
-            sumXY += x * y;
-            sumX3 += x2 * x;
-            sumY3 += y2 * y;
-            sumX1Y2 += x * y2;
-            sumX2Y1 += x2 * y;
-        }
+        const double x2_up2 = x1 + cosAlphaBeta * (arm2_ + delta);
+        const double y2_up2 = y1 + sinAlphaBeta * (arm2_ + delta);
+        pt.diffArm2 = std::hypot(x2 - x2_up2, y2 - y2_up2);
 
         double C = N * sumX2 - sumX * sumX;
         double D = N * sumXY - sumX * sumY;
@@ -143,42 +214,85 @@ CalibrationResult CalibrationEngine::computeOpositPoints(double refRadius) {
             }
         }
 
+        result_.append(pt);
+       }
 
-        double totalCircleError = 0.0;
-        maxErrorCircleIndex_ = -1;
-        maxErrorCircle_ = 0;
-        averageCircleFitError_ = 0 ;
+    // Fit kružnice metodou Pratt
+    QVector<QPointF> positions;
+    positions.reserve(result_.size());
+    for (const CalibrationPoint &pt : result_)
+        positions.append(pt.position);
 
-        for (int i = 0; i < result_.size(); ++i) {
-            double dist = QLineF(result_[i].position, circleCenter).length();
-            double err = std::abs(dist - radius);
-            totalCircleError += err;
+    QPointF circleCenter;
+    double radius = 0.0;
+    fitCirclePratt(positions, circleCenter, radius);
+    circleCenter_ = circleCenter;
+    circleRadius_ = radius;
 
-            if (err > maxErrorCircle_) {
-                maxErrorCircle_ = err;
-                maxErrorCircleIndex_ = i;
-            }
-        }
-        averageCircleFitError_=totalCircleError/ result_.size();
-    // Najdi protilehlé body
+    double totalCircleError = 0.0;
+    maxErrorCircleIndex_ = -1;
+    maxErrorCircle_ = 0;
+    averageCircleFitError_ = 0;
     for (int i = 0; i < result_.size(); ++i) {
+        const QPointF &p = result_[i].position;
+        double dist = std::hypot(p.x() - circleCenter.x(), p.y() - circleCenter.y());
+        double err = std::abs(dist - radius);
+        totalCircleError += err;
+        if (err > maxErrorCircle_) {
+            maxErrorCircle_ = err;
+            maxErrorCircleIndex_ = i;
+        }
+    }
+    averageCircleFitError_ = totalCircleError / result_.size();
+
+    // Najdi protilehlé body pomocí konvexního obalu a rotating calipers
+    QVector<IndexedPoint> indexed;
+    indexed.reserve(result_.size());
+    for (const CalibrationPoint &pt : result_)
+        indexed.append({pt.position, pt.index});
+
+    QVector<IndexedPoint> hull = computeHull(indexed);
+    QVector<int> hullOpp = rotatingCalipers(hull);
+    QVector<bool> onHull(result_.size(), false);
+    for (int i = 0; i < hull.size(); ++i) {
+        onHull[hull[i].index] = true;
+        int oppHullIdx = hullOpp[i];
+        int oppOrig = hull[oppHullIdx].index;
+        const QPointF &p1 = result_[hull[i].index].position;
+        const QPointF &p2 = result_[oppOrig].position;
+        double dist = std::hypot(p1.x() - p2.x(), p1.y() - p2.y());
+        auto &r = result_[hull[i].index];
+        r.opposite = p2;
+        r.oppositeIndex = oppOrig;
+        r.distanceToOpposite = dist;
+        r.diff = dist;
+        if (hull[i].index == betaMinIndex_)
+            betaMinOpositIndex_ = oppOrig;
+        if (hull[i].index == alfaMinIndex_)
+            alfaMinOpositIndex_ = oppOrig;
+    }
+    for (int i = 0; i < result_.size(); ++i) {
+        if (onHull[i])
+            continue;
+        const QPointF &p = result_[i].position;
         double maxDist = 0.0;
         int farIndex = -1;
-        for (int j = 0; j < result_.size(); ++j) {
-            if (i == j) continue;
-            double d = QLineF(result_[i].position, result_[j].position).length();
+        for (const auto &hp : hull) {
+            const QPointF &hpPos = result_[hp.index].position;
+            double d = std::hypot(p.x() - hpPos.x(), p.y() - hpPos.y());
             if (d > maxDist) {
                 maxDist = d;
-                farIndex = j;
+                farIndex = hp.index;
             }
         }
         result_[i].opposite = result_[farIndex].position;
         result_[i].oppositeIndex = farIndex;
         result_[i].distanceToOpposite = maxDist;
         result_[i].diff = maxDist;
-        if (i == betaMinIndex_) betaMinOpositIndex_ = farIndex;
-        if (i == alfaMinIndex_) alfaMinOpositIndex_ = farIndex;
-   //qDebug() << "Nejvzdálenější bod pro bod: " << i <<" " << result_[i].position << "  je " << result_[farIndex].position << "  opoindex " << farIndex << "vzdalenost  je  " << maxDist ;
+        if (i == betaMinIndex_)
+            betaMinOpositIndex_ = farIndex;
+        if (i == alfaMinIndex_)
+            alfaMinOpositIndex_ = farIndex;
     }
     // Výpočet průměrné vzdálenosti
     double sum = 0.0;
