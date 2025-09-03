@@ -68,6 +68,7 @@ public:
     void setAddPointMode(AddPointMode mode);
     void setContiMode(ContiMode mode);
     AddPointMode getAddPointMode() const;
+    ContiMode getContiMode() const;
     QString modeAddPointToString(AddPointMode mode);
     QString modeContiToString(ContiMode mode);
     void cancelCurrentAction();
@@ -84,6 +85,9 @@ public:
 
     QPointF arm2EndPoint() const { return endPointArm2_; }
     GraphicsItems* currentShape() const { return shapeManager_.currentShape(); }
+    int pointCount() const;
+    int polylineCount() const;
+    int circleCount() const;
 
 signals:
     // stávající signály
@@ -94,6 +98,7 @@ signals:
     void modeContiChanged(ContiMode mode);
     void sceneModified(QPointF endarm2);
     void calibrateAnglesAdded(double alfaDeg, double betaDeg);
+    void shapesChanged();
 
     // --- Nové signály související se sériovým portem ---
     void serialOpened();                         // bez argumentu (matchuje SerialManager::opened())

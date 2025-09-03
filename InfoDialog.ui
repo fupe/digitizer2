@@ -17,8 +17,8 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>20</y>
-     <width>91</width>
+     <y>80</y>
+     <width>120</width>
      <height>21</height>
     </rect>
    </property>
@@ -30,7 +30,111 @@
    <property name="geometry">
     <rect>
      <x>160</x>
+     <y>80</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_addmode">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
      <y>20</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add mode</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="addmode_value">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>20</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_contimode">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>50</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Conti mode</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="contimode_value">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>50</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_num_polylines">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>110</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Polylines</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="num_polylines">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>110</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_num_circles">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Circles</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="num_circles">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>140</y>
      <width>91</width>
      <height>21</height>
     </rect>

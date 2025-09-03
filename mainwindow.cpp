@@ -287,6 +287,8 @@ void MainWindow::setup_scene()
     //scene->addLine(0,0,200,200,*s.arms_pen);
     //qDebug() << "scene = 7";
     arm2  = scene->addLine(0,0,s.arm2_length,0,*s.arms_pen);
+    arm1->setZValue(100); // cary v popredi
+    arm2->setZValue(101);
     base = scene->addEllipse(-25,-25, 50, 50,*s.arms_pen);
     arm2->setPos(s.arm1_length,0);
     arm1->show();
@@ -611,7 +613,7 @@ void MainWindow::on_actionNew_file_triggered()
 
 void MainWindow::on_actionInfo_triggered()
 {
-    info = new InfoDialog(this);
+    info = new InfoDialog(appManager(), this);
 //    recalculate_info();  pocitala pocet prvku
     info->show();
 }
@@ -1030,6 +1032,10 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
             calibrate = new CalibrateWindow(appManager(), this);
             connect(calibrate, &CalibrateWindow::button_calibrate_clicked,
                     this, &MainWindow::handleCalibrateButtonClicked);
+            connect(calibrate, &QObject::destroyed, this, [this](QObject*) {
+                calibrate = nullptr;
+                appManager()->setAddPointMode(AddPointMode::None);
+            });
             const auto& s = settingsManager_->currentSettings();
             calibrate->set_arms(s.arm1_length, s.arm2_length);
         }
