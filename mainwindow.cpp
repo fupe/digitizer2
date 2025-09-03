@@ -287,6 +287,8 @@ void MainWindow::setup_scene()
     //scene->addLine(0,0,200,200,*s.arms_pen);
     //qDebug() << "scene = 7";
     arm2  = scene->addLine(0,0,s.arm2_length,0,*s.arms_pen);
+    arm1->setZValue(100); // cary v popredi
+    arm2->setZValue(101);
     base = scene->addEllipse(-25,-25, 50, 50,*s.arms_pen);
     arm2->setPos(s.arm1_length,0);
     arm1->show();
