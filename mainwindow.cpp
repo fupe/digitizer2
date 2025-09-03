@@ -611,7 +611,7 @@ void MainWindow::on_actionNew_file_triggered()
 
 void MainWindow::on_actionInfo_triggered()
 {
-    info = new InfoDialog(this);
+    info = new InfoDialog(appManager(), this);
 //    recalculate_info();  pocitala pocet prvku
     info->show();
 }
