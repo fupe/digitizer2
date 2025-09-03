@@ -117,6 +117,10 @@ AddPointMode AppManager::getAddPointMode() const {
     return currentAddPointMode_;
 }
 
+ContiMode AppManager::getContiMode() const {
+    return currentContiMode_;
+}
+
 QString AppManager::modeAddPointToString(AddPointMode mode) {
     switch (mode) {
     case AddPointMode::None:      return "None";
@@ -219,6 +223,38 @@ void AppManager::onShapesChanged()
         //qDebug()<<"AppManager::onShapesChanged :" <<shape;
         scene_->addItem(shape);
     }
+
+    emit shapesChanged();
+}
+
+int AppManager::pointCount() const {
+    int count = 0;
+    for (auto* item : shapeManager_.getShapes()) {
+        if (dynamic_cast<mypoint*>(item)) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+int AppManager::polylineCount() const {
+    int count = 0;
+    for (auto* item : shapeManager_.getShapes()) {
+        if (dynamic_cast<mypolyline*>(item)) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+int AppManager::circleCount() const {
+    int count = 0;
+    for (auto* item : shapeManager_.getShapes()) {
+        if (dynamic_cast<mycircle*>(item)) {
+            ++count;
+        }
+    }
+    return count;
 }
 
 void AppManager::setScene(QGraphicsScene *scene)
