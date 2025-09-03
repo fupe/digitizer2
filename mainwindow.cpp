@@ -1027,6 +1027,10 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
             calibrate = new CalibrateWindow(appManager(), this);
             connect(calibrate, &CalibrateWindow::button_calibrate_clicked,
                     this, &MainWindow::handleCalibrateButtonClicked);
+            connect(calibrate, &QObject::destroyed, this, [this](QObject*) {
+                calibrate = nullptr;
+                appManager()->setAddPointMode(AddPointMode::None);
+            });
             const auto& s = settingsManager_->currentSettings();
             calibrate->set_arms(s.arm1_length, s.arm2_length);
         }
