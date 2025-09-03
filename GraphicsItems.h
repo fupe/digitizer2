@@ -28,7 +28,7 @@ public:
 
     QPoint position;
     QPen pen;
-    bool finished;
+    bool finished = false;
     QRectF m_boundingRect;
 
     virtual void export_dxf(DL_Dxf& dxf, DL_WriterA& dw, Units units);  //export to dxf file

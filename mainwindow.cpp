@@ -788,7 +788,7 @@ void MainWindow::updateArms(double Arm1Angle, double Arm2Angle,QPointF endPointA
 void MainWindow::updateUiForMode(AddPointMode mode) {
     qDebug() << "update Ui for mode " <<appManager()->modeAddPointToString(mode); ;
     // Nejdřív vše zakázat (výchozí stav)
-
+/*
         ui->actionAdd_circle->setEnabled(false);
         ui->actionAdd_polyline->setEnabled(false);
         ui->actionMeasure->setEnabled(false);
@@ -828,7 +828,7 @@ void MainWindow::updateUiForMode(AddPointMode mode) {
             // vše zůstává zakázané
             break;
         }
-
+*/
 }
 
 
@@ -953,8 +953,13 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
     qDebug() << " onAddPointModeChanged" << appManager()->modeAddPointToString(mode);
     const bool on_measure = (mode == AddPointMode::Measure);
     const bool on_polyline = (mode == AddPointMode::Polyline);
+    const bool on_calibrate = (mode == AddPointMode::Calibrate);
 
     // UI: update akce
+    ui->actionAdd_circle->setEnabled(false);
+    ui->actionAdd_polyline->setEnabled(false);
+    ui->actionMeasure->setEnabled(false);
+    ui->actionCalibrate->setEnabled(false);
     {
         {
             QSignalBlocker block_action_polyline(ui->actionAdd_polyline);
@@ -980,8 +985,6 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
             : tr("Měření (%1)").arg(seq.toString(QKeySequence::PortableText)));
     }
 
-    // Otevřít/zavřít MeasureDialog
-    // Otevřít/zavřít MeasureDialog
     if (on_measure) {
         if (!measure) {
             measure = new MeasureDialog(appManager()->settingsManager(), this);

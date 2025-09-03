@@ -19,6 +19,7 @@ GraphicsItems::GraphicsItems()
     setFlag (ItemIsSelectable, true);
     setAcceptHoverEvents(true);
     setAcceptedMouseButtons(Qt::LeftButton);
+    finished = false;
 
     // KLÍČOVÉ: vizuální velikost bodu nezávislá na zoomu
 
@@ -187,6 +188,8 @@ void mypolyline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         const QPointF armEnd = appManager_->arm2EndPoint();
         painter->drawLine(mypolygon->first(), armEnd);
         if (mypolygon->count() > 1) {
+            tempPen.setWidth(qMax(1, pen.width() - 1));
+            painter->setPen(tempPen);
             painter->drawLine(mypolygon->last(), armEnd);
         }
         painter->setPen(pen);
