@@ -1,7 +1,33 @@
 #include <QDebug>
+#include <QProcess>
+#include <QCoreApplication>
+#ifdef Q_OS_WIN
+#include <windows.h>
+#include <psapi.h>
+#endif
 #include "InfoDialog.h"
 #include "ui_InfoDialog.h"
 #include "appmanager.h"
+
+static qint64 getMemoryUsageKB()
+{
+#ifdef Q_OS_WIN
+    PROCESS_MEMORY_COUNTERS pmc;
+    if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc))) {
+        return pmc.WorkingSetSize / 1024;
+    }
+    return 0;
+#else
+    QProcess process;
+    process.start("ps", QStringList() << "-o" << "rss=" << "-p"
+                   << QString::number(QCoreApplication::applicationPid()));
+    if (!process.waitForFinished())
+        return 0;
+    bool ok = false;
+    qint64 rss = process.readAllStandardOutput().trimmed().toLongLong(&ok);
+    return ok ? rss : 0;
+#endif
+}
 
 InfoDialog::InfoDialog(AppManager* app, QWidget *parent) :
     QDialog(parent),
@@ -65,4 +91,7 @@ void InfoDialog::updateCounts()
     ui->num_points->setText(QString::number(app_->pointCount()));
     ui->num_polylines->setText(QString::number(app_->polylineCount()));
     ui->num_circles->setText(QString::number(app_->circleCount()));
+    const qint64 memKB = getMemoryUsageKB();
+    const double memMB = static_cast<double>(memKB) / 1024.0;
+    ui->memory_usage->setText(QString::number(memMB, 'f', 2) + " MB");
 }
