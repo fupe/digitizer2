@@ -1,4 +1,8 @@
 #include <QDebug>
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#endif
 #include "InfoDialog.h"
 #include "ui_InfoDialog.h"
 #include "appmanager.h"
