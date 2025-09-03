@@ -1,4 +1,8 @@
 #include <QDebug>
+#ifdef _WIN32
+#include <windows.h>
+#include <psapi.h>
+#endif
 #include "InfoDialog.h"
 #include "ui_InfoDialog.h"
 #include "appmanager.h"
@@ -21,6 +25,11 @@ InfoDialog::InfoDialog(AppManager* app, QWidget *parent) :
         updateModes();
         updateCounts();
     }
+
+    memoryTimer_ = new QTimer(this);
+    connect(memoryTimer_, &QTimer::timeout, this, &InfoDialog::updateMemory);
+    memoryTimer_->start(1000);
+    updateMemory();
 }
 
 InfoDialog::~InfoDialog()
@@ -65,4 +74,16 @@ void InfoDialog::updateCounts()
     ui->num_points->setText(QString::number(app_->pointCount()));
     ui->num_polylines->setText(QString::number(app_->polylineCount()));
     ui->num_circles->setText(QString::number(app_->circleCount()));
+}
+
+void InfoDialog::updateMemory()
+{
+#ifdef _WIN32
+    PROCESS_MEMORY_COUNTERS counters;
+    if (GetProcessMemoryInfo(GetCurrentProcess(), &counters, sizeof(counters))) {
+        ui->memory_value->setText(QString::number(counters.WorkingSetSize / 1024));
+    }
+#else
+    ui->memory_value->setText("N/A");
+#endif
 }

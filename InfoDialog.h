@@ -2,6 +2,7 @@
 #define INFODIALOG_H
 
 #include <QDialog>
+#include <QTimer>
 
 class AppManager;
 
@@ -23,10 +24,12 @@ private slots:
     void on_close_clicked();
     void updateModes();
     void updateCounts();
+    void updateMemory();
 
 private:
     Ui::InfoDialog *ui;
     AppManager* app_ = nullptr;
+    QTimer* memoryTimer_ = nullptr;
 };
 
 #endif // MYINFO_H

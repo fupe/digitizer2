@@ -143,6 +143,32 @@
     <string/>
    </property>
   </widget>
+  <widget class="QLabel" name="label_memory">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>170</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Memory usage (KB)</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="memory_value">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>170</y>
+     <width>91</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
   <widget class="QPushButton" name="close">
    <property name="geometry">
     <rect>
