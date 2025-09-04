@@ -351,10 +351,8 @@ void mycircle::addPointToShape(const QPointF& point)
 
 QRectF mycircle::boundingRect() const
 {
-   return QRectF(-20,-20,40,40);
-    //qDebug() << "boungingrect" <<m_boundingRect;
-    //return m_boundingRect;
-
+    return QRectF(center.x() - radius, center.y() - radius,
+                  2 * radius, 2 * radius).adjusted(-3, -3, 3, 3);
 }
 
 void mycircle::export_dxf(DL_Dxf& dxf, DL_WriterA& dw, Units units)

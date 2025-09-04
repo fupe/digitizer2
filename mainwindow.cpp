@@ -235,6 +235,11 @@ void MainWindow::Zoom_Dynamic() {
     hasItem = true;
   }
 
+  if (arm2) {
+    bounds = bounds.united(arm2->sceneBoundingRect());
+    hasItem = true;
+  }
+
   if (hasItem) {
     bounds.adjust(-20, -20, 20, 20); // přidá okraje
     ui->graphicsView->fitInView(bounds, Qt::KeepAspectRatio);
