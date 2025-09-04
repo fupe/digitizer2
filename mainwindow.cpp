@@ -41,16 +41,12 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
   connect(ui->actionDisconnect, &QAction::triggered, this,
           [this](bool) { appManager_->closeSerial(); });
   connect(appManager_, &AppManager::serialOpened, this,
-          [this]() { // stav ikony z appmanageru.
-            ui->actionConnect->setEnabled(false);
-            ui->actionDisconnect->setEnabled(true);
-          });
+          [this]() { updateSerialActions(true); });
   qDebug() << "konstruktoru 2";
-  connect(appManager_, &AppManager::serialClosed, this, [this]() {
-    ui->actionConnect->setEnabled(true);
-    ui->actionDisconnect->setEnabled(false);
-  });
+  connect(appManager_, &AppManager::serialClosed, this,
+          [this]() { updateSerialActions(false); });
   qDebug() << "konstruktoru 3";
+  updateSerialActions(appManager_->isSerialConnected());
   connect(ui->actionAdd_polyline, &QAction::toggled, this, [this](bool on) {
     if (on)
       appManager()->setAddPointMode(AddPointMode::Polyline);
@@ -125,6 +121,12 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
 }
 
 MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::updateSerialActions(bool connected)
+{
+  ui->actionConnect->setEnabled(!connected);
+  ui->actionDisconnect->setEnabled(connected);
+}
 
 void MainWindow::closeEvent(QCloseEvent *event)
 

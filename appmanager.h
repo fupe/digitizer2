@@ -61,6 +61,7 @@ public:
     void closeSerial();
     void send(const QByteArray& data);
     QString dataSourceToHuman() const;           // pomocná human-readable hláška
+    bool isSerialConnected() const { return serialConnected_; }
 
     void setAngles(double alfa, double beta,int index);
     double getAlfa();
@@ -132,6 +133,7 @@ private:
     QTimer dataSetTimer_;
     int dataSetCount_ = 0;
     void logDataSetCount();
+    bool serialConnected_ = false;
 
 public slots:
     // zatím prázdné; ponecháno pro případné budoucí sloty

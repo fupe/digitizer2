@@ -134,6 +134,7 @@ public slots:
 private:
   void initActions();
   void initMenu();
+  void updateSerialActions(bool connected);
 
   QMenu *ZoomMenu;
   CustomToolButton *ZoomToolButton;
