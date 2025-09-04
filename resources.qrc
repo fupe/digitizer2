@@ -23,5 +23,6 @@
         <file>translations/english.ts</file>
         <file>translations/german.qm</file>
         <file>translations/german.ts</file>
+        <file>pic/zoom_user.png</file>
     </qresource>
 </RCC>
