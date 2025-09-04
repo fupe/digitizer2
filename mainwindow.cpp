@@ -388,7 +388,7 @@ void GraphicsView::wheelEvent(QWheelEvent *e) {
   const ViewportAnchor anchor = transformationAnchor();
   setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
   int angle = e->angleDelta().y();
-  qDebug() << "wheel + control event " << e << "delta " << e->angleDelta().y();
+  //qDebug() << "wheel + control event " << e << "delta " << e->angleDelta().y();
   qreal factor;
   if (angle > 0) {
     factor = 1.1;
@@ -398,10 +398,10 @@ void GraphicsView::wheelEvent(QWheelEvent *e) {
   scale(factor, factor);
   setTransformationAnchor(anchor);
   MainWindow *mw = qobject_cast<MainWindow *>(this->window());
-  if (mw && mw->zoomMode() != ZoomMode::Dynamic)
+  if (mw) // && mw->zoomMode() != ZoomMode::Dynamic)
     mw->Zoom_User();
-  qDebug() << "anchor " << anchor;
-  qDebug() << "transform " << transform();
+  //qDebug() << "anchor " << anchor;
+  //qDebug() << "transform " << transform();
   //}
 }
 
