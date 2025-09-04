@@ -45,6 +45,8 @@ public:
     AppManager* appManager() const { return appManager_; }
     SettingsManager* settingsManager() const { return settingsManager_; }
     void onAddPointModeChanged(AddPointMode mode);
+    void onContiModeChanged( ContiMode mode);
+
     void updateUiForMode(AddPointMode mode);
     MeasureDialog* measure = nullptr;
     CalibrateWindow* calibrate = nullptr;

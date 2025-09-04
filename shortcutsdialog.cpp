@@ -33,6 +33,7 @@ void ShortCutsDialog::populate() {
     // naplnění editorů ze slovníku
     ui->keySequenceEdit_addpoint   ->setKeySequence(tmp_.map.value(QStringLiteral("action.addPoint")));
     ui->keySequenceEdit_addpolyline->setKeySequence(tmp_.map.value(QStringLiteral("action.polyline")));
+    ui->keySequenceEdit_addcircle  ->setKeySequence(tmp_.map.value(QStringLiteral("action.circle")));
     ui->keySequenceEdit_measure    ->setKeySequence(tmp_.map.value(QStringLiteral("action.measure")));
     ui->keySequenceEdit_clear      ->setKeySequence(tmp_.map.value(QStringLiteral("action.clear")));
     ui->keySequenceEdit_continous  ->setKeySequence(tmp_.map.value(QStringLiteral("action.continous")));
@@ -45,6 +46,7 @@ void ShortCutsDialog::pullFromUi() {
     // sebrání hodnot z UI zpět do modelu
     tmp_.map[QStringLiteral("action.addPoint")]   = ui->keySequenceEdit_addpoint   ->keySequence();
     tmp_.map[QStringLiteral("action.polyline")]   = ui->keySequenceEdit_addpolyline->keySequence();
+    tmp_.map[QStringLiteral("action.circle")]     = ui->keySequenceEdit_addcircle  ->keySequence();
     tmp_.map[QStringLiteral("action.measure")]    = ui->keySequenceEdit_measure    ->keySequence();
     tmp_.map[QStringLiteral("action.clear")]      = ui->keySequenceEdit_clear      ->keySequence();
     tmp_.map[QStringLiteral("action.continous")]  = ui->keySequenceEdit_continous  ->keySequence();
@@ -63,6 +65,7 @@ void ShortCutsDialog::resetToDefaults() {
     const Shortcuts def = Shortcuts::defaults();
     ui->keySequenceEdit_addpoint   ->setKeySequence(def.map.value(QStringLiteral("action.addPoint")));
     ui->keySequenceEdit_addpolyline->setKeySequence(def.map.value(QStringLiteral("action.polyline")));
+    ui->keySequenceEdit_addcircle  ->setKeySequence(def.map.value(QStringLiteral("action.circle")));
     ui->keySequenceEdit_measure    ->setKeySequence(def.map.value(QStringLiteral("action.measure")));
     ui->keySequenceEdit_clear      ->setKeySequence(def.map.value(QStringLiteral("action.clear")));
     ui->keySequenceEdit_continous  ->setKeySequence(def.map.value(QStringLiteral("action.continous")));

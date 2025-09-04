@@ -53,6 +53,8 @@ MainWindow::MainWindow(AppManager* app, QWidget* parent)
     connect(ui->actionAdd_circle,   &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Circle);   });
     connect(ui->actionCalibrate,    &QAction::toggled, this, [this](bool on){ if (on) appManager()->setAddPointMode(AddPointMode::Calibrate); else appManager()->setAddPointMode(AddPointMode::None);});
     connect(appManager(), &AppManager::modeAddPointChanged,this, &MainWindow::onAddPointModeChanged); //reakce na zmenu modu
+    connect(appManager(), &AppManager::modeContiChanged,this, &MainWindow::onContiModeChanged); //reakce na zmenu modu conti
+
     qDebug()<<"konstruktoru 4";
     // UI → AppManager
         // AppManager → status bab
@@ -99,6 +101,7 @@ qDebug()<<"konstruktoru5 ";
 
     qDebug()<<"konec konstruktoru";
     onAddPointModeChanged(AddPointMode::None);  //vyplneni zkratek v tooltipu a podobne
+    onContiModeChanged(ContiMode::SinglePoint); //vyplni zkratky u conti a podobne
 }
 
 MainWindow::~MainWindow()
@@ -950,14 +953,16 @@ void MainWindow::onSettingsChanged(const Settings& s)
     }
 
     // přiřaď klávesové zkratky k akcím
+    ui->actionNew_file->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.newfile")));
     ui->actionadd_point->setShortcut(
         s.shortcuts.map.value(QStringLiteral("action.addPoint")));
     ui->actionAdd_polyline->setShortcut(
         s.shortcuts.map.value(QStringLiteral("action.polyline")));
+    ui->actionAdd_circle->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.circle")));
     ui->actionMeasure->setShortcut(
         s.shortcuts.map.value(QStringLiteral("action.measure")));
-    ui->actionDelete_last_point->setShortcut(
-        s.shortcuts.map.value(QStringLiteral("action.clear")));
     ui->actionAuto->setShortcut(
         s.shortcuts.map.value(QStringLiteral("action.continous")));
     actionZoom_All->setShortcut(
@@ -970,6 +975,19 @@ void MainWindow::onSettingsChanged(const Settings& s)
     onAddPointModeChanged(appManager()->getAddPointMode());
 }
 
+void MainWindow::onContiModeChanged(ContiMode mode)
+{
+   const bool on_contimode = (mode == ContiMode::Continous);
+   //mode continous
+   QKeySequence seq = appManager()->settingsManager()->currentSettings().shortcuts.map
+           .value(QStringLiteral("action.continous"));
+   ui->actionAuto->setToolTip(on_contimode
+       ? tr("End continous (%1)").arg(seq.toString(QKeySequence::PortableText))
+       : tr("Continous (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+}
+
+
 void MainWindow::onAddPointModeChanged(AddPointMode mode)
 {
     qDebug() << " onAddPointModeChanged" << appManager()->modeAddPointToString(mode);
@@ -978,6 +996,7 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
     const bool on_circle = (mode == AddPointMode::Circle);
     const bool on_calibrate = (mode == AddPointMode::Calibrate);
     const bool on_none = (mode == AddPointMode::None);
+
 
     // UI: update akce
     ui->actionAdd_circle->setEnabled(false);
@@ -1007,8 +1026,27 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
         ui->actionMeasure->setToolTip(on_measure
             ? tr("Konec měření (%1)").arg(seq.toString(QKeySequence::PortableText))
             : tr("Měření (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+        //circle
         ui->actionAdd_circle->setEnabled(on_circle);
         ui->actionAdd_circle->setText(on_circle ? tr("End circle") : tr("Add circle"));
+        seq = appManager()->settingsManager()->currentSettings().shortcuts.map
+                .value(QStringLiteral("action.circle"));
+        ui->actionAdd_circle->setToolTip(on_measure
+            ? tr("Konec circle (%1)").arg(seq.toString(QKeySequence::PortableText))
+            : tr("Circle (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+        // Point
+        seq = appManager()->settingsManager()->currentSettings().shortcuts.map
+                .value(QStringLiteral("action.addPoint"));
+        ui->actionadd_point->setToolTip(tr("Point (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+        //new file
+        seq = appManager()->settingsManager()->currentSettings().shortcuts.map
+                .value(QStringLiteral("action.newfile"));
+        ui->actionNew_file->setToolTip(tr("New file (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+
 
     }
 

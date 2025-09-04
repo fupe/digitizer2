@@ -94,7 +94,7 @@
      <x>40</x>
      <y>110</y>
      <width>101</width>
-     <height>21</height>
+     <height>99</height>
     </rect>
    </property>
    <property name="text">
@@ -107,7 +107,7 @@
      <x>130</x>
      <y>110</y>
      <width>113</width>
-     <height>22</height>
+     <height>100</height>
     </rect>
    </property>
   </widget>
@@ -117,7 +117,7 @@
      <x>40</x>
      <y>200</y>
      <width>101</width>
-     <height>21</height>
+     <height>99</height>
     </rect>
    </property>
    <property name="text">
@@ -130,7 +130,7 @@
      <x>130</x>
      <y>140</y>
      <width>113</width>
-     <height>22</height>
+     <height>100</height>
     </rect>
    </property>
   </widget>
@@ -140,7 +140,7 @@
      <x>40</x>
      <y>170</y>
      <width>101</width>
-     <height>21</height>
+     <height>99</height>
     </rect>
    </property>
    <property name="text">
@@ -153,7 +153,7 @@
      <x>40</x>
      <y>140</y>
      <width>101</width>
-     <height>21</height>
+     <height>99</height>
     </rect>
    </property>
    <property name="text">
@@ -166,7 +166,7 @@
      <x>130</x>
      <y>170</y>
      <width>113</width>
-     <height>22</height>
+     <height>100</height>
     </rect>
    </property>
   </widget>
@@ -176,7 +176,7 @@
      <x>130</x>
      <y>200</y>
      <width>113</width>
-     <height>22</height>
+     <height>100</height>
     </rect>
    </property>
   </widget>
@@ -186,7 +186,7 @@
      <x>40</x>
      <y>230</y>
      <width>101</width>
-     <height>21</height>
+     <height>99</height>
     </rect>
    </property>
    <property name="text">
@@ -199,7 +199,7 @@
      <x>130</x>
      <y>260</y>
      <width>113</width>
-     <height>22</height>
+     <height>100</height>
     </rect>
    </property>
   </widget>
@@ -209,7 +209,7 @@
      <x>40</x>
      <y>260</y>
      <width>101</width>
-     <height>21</height>
+     <height>99</height>
     </rect>
    </property>
    <property name="text">
@@ -221,6 +221,29 @@
     <rect>
      <x>130</x>
      <y>230</y>
+     <width>113</width>
+     <height>100</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_addcircle">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>110</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Add Circle</string>
+   </property>
+  </widget>
+  <widget class="QKeySequenceEdit" name="keySequenceEdit_addcircle">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>110</y>
      <width>113</width>
      <height>22</height>
     </rect>
