@@ -94,6 +94,7 @@ qDebug()<<"konstruktoru5 ";
     setup_scene();
     connect(appManager_, &AppManager::armsUpdated, this, &MainWindow::updateArms);
     qDebug()<<"konec konstruktoru";
+    onAddPointModeChanged(AddPointMode::None);  //vyplneni zkratek v tooltipu a podobne
 }
 
 MainWindow::~MainWindow()
@@ -948,6 +949,7 @@ void MainWindow::onSettingsChanged(const Settings& s)
         l.setLength(s.arm2_length); // změní jen délku
         arm2->setLine(l);
     }
+    onAddPointModeChanged(appManager()->getAddPointMode());
 }
 
 void MainWindow::onAddPointModeChanged(AddPointMode mode)
@@ -955,60 +957,59 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
     qDebug() << " onAddPointModeChanged" << appManager()->modeAddPointToString(mode);
     const bool on_measure = (mode == AddPointMode::Measure);
     const bool on_polyline = (mode == AddPointMode::Polyline);
+    const bool on_circle = (mode == AddPointMode::Circle);
     const bool on_calibrate = (mode == AddPointMode::Calibrate);
+    const bool on_none = (mode == AddPointMode::None);
 
     // UI: update akce
     ui->actionAdd_circle->setEnabled(false);
     ui->actionAdd_polyline->setEnabled(false);
     ui->actionMeasure->setEnabled(false);
     ui->actionCalibrate->setEnabled(false);
-    {
-        {
-            QSignalBlocker block_action_polyline(ui->actionAdd_polyline);
-            ui->actionAdd_polyline->setChecked(on_polyline);
-            ui->actionAdd_polyline->setText(on_polyline ? tr("End polyline") : tr("Add polyline"));
-            QKeySequence seq = appManager()->settingsManager()->currentSettings().shortcuts.map
-                                 .value(QStringLiteral("action.polyline"));
-            QString shortcut = seq.toString(QKeySequence::PortableText);
-            ui->actionAdd_polyline->setToolTip(on_polyline
-                ? tr("konec polyline (%1)").arg(shortcut)
-                : tr("Přidat polyline (%1)").arg(shortcut));
-        }
 
+    {
+        //polyline
+        QSignalBlocker block_action_polyline(ui->actionAdd_polyline);
+        //ui->actionAdd_polyline->setChecked(on_polyline);
+        ui->actionAdd_polyline->setEnabled(on_polyline);
+        ui->actionAdd_polyline->setText(on_polyline ? tr("End polyline") : tr("Add polyline"));
+        QKeySequence seq = appManager()->settingsManager()->currentSettings().shortcuts.map
+                                 .value(QStringLiteral("action.polyline"));
+        QString shortcut = seq.toString(QKeySequence::PortableText);
+        ui->actionAdd_polyline->setToolTip(on_polyline
+            ? tr("konec polyline (%1)").arg(shortcut)
+            : tr("Přidat polyline (%1)").arg(shortcut));
+
+        //measure
         QSignalBlocker block_action_measure(ui->actionMeasure);
         ui->actionMeasure->setChecked(on_measure);
         ui->actionMeasure->setText(on_measure ? tr("Konec měření") : tr("Měření"));
-
-        const QKeySequence seq =
-            appManager()->settingsManager()->currentSettings().shortcuts.map
+        seq = appManager()->settingsManager()->currentSettings().shortcuts.map
                 .value(QStringLiteral("action.measure"));
         ui->actionMeasure->setToolTip(on_measure
             ? tr("Konec měření (%1)").arg(seq.toString(QKeySequence::PortableText))
             : tr("Měření (%1)").arg(seq.toString(QKeySequence::PortableText)));
+        ui->actionAdd_circle->setEnabled(on_circle);
+        ui->actionAdd_circle->setText(on_circle ? tr("End circle") : tr("Add circle"));
+
     }
 
     if (on_measure) {
         if (!measure) {
             measure = new MeasureDialog(appManager()->settingsManager(), this);
             measure->setAttribute(Qt::WA_DeleteOnClose, true);
-
-            connect(appManager(), &AppManager::positionChanged,
-                    measure, &MeasureDialog::updatePosition);
-            connect(appManager(), &AppManager::measureToggled,
-                    measure, &MeasureDialog::toggleMode);
-
+            connect(appManager(), &AppManager::positionChanged,measure, &MeasureDialog::updatePosition);
+            connect(appManager(), &AppManager::measureToggled, measure, &MeasureDialog::toggleMode);
             // Jakmile se dialog zavře (OK/Cancel/křížek), vrať režim do None
             connect(measure, &QDialog::finished, this, [this](int){
                 // Sync režimu (idempotentní)
                 if (appManager()->getAddPointMode() == AddPointMode::Measure) {
                     appManager()->setAddPointMode(AddPointMode::None);
                 }
-
                 // UI – odškrtnout a vrátit text; nevyvolá rekurzivně toggled
                 QSignalBlocker b(ui->actionMeasure);
                 ui->actionMeasure->setChecked(false);
                 ui->actionMeasure->setText(tr("Měření"));
-
                 // ukazatel už neplatí (dialog se smaže díky WA_DeleteOnClose)
                 measure = nullptr;
             });
@@ -1025,9 +1026,7 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
         }
         }
 
-
-
-    if (mode == AddPointMode::Calibrate) {
+    if (on_calibrate) {
         if (!calibrate) {
             calibrate = new CalibrateWindow(appManager(), this);
             connect(calibrate, &CalibrateWindow::button_calibrate_clicked,
@@ -1043,6 +1042,22 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode)
     } else if (calibrate) {
         calibrate->close();
         calibrate = nullptr;
+    }
+    if (on_polyline)
+    {
+
+    }
+
+    if (on_circle)
+    {
+
+    }
+
+    if (on_none)
+    {
+        ui->actionAdd_polyline->setEnabled(true);
+        ui->actionAdd_circle->setEnabled(true);
+        ui->actionMeasure->setEnabled(true);
     }
 }
 
