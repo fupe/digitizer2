@@ -4,6 +4,7 @@
 #include <QDialog>
 
 class AppManager;
+enum class ZoomMode;
 
 namespace Ui {
 class InfoDialog;
@@ -23,8 +24,10 @@ private slots:
     void on_close_clicked();
     void updateModes();
     void updateCounts();
+    void updateZoomMode(ZoomMode mode);
 
 private:
+    static QString zoomModeToString(ZoomMode mode);
     Ui::InfoDialog *ui;
     AppManager* app_ = nullptr;
 };
