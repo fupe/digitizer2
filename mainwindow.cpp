@@ -256,6 +256,7 @@ void MainWindow::Zoom_Dynamic() {
     //ui->graphicsView->fitInView(-25, -25, 50, 50, Qt::KeepAspectRatio);
     ui->graphicsView->centerOn(bounds.center());
   }
+  emit zoomModeChanged(zoomMode_);
 }
 
 void MainWindow::Zoom_All() {
@@ -272,6 +273,7 @@ void MainWindow::Zoom_All() {
                                     2.1 * (s.arm1_length + s.arm2_length),
                                     2.1 * (s.arm1_length + s.arm2_length)),
                               Qt::KeepAspectRatio);
+  emit zoomModeChanged(zoomMode_);
 }
 
 void MainWindow::Zoom_User() {
@@ -283,6 +285,7 @@ void MainWindow::Zoom_User() {
     actionZoom_Dynamic->setChecked(false);
   if (actionZoom_All)
     actionZoom_All->setChecked(false);
+  emit zoomModeChanged(zoomMode_);
 }
 
 void MainWindow::toggleZoomMode() {

@@ -6,6 +6,7 @@
 #include "InfoDialog.h"
 #include "ui_InfoDialog.h"
 #include "appmanager.h"
+#include "mainwindow.h"
 
 InfoDialog::InfoDialog(AppManager* app, QWidget *parent) :
     QDialog(parent),
@@ -24,6 +25,12 @@ InfoDialog::InfoDialog(AppManager* app, QWidget *parent) :
                 this, &InfoDialog::updateCounts);
         updateModes();
         updateCounts();
+    }
+
+    if (auto mw = qobject_cast<MainWindow*>(parent)) {
+        connect(mw, &MainWindow::zoomModeChanged,
+                this, &InfoDialog::updateZoomMode);
+        updateZoomMode(mw->zoomMode());
     }
 }
 
@@ -69,4 +76,23 @@ void InfoDialog::updateCounts()
     ui->num_points->setText(QString::number(app_->pointCount()));
     ui->num_polylines->setText(QString::number(app_->polylineCount()));
     ui->num_circles->setText(QString::number(app_->circleCount()));
+}
+
+void InfoDialog::updateZoomMode(ZoomMode mode)
+{
+    ui->zoommode_value->setText(zoomModeToString(mode));
+}
+
+QString InfoDialog::zoomModeToString(ZoomMode mode)
+{
+    switch (mode) {
+    case ZoomMode::All:
+        return tr("All");
+    case ZoomMode::Dynamic:
+        return tr("Dynamic");
+    case ZoomMode::User:
+        return tr("User");
+    default:
+        return tr("Unknown");
+    }
 }

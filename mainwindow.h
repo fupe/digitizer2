@@ -76,6 +76,7 @@ public:
   QTranslator translator;
   QTranslator guitranslator;
   QStringList languages;
+  ZoomMode zoomMode() const { return zoomMode_; }
 
 private:
   // std::unique_ptr<Ui::MainWindow> ui;  // vlastnictví UI
@@ -86,6 +87,7 @@ private:
 
 signals:
   void dataReady(double alfa, double beta);
+  void zoomModeChanged(ZoomMode mode);
 
 private slots:
   void updateArms(double Arm1Angle, double Arm2Angle, QPointF endPointArm1,
