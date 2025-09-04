@@ -185,49 +185,72 @@ void MainWindow::readData()
 
 void MainWindow::Zoom_Dynamic()
 {
-    //qDebug() << "dynamic";
-    if (actionZoom_Dynamic->isChecked())
-    {
-        QGraphicsScene* aaa = ui->graphicsView->scene();
-            if (!aaa) return;
+    zoomMode_ = ZoomMode::Dynamic;
+    ZoomToolButton->setDefaultAction(actionZoom_Dynamic);
+    actionZoom_Dynamic->setChecked(true);
+    if (actionZoom_All)
+        actionZoom_All->setChecked(false);
 
-            QRectF bounds;
-            bool hasItem = false;
+    QGraphicsScene* aaa = ui->graphicsView->scene();
+    if (!aaa) return;
 
-            for (QGraphicsItem* item : scene->items()) {
-                auto* shape = dynamic_cast<GraphicsItems*>(item);
-                if (shape) {
-                    if (!hasItem) {
-                        bounds = shape->sceneBoundingRect();
-                        hasItem = true;
-                    } else {
-                        bounds = bounds.united(shape->sceneBoundingRect());
-                    }
-                }
-            }
-            if (hasItem) {
-                QRectF endpoitArm(lastEndArm2_, QSizeF(1, 1));  // malý obdélník okolo bodu
-                        bounds = bounds.united(endpoitArm);          // přidat do oblasti
-                bounds.adjust(-20, -20, 20, 20);  // přidá okraje
-                ui->graphicsView->fitInView(bounds, Qt::KeepAspectRatio);
-                ui->graphicsView->centerOn(bounds.center());
+    QRectF bounds;
+    bool hasItem = false;
+
+    for (QGraphicsItem* item : scene->items()) {
+        auto* shape = dynamic_cast<GraphicsItems*>(item);
+        if (shape) {
+            if (!hasItem) {
+                bounds = shape->sceneBoundingRect();
+                hasItem = true;
             } else {
-                qDebug() << "Žádné GraphicsItems k zobrazení.";
+                bounds = bounds.united(shape->sceneBoundingRect());
             }
+        }
+    }
+    if (hasItem) {
+        QRectF endpoitArm(lastEndArm2_, QSizeF(1, 1));  // malý obdélník okolo bodu
+        bounds = bounds.united(endpoitArm);          // přidat do oblasti
+        bounds.adjust(-20, -20, 20, 20);  // přidá okraje
+        ui->graphicsView->fitInView(bounds, Qt::KeepAspectRatio);
+        ui->graphicsView->centerOn(bounds.center());
+    } else {
+        qDebug() << "Žádné GraphicsItems k zobrazení.";
     }
 }
 
 void MainWindow::Zoom_All()
 {
+    zoomMode_ = ZoomMode::All;
+    ZoomToolButton->setDefaultAction(actionZoom_All);
+    if (actionZoom_All)
+        actionZoom_All->setChecked(true);
+    if (actionZoom_Dynamic)
+        actionZoom_Dynamic->setChecked(false);
+
     const auto& s = settingsManager_->currentSettings();
     ui->graphicsView->fitInView(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)),Qt::KeepAspectRatio);
 }
 
 void MainWindow::Zoom_User()
 {
-    qDebug() << "User defined zoom";
-    //actionZoom_Dynamic->setChecked(false);
-    //actionZoom_All->setChecked(false);
+    zoomMode_ = ZoomMode::User;
+    ZoomToolButton->setDefaultAction(actionZoom_User);
+    if (actionZoom_User)
+        actionZoom_User->setChecked(true);
+    if (actionZoom_Dynamic)
+        actionZoom_Dynamic->setChecked(false);
+    if (actionZoom_All)
+        actionZoom_All->setChecked(false);
+}
+
+void MainWindow::toggleZoomMode()
+{
+    if (zoomMode_ == ZoomMode::All) {
+        Zoom_Dynamic();
+    } else {
+        Zoom_All();
+    }
 }
 
 void MainWindow::status_bar_print(QString text,int delay)
@@ -252,16 +275,22 @@ void MainWindow::initActions()
 void MainWindow::initMenu()
 {
     /*--------pridani cudliku zoom-------*/
-    actionZoom_All = new QAction(tr("Zoom All orig"), this);
-    actionZoom_Dynamic = new QAction(tr("Zoom Dynamic orig"), this);
+    actionZoom_All = new QAction(tr("Zoom All"), this);
+    actionZoom_Dynamic = new QAction(tr("Zoom Dynamic"), this);
+    actionZoom_User = new QAction(tr("Zoom User"), this);
     actionZoom_All->setIcon(QIcon(":/pic/zoom_all.png"));
     actionZoom_Dynamic->setIcon(QIcon(":/pic/zoom_select.png"));
+    actionZoom_User->setIcon(QIcon(":/pic/manual.png"));
+    actionZoom_All->setCheckable(true);
     actionZoom_Dynamic->setCheckable(true);
+    actionZoom_User->setCheckable(true);
     connect(actionZoom_All,     &QAction::triggered, this, &MainWindow::Zoom_All);
     connect(actionZoom_Dynamic, &QAction::triggered, this, &MainWindow::Zoom_Dynamic);
+    connect(actionZoom_User,    &QAction::triggered, this, &MainWindow::Zoom_User);
     ZoomMenu = new QMenu;
     ZoomMenu->addAction(actionZoom_All);
     ZoomMenu->addAction(actionZoom_Dynamic);
+    ZoomMenu->addAction(actionZoom_User);
     ZoomToolButton = new CustomToolButton;
     ZoomToolButton->setMenu(ZoomMenu);
     ZoomToolButton->setDefaultAction(actionZoom_All);
@@ -269,6 +298,9 @@ void MainWindow::initMenu()
     ZoomToolButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     ZoomToolButton->setCheckable(true);
     ui->toolBar_2->addWidget(ZoomToolButton);
+    zoomShortcut_ = new QShortcut(this);
+    zoomShortcut_->setKey(settingsManager_->currentSettings().shortcuts.map.value(QStringLiteral("action.zoom")));
+    connect(zoomShortcut_, &QShortcut::activated, this, &MainWindow::toggleZoomMode);
     /*-----------konec zoom-------*/
     ZoomMenu->setTitle("zoommenu");
 }
@@ -344,6 +376,9 @@ void GraphicsView::wheelEvent(QWheelEvent *e)
         }
         scale(factor, factor);
         setTransformationAnchor(anchor);
+        MainWindow *mw = qobject_cast<MainWindow*>(this->window());
+        if (mw)
+            mw->Zoom_User();
         qDebug() << "anchor " << anchor ;
         qDebug() << "transform " << transform() ;
     //}
@@ -965,10 +1000,9 @@ void MainWindow::onSettingsChanged(const Settings& s)
         s.shortcuts.map.value(QStringLiteral("action.measure")));
     ui->actionAuto->setShortcut(
         s.shortcuts.map.value(QStringLiteral("action.continous")));
-    actionZoom_All->setShortcut(
-        s.shortcuts.map.value(QStringLiteral("action.zoom")));
-    actionZoom_Dynamic->setShortcut(
-        s.shortcuts.map.value(QStringLiteral("action.zoom")));
+    if (zoomShortcut_)
+        zoomShortcut_->setKey(
+            s.shortcuts.map.value(QStringLiteral("action.zoom")));
     ui->actionSave_dxf->setShortcut(
         s.shortcuts.map.value(QStringLiteral("action.exportdxf")));
 

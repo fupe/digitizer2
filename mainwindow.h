@@ -7,6 +7,7 @@
 #include <QtGui>
 #include <QSerialPort>
 #include <QGraphicsView>
+#include <QShortcut>
 #include "settings.h"
 #include "appmanager.h" //musi byt
 
@@ -28,6 +29,7 @@ class GraphicsItems;
 class QKeyEvent;
 class QMouseEvent;
 enum class AddPointMode;
+enum class ZoomMode { All, Dynamic, User };
 
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -122,6 +124,7 @@ public slots:
     void Zoom_Dynamic();
     void Zoom_All();
     void Zoom_User();
+    void toggleZoomMode();
     void status_bar_print(QString,int);
     void setup_scene ();
     //void retranslate();
@@ -134,6 +137,8 @@ private:
 
     QMenu* ZoomMenu;
     CustomToolButton* ZoomToolButton;
+    ZoomMode zoomMode_ = ZoomMode::All;
+    QShortcut* zoomShortcut_ = nullptr;
 
     /*modbus*/
     //QModbusDataUnit readRequest() const;
