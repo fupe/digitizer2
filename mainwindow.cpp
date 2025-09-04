@@ -1054,8 +1054,7 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode) {
     ui->actionAdd_circle->setEnabled(on_circle);
     ui->actionAdd_circle->setText(on_circle ? tr("End circle")
                                             : tr("Add circle"));
-    seq =
-        appManager()->settingsManager()->currentSettings().shortcuts.map.value(
+    seq = appManager()->settingsManager()->currentSettings().shortcuts.map.value(
             QStringLiteral("action.circle"));
     ui->actionAdd_circle->setToolTip(
         on_measure
@@ -1071,11 +1070,27 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode) {
         tr("Point (%1)").arg(seq.toString(QKeySequence::PortableText)));
 
     // new file
-    seq =
-        appManager()->settingsManager()->currentSettings().shortcuts.map.value(
+    seq =  appManager()->settingsManager()->currentSettings().shortcuts.map.value(
             QStringLiteral("action.newfile"));
     ui->actionNew_file->setToolTip(
         tr("New file (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+    //zoom
+    seq =  appManager()->settingsManager()->currentSettings().shortcuts.map.value(
+            QStringLiteral("action.zoom"));
+    actionZoom_All->setToolTip(
+        tr("Zoom All (%1)").arg(seq.toString(QKeySequence::PortableText)));
+    actionZoom_Dynamic->setToolTip(
+        tr("Zoom All (%1)").arg(seq.toString(QKeySequence::PortableText)));
+    actionZoom_User->setToolTip(
+        tr("Zoom All (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+    //BAck
+    seq =  appManager()->settingsManager()->currentSettings().shortcuts.map.value(
+            QStringLiteral("action.back"));
+    ui->actionDelete_last_point->setToolTip(
+        tr("Delete (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
   }
 
   if (on_measure) {
