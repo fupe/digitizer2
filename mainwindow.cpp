@@ -206,9 +206,6 @@ void MainWindow::Zoom_Dynamic() {
   zoomMode_ = ZoomMode::Dynamic;
 
   ZoomToolButton->setDefaultAction(actionZoom_Dynamic);
-  actionZoom_Dynamic->setChecked(true);
-  if (actionZoom_All)
-    actionZoom_All->setChecked(false);
 
   auto *sc = ui->graphicsView->scene();
   if (!sc)
@@ -261,10 +258,6 @@ void MainWindow::Zoom_Dynamic() {
 void MainWindow::Zoom_All() {
   zoomMode_ = ZoomMode::All;
   ZoomToolButton->setDefaultAction(actionZoom_All);
-  if (actionZoom_All)
-    actionZoom_All->setChecked(true);
-  if (actionZoom_Dynamic)
-    actionZoom_Dynamic->setChecked(false);
 
   const auto &s = settingsManager_->currentSettings();
   ui->graphicsView->fitInView(QRect(-1.05 * (s.arm1_length + s.arm2_length),
@@ -277,12 +270,6 @@ void MainWindow::Zoom_All() {
 void MainWindow::Zoom_User() {
   zoomMode_ = ZoomMode::User;
   ZoomToolButton->setDefaultAction(actionZoom_User);
-  if (actionZoom_User)
-    actionZoom_User->setChecked(true);
-  if (actionZoom_Dynamic)
-    actionZoom_Dynamic->setChecked(false);
-  if (actionZoom_All)
-    actionZoom_All->setChecked(false);
 }
 
 void MainWindow::toggleZoomMode() {
@@ -316,9 +303,6 @@ void MainWindow::initMenu() {
   actionZoom_All->setIcon(QIcon(":/pic/zoom_all.png"));
   actionZoom_Dynamic->setIcon(QIcon(":/pic/zoom_select.png"));
   actionZoom_User->setIcon(QIcon(":/pic/zoom_user.png"));
-  actionZoom_All->setCheckable(true);
-  actionZoom_Dynamic->setCheckable(true);
-  actionZoom_User->setCheckable(true);
   connect(actionZoom_All, &QAction::triggered, this, &MainWindow::Zoom_All);
   connect(actionZoom_Dynamic, &QAction::triggered, this,
           &MainWindow::Zoom_Dynamic);
@@ -332,11 +316,11 @@ void MainWindow::initMenu() {
   ZoomToolButton->setDefaultAction(actionZoom_All);
   ZoomToolButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
   ZoomToolButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-  ZoomToolButton->setCheckable(true);
   ui->toolBar_2->addWidget(ZoomToolButton);
   zoomShortcut_ = new QShortcut(this);
   zoomShortcut_->setKey(settingsManager_->currentSettings().shortcuts.map.value(
       QStringLiteral("action.zoom")));
+  zoomShortcut_->setContext(Qt::ApplicationShortcut);
   connect(zoomShortcut_, &QShortcut::activated, this,
           &MainWindow::toggleZoomMode);
   /*-----------konec zoom-------*/
