@@ -106,7 +106,7 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
 
   qDebug() << "konec konstruktoru";
   onAddPointModeChanged(AddPointMode::None); // vyplneni zkratek v tooltipu a podobne
-  onContiModeChanged(ContiMode::SinglePoint); // vyplni zkratky u conti a
+  onContiModeChanged(appManager()->getContiMode()); // vyplni zkratky u conti a
 
 
 }
@@ -624,11 +624,9 @@ void MainWindow::on_actionset_zero_triggered() {
 }
 
 void MainWindow::on_actionAuto_triggered() {
-  if (ui->actionAuto->isChecked()) {
-    ui->actionAuto->setIcon(QIcon(QStringLiteral(":/pic/auto.png")));
+  if (appManager()->getContiMode() == ContiMode::SinglePoint) {
     appManager()->setContiMode(ContiMode::Continous);
   } else {
-    ui->actionAuto->setIcon(QIcon(QStringLiteral(":/pic/manual.png")));
     appManager()->setContiMode(ContiMode::SinglePoint);
   }
 }
@@ -988,6 +986,9 @@ void MainWindow::onSettingsChanged(const Settings &s) {
 void MainWindow::onContiModeChanged(ContiMode mode) {
   const bool on_contimode = (mode == ContiMode::Continous);
   // mode continous
+  ui->actionAuto->setIcon(QIcon(on_contimode
+                                    ? QStringLiteral(":/pic/auto.png")
+                                    : QStringLiteral(":/pic/manual.png")));
   QKeySequence seq =
       appManager()->settingsManager()->currentSettings().shortcuts.map.value(
           QStringLiteral("action.continous"));
