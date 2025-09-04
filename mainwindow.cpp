@@ -80,26 +80,18 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
             statusBar()->showMessage(e, 8000);
             qWarning() << "STATUSBAR error:" << e;
           });
-  qDebug() << "konstruktoru5 ";
   const auto &cs = settingsManager_->currentSettings();
   if (cs.main_window_position.isValid()) {
     setGeometry(cs.main_window_position);
   }
   //-----
-  qDebug() << "konstruktoru 6";
   connect(settingsManager_, &SettingsManager::settingsChanged, this,
           &MainWindow::onSettingsChanged);
   onLanguageChanged(cs.language);
-  qDebug() << "konstruktoru 66";
-  // inicializace z aktuálních Settings (např. zkratky, stavy checkboxů…)
-  // onSettingsChanged(settingsManager_->currentSettings()); // nebo jak se u
-  // tebe jmenuje getter
-  qDebug() << "konstruktoru 666";
   connect(ui->actionExit, &QAction::triggered, this, [this]() {
-    qDebug() << "Menu Exit triggered";
+    //qDebug() << "Menu Exit triggered";
     this->close(); // vyvolá closeEvent()
   });
-  qDebug() << "konstruktoru 7";
   this->setWindowTitle(tr("Digitizer"));
   // qApp->installEventFilter(this);
   // this->installEventFilter(this);
@@ -107,7 +99,6 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
   ui->toolBar_2->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
   ui->toolBar_2->setIconSize(QSize(50, 50));
   /*graphics*/
-  // qDebug() << " scene = new QGraphicsScene(this); = " ;
   scene = new QGraphicsScene(this);
   setup_scene();
   connect(appManager_, &AppManager::armsUpdated, this, &MainWindow::updateArms);
@@ -337,7 +328,7 @@ void MainWindow::setup_scene() {
   scene->setSceneRect(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)));
   ui->graphicsView->setScene(scene);
   ui->graphicsView->fitInView(scene->sceneRect(),Qt::KeepAspectRatio);
-  qDebug()<<"scener eckt"<< scene->sceneRect();
+  //qDebug()<<"scener eckt"<< scene->sceneRect();
   appManager_->setScene(scene);
   // qDebug() << "scene = 1";
   ui->graphicsView->setRenderHints(QPainter::Antialiasing);
