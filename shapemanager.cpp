@@ -15,7 +15,7 @@ void ShapeManager::addShape(GraphicsItems* shape)
 
 const QVector<GraphicsItems*>& ShapeManager::getShapes() const
 {
-    qDebug() <<"ShapeManager::getShapes";
+    //qDebug() <<"ShapeManager::getShapes";
     return shapes_;
 }
 

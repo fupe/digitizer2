@@ -18,8 +18,8 @@ CalibrateWindow::CalibrateWindow(AppManager* appManager, QWidget *parent)
 {
     ui->setupUi(this);
     //ui->calculate  ->setEnabled(false);
-    scene = new QGraphicsScene(this);
-    scene->setSceneRect(-100, -100, 200, 200);
+    //scene = new QGraphicsScene(this);
+    //scene->setSceneRect(-100, -100, 200, 200);
     //ui->graphicsView->setScene(scene);
     //ui->graphicsView->fitInView(scene->sceneRect(), Qt::KeepAspectRatio);
     //pen.setColor(Qt::blue);

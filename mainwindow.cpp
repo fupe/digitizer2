@@ -118,10 +118,10 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
   onSettingsChanged(cs);
 
   qDebug() << "konec konstruktoru";
-  onAddPointModeChanged(
-      AddPointMode::None); // vyplneni zkratek v tooltipu a podobne
+  onAddPointModeChanged(AddPointMode::None); // vyplneni zkratek v tooltipu a podobne
   onContiModeChanged(ContiMode::SinglePoint); // vyplni zkratky u conti a
-                                              // podobne
+  sceneModified(QPointF(0,0));
+
 }
 
 MainWindow::~MainWindow() { delete ui; }
@@ -219,14 +219,14 @@ void MainWindow::Zoom_Dynamic() {
 
   for (QGraphicsItem *item : sc->items()) {
     if (auto *shape = dynamic_cast<GraphicsItems *>(item)) {
-        qDebug()<<"shape" <<  shape->sceneBoundingRect() ;
+        //qDebug()<<"shape" <<  shape->sceneBoundingRect() ;
       if (!hasItem) {
         bounds = shape->sceneBoundingRect();
-        qDebug()<<"!hasItem" <<  bounds ;
+        //qDebug()<<"!hasItem" <<  bounds ;
         hasItem = true;
       } else {
         bounds = bounds.united(shape->sceneBoundingRect());
-        qDebug()<<"hasItem" <<  bounds ;
+      //  qDebug()<<"hasItem" <<  bounds ;
       }
     }
 
@@ -235,26 +235,26 @@ void MainWindow::Zoom_Dynamic() {
   QRectF endPointRect(lastEndArm2_, QSizeF(1, 1)); // obdélník okolo aktuální pozice
   if (hasItem) {
     bounds = bounds.united(endPointRect);
-    qDebug()<<"hasItem endpoint" <<  bounds ;
+    //qDebug()<<"hasItem endpoint" <<  bounds ;
   } else {
     bounds = endPointRect;
-    qDebug()<<"!hasItem endpoint" <<  bounds ;
+    //qDebug()<<"!hasItem endpoint" <<  bounds ;
     hasItem = true;
   }
 
-  if (arm2==0) {
+  /*if (arm2) {
     bounds = bounds.united(arm2->sceneBoundingRect());
     qDebug()<<"arm2 " <<  bounds ;
     hasItem = true;
-  }
+  }*/
 
   if (hasItem) {
     bounds.adjust(-20, -20, 20, 20); // přidá okraje
-    qDebug()<<"bounds.adjust " <<  bounds ;
-    qDebug()<<"bounds.center " <<  bounds.center() ;
+    //qDebug()<<"bounds.adjust " <<  bounds ;
+    //qDebug()<<"bounds.center " <<  bounds.center() ;
     ui->graphicsView->fitInView(bounds, Qt::KeepAspectRatio);
-    ui->graphicsView->fitInView(0,0,20,20, Qt::KeepAspectRatio);
-    //ui->graphicsView->centerOn(bounds.center());
+    //ui->graphicsView->fitInView(-25, -25, 50, 50, Qt::KeepAspectRatio);
+    ui->graphicsView->centerOn(bounds.center());
   }
 }
 
@@ -346,9 +346,11 @@ void MainWindow::initMenu() {
 void MainWindow::setup_scene() {
   // qDebug() << "scene = " << scene ;
   const auto &s = settingsManager_->currentSettings();
-  scene->setSceneRect(-100, -100, 200, 200);
-  // scene->setSceneRect(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)));
+  //scene->setSceneRect(-100, -100, 200, 200);
+  scene->setSceneRect(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)));
   ui->graphicsView->setScene(scene);
+  ui->graphicsView->fitInView(scene->sceneRect(),Qt::KeepAspectRatio);
+  qDebug()<<"scener eckt"<< scene->sceneRect();
   appManager_->setScene(scene);
   // qDebug() << "scene = 1";
   ui->graphicsView->setRenderHints(QPainter::Antialiasing);
@@ -372,8 +374,7 @@ void MainWindow::setup_scene() {
   arm1->show();
   arm2->show();
 
-  ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(),
-                              Qt::KeepAspectRatio);
+  //ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
   // ui->graphicsView->show();
   // qDebug() << " konecscene = " ;
 }
@@ -381,12 +382,13 @@ void MainWindow::setup_scene() {
 void MainWindow::on_actionDelete_last_point_triggered() {}
 
 void MainWindow::sceneModified(QPointF) {
-    //qDebug()<<"sceneModified zoom" ;
+
   if (zoomMode_ == ZoomMode::Dynamic)
   {
       //qDebug()<<" zoom dynamic" ;
     Zoom_Dynamic();
   }
+
 }
 
 
@@ -920,7 +922,7 @@ void MainWindow::on_actionMeasure_toggled(bool on) {
 }
 
 void MainWindow::on_actionadd_point_triggered() {
-  qDebug() << "add point trigered ui";
+  //qDebug() << "add point trigered ui";
   appManager()->addpointfrommainwindow();
 }
 

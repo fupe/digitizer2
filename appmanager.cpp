@@ -75,7 +75,7 @@ void AppManager::setAngles(double alfa, double beta, int index)
 
     if (distance > settings_.auto_step && currentContiMode_ == ContiMode::Continous)
     {
-        qDebug() << "distance " << distance;
+        //qDebug() << "distance " << distance;
         addpointfrommainwindow();
     }
     else
@@ -146,24 +146,24 @@ void AppManager::cancelCurrentAction() {
 
 void AppManager::addpointfrommainwindow(void)
 {
-    qDebug() << "add point from main window position " << endPointArm2_;
+    //qDebug() << "add point from main window position " << endPointArm2_;
     lastpoint = endPointArm2_;
     switch (currentAddPointMode_) {
         case AddPointMode::None:
-            qDebug() << "add point" << modeAddPointToString(currentAddPointMode_);
+           // qDebug() << "add point" << modeAddPointToString(currentAddPointMode_);
             addPointtoShapeManager();
             break;
         case AddPointMode::Circle:
             // TODO: doplnit circle fit
             break;
         case AddPointMode::Polyline:
-            qDebug() << "polyline add point";
+            //qDebug() << "polyline add point";
             if (shapeManager_.hasCurrent()) {
                 shapeManager_.appendToCurrent(endPointArm2_);
             }
             break;
         case AddPointMode::Measure:
-            qDebug() << "case measure add point";
+            //qDebug() << "case measure add point";
             addPointtoMeasuru();
             break;
         case AddPointMode::Calibrate:
@@ -198,7 +198,7 @@ void AppManager::addPointtoShapeManager()
 {
     lastpoint = endPointArm2_;
     auto* point = new mypoint;
-    qDebug()<<"position " << endPointArm2_ ;
+    //qDebug()<<"position " << endPointArm2_ ;
     point->setPos(endPointArm2_);
     shapeManager_.addShape(point);
     //shapeManager_.printShapesInfo();
@@ -379,8 +379,7 @@ void AppManager::onSerialLine(const QByteArray& line)
 void AppManager::logDataSetCount()
 {
    // qDebug() << "Přijaté sady dat:" << dataSetCount_;
-    QRectF rect = scene_->sceneRect();
-    qDebug() << "Scene rect:" << rect;
+
 }
 
 void AppManager::onSerialOpened()
