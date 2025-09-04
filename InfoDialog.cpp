@@ -23,8 +23,13 @@ InfoDialog::InfoDialog(AppManager* app, QWidget *parent) :
                 this, &InfoDialog::updateModes);
         connect(app_, &AppManager::shapesChanged,
                 this, &InfoDialog::updateCounts);
+        connect(app_, &AppManager::serialOpened,
+                this, &InfoDialog::onSerialOpened);
+        connect(app_, &AppManager::serialClosed,
+                this, &InfoDialog::onSerialClosed);
         updateModes();
         updateCounts();
+        updateConnectionStatus(app_->isSerialConnected());
     }
 
     if (auto mw = qobject_cast<MainWindow*>(parent)) {
@@ -95,4 +100,20 @@ QString InfoDialog::zoomModeToString(ZoomMode mode)
     default:
         return tr("Unknown");
     }
+}
+
+void InfoDialog::updateConnectionStatus(bool connected)
+{
+    ui->connection_value->setText(connected ? tr("Connected")
+                                           : tr("Disconnected"));
+}
+
+void InfoDialog::onSerialOpened()
+{
+    updateConnectionStatus(true);
+}
+
+void InfoDialog::onSerialClosed()
+{
+    updateConnectionStatus(false);
 }

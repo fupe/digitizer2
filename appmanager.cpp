@@ -384,6 +384,7 @@ void AppManager::logDataSetCount()
 
 void AppManager::onSerialOpened()
 {
+    serialConnected_ = true;
     qDebug() << "AppManager: opened -" << dataSourceToHuman();
     // pošli čitelnou hlášku ven (MainWindow -> statusbar)
     emit connectionNotice(tr("Připojeno: %1").arg(dataSourceToHuman()));
@@ -391,6 +392,7 @@ void AppManager::onSerialOpened()
 
 void AppManager::onSerialClosed()
 {
+    serialConnected_ = false;
     qDebug() << "AppManager: close -" << dataSourceToHuman();
     emit connectionNotice(tr("Odpojeno: %1").arg(dataSourceToHuman()));
     settings_.simulation.loggingEnabled = false;

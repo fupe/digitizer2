@@ -25,6 +25,9 @@ private slots:
     void updateModes();
     void updateCounts();
     void updateZoomMode(ZoomMode mode);
+    void updateConnectionStatus(bool connected);
+    void onSerialOpened();
+    void onSerialClosed();
 
 private:
     static QString zoomModeToString(ZoomMode mode);

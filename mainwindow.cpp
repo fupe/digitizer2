@@ -41,16 +41,12 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
   connect(ui->actionDisconnect, &QAction::triggered, this,
           [this](bool) { appManager_->closeSerial(); });
   connect(appManager_, &AppManager::serialOpened, this,
-          [this]() { // stav ikony z appmanageru.
-            ui->actionConnect->setEnabled(false);
-            ui->actionDisconnect->setEnabled(true);
-          });
+          [this]() { updateSerialActions(true); });
   qDebug() << "konstruktoru 2";
-  connect(appManager_, &AppManager::serialClosed, this, [this]() {
-    ui->actionConnect->setEnabled(true);
-    ui->actionDisconnect->setEnabled(false);
-  });
+  connect(appManager_, &AppManager::serialClosed, this,
+          [this]() { updateSerialActions(false); });
   qDebug() << "konstruktoru 3";
+  updateSerialActions(appManager_->isSerialConnected());
   connect(ui->actionAdd_polyline, &QAction::toggled, this, [this](bool on) {
     if (on)
       appManager()->setAddPointMode(AddPointMode::Polyline);
@@ -116,6 +112,12 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
 }
 
 MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::updateSerialActions(bool connected)
+{
+  ui->actionConnect->setEnabled(!connected);
+  ui->actionDisconnect->setEnabled(connected);
+}
 
 void MainWindow::closeEvent(QCloseEvent *event)
 
@@ -1043,8 +1045,7 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode) {
     ui->actionAdd_circle->setEnabled(on_circle);
     ui->actionAdd_circle->setText(on_circle ? tr("End circle")
                                             : tr("Add circle"));
-    seq =
-        appManager()->settingsManager()->currentSettings().shortcuts.map.value(
+    seq = appManager()->settingsManager()->currentSettings().shortcuts.map.value(
             QStringLiteral("action.circle"));
     ui->actionAdd_circle->setToolTip(
         on_measure
@@ -1060,11 +1061,27 @@ void MainWindow::onAddPointModeChanged(AddPointMode mode) {
         tr("Point (%1)").arg(seq.toString(QKeySequence::PortableText)));
 
     // new file
-    seq =
-        appManager()->settingsManager()->currentSettings().shortcuts.map.value(
+    seq =  appManager()->settingsManager()->currentSettings().shortcuts.map.value(
             QStringLiteral("action.newfile"));
     ui->actionNew_file->setToolTip(
         tr("New file (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+    //zoom
+    seq =  appManager()->settingsManager()->currentSettings().shortcuts.map.value(
+            QStringLiteral("action.zoom"));
+    actionZoom_All->setToolTip(
+        tr("Zoom All (%1)").arg(seq.toString(QKeySequence::PortableText)));
+    actionZoom_Dynamic->setToolTip(
+        tr("Zoom All (%1)").arg(seq.toString(QKeySequence::PortableText)));
+    actionZoom_User->setToolTip(
+        tr("Zoom All (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
+    //BAck
+    seq =  appManager()->settingsManager()->currentSettings().shortcuts.map.value(
+            QStringLiteral("action.back"));
+    ui->actionDelete_last_point->setToolTip(
+        tr("Delete (%1)").arg(seq.toString(QKeySequence::PortableText)));
+
   }
 
   if (on_measure) {
