@@ -93,6 +93,10 @@ qDebug()<<"konstruktoru5 ";
     scene = new QGraphicsScene(this);
     setup_scene();
     connect(appManager_, &AppManager::armsUpdated, this, &MainWindow::updateArms);
+
+    // nastavit výchozí klávesové zkratky podle aktuálních nastavení
+    onSettingsChanged(cs);
+
     qDebug()<<"konec konstruktoru";
     onAddPointModeChanged(AddPointMode::None);  //vyplneni zkratek v tooltipu a podobne
 }
@@ -934,21 +938,35 @@ void MainWindow::on_actionConnect_triggered()
 
 void MainWindow::onSettingsChanged(const Settings& s)
 {
-    //qDebug() << "arm1 " << s.arm1_length << " arm2 " << s.arm2_length;
-    if (arm1!=nullptr)   qDebug() << "arm1 "<< arm1 ;
-    //if (arm2!=nullptr)   qDebug() << "arm2 "<< arm2 ;
-    //if (arm1)
-    {
-        QLineF l = arm1->line();   // aktuální čára (uchová P1 i úhel)
-        l.setLength(s.arm1_length); // změní jen délku
-        arm1->setLine(l);
+    // aktualizuj délky ramen podle uloženého nastavení
+    QLineF l = arm1->line();   // aktuální čára (uchová P1 i úhel)
+    l.setLength(s.arm1_length); // změní jen délku
+    arm1->setLine(l);
+
+    if (arm2) {
+        QLineF l2 = arm2->line();   // aktuální čára (uchová P1 i úhel)
+        l2.setLength(s.arm2_length); // změní jen délku
+        arm2->setLine(l2);
     }
-    if (arm2)
-    {
-        QLineF l = arm2->line();   // aktuální čára (uchová P1 i úhel)
-        l.setLength(s.arm2_length); // změní jen délku
-        arm2->setLine(l);
-    }
+
+    // přiřaď klávesové zkratky k akcím
+    ui->actionadd_point->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.addPoint")));
+    ui->actionAdd_polyline->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.polyline")));
+    ui->actionMeasure->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.measure")));
+    ui->actionDelete_last_point->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.clear")));
+    ui->actionAuto->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.continous")));
+    actionZoom_All->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.zoom")));
+    actionZoom_Dynamic->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.zoom")));
+    ui->actionSave_dxf->setShortcut(
+        s.shortcuts.map.value(QStringLiteral("action.exportdxf")));
+
     onAddPointModeChanged(appManager()->getAddPointMode());
 }
 
