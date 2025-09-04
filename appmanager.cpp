@@ -378,7 +378,9 @@ void AppManager::onSerialLine(const QByteArray& line)
 
 void AppManager::logDataSetCount()
 {
-    qDebug() << "Přijaté sady dat:" << dataSetCount_;
+   // qDebug() << "Přijaté sady dat:" << dataSetCount_;
+    QRectF rect = scene_->sceneRect();
+    qDebug() << "Scene rect:" << rect;
 }
 
 void AppManager::onSerialOpened()

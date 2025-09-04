@@ -204,6 +204,7 @@ void MainWindow::readData()
 
 void MainWindow::Zoom_Dynamic() {
   zoomMode_ = ZoomMode::Dynamic;
+
   ZoomToolButton->setDefaultAction(actionZoom_Dynamic);
   actionZoom_Dynamic->setChecked(true);
   if (actionZoom_All)
@@ -218,32 +219,42 @@ void MainWindow::Zoom_Dynamic() {
 
   for (QGraphicsItem *item : sc->items()) {
     if (auto *shape = dynamic_cast<GraphicsItems *>(item)) {
+        qDebug()<<"shape" <<  shape->sceneBoundingRect() ;
       if (!hasItem) {
         bounds = shape->sceneBoundingRect();
+        qDebug()<<"!hasItem" <<  bounds ;
         hasItem = true;
       } else {
         bounds = bounds.united(shape->sceneBoundingRect());
+        qDebug()<<"hasItem" <<  bounds ;
       }
     }
+
   }
 
   QRectF endPointRect(lastEndArm2_, QSizeF(1, 1)); // obdélník okolo aktuální pozice
   if (hasItem) {
     bounds = bounds.united(endPointRect);
+    qDebug()<<"hasItem endpoint" <<  bounds ;
   } else {
     bounds = endPointRect;
+    qDebug()<<"!hasItem endpoint" <<  bounds ;
     hasItem = true;
   }
 
-  if (arm2) {
+  if (arm2==0) {
     bounds = bounds.united(arm2->sceneBoundingRect());
+    qDebug()<<"arm2 " <<  bounds ;
     hasItem = true;
   }
 
   if (hasItem) {
     bounds.adjust(-20, -20, 20, 20); // přidá okraje
+    qDebug()<<"bounds.adjust " <<  bounds ;
+    qDebug()<<"bounds.center " <<  bounds.center() ;
     ui->graphicsView->fitInView(bounds, Qt::KeepAspectRatio);
-    ui->graphicsView->centerOn(bounds.center());
+    ui->graphicsView->fitInView(0,0,20,20, Qt::KeepAspectRatio);
+    //ui->graphicsView->centerOn(bounds.center());
   }
 }
 
@@ -370,9 +381,14 @@ void MainWindow::setup_scene() {
 void MainWindow::on_actionDelete_last_point_triggered() {}
 
 void MainWindow::sceneModified(QPointF) {
+    //qDebug()<<"sceneModified zoom" ;
   if (zoomMode_ == ZoomMode::Dynamic)
+  {
+      //qDebug()<<" zoom dynamic" ;
     Zoom_Dynamic();
+  }
 }
+
 
 GraphicsView::GraphicsView(QWidget *parent)
     : QGraphicsView(parent)
