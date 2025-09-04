@@ -965,8 +965,8 @@ void MainWindow::onSettingsChanged(const Settings& s)
         s.shortcuts.map.value(QStringLiteral("action.measure")));
     ui->actionAuto->setShortcut(
         s.shortcuts.map.value(QStringLiteral("action.continous")));
-    actionZoom_All->setShortcut(
-        s.shortcuts.map.value(QStringLiteral("action.zoom")));
+    //actionZoom_All->setShortcut(
+      //  s.shortcuts.map.value(QStringLiteral("action.zoom")));
     actionZoom_Dynamic->setShortcut(
         s.shortcuts.map.value(QStringLiteral("action.zoom")));
     ui->actionSave_dxf->setShortcut(

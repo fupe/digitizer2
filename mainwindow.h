@@ -147,7 +147,7 @@ public:
     QAction* actionZoom_All;
     QAction* actionZoom_Dynamic;
     QAction* actionZoom_User;
-    QGraphicsScene *scene,*scene_calib;
+    QGraphicsScene *scene;
 
     QGraphicsLineItem *line;
     QGraphicsRectItem *rectangle;

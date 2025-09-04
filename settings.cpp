@@ -11,7 +11,7 @@ Shortcuts Shortcuts::defaults()
     s.map[QStringLiteral("action.measure")]      = QKeySequence::fromString(QStringLiteral("P"),      QKeySequence::PortableText);
     s.map[QStringLiteral("action.newfile")]        = QKeySequence::fromString(QStringLiteral("L"),      QKeySequence::PortableText);
     s.map[QStringLiteral("action.continous")]    = QKeySequence::fromString(QStringLiteral("Ctrl+0"), QKeySequence::PortableText);
-    s.map[QStringLiteral("action.zoom")]         = QKeySequence::fromString(QStringLiteral("L"),      QKeySequence::PortableText);
+    s.map[QStringLiteral("action.zoom")]         = QKeySequence::fromString(QStringLiteral("Y"),      QKeySequence::PortableText);
     s.map[QStringLiteral("action.back")]         = QKeySequence::fromString(QStringLiteral("Ctrl+0"), QKeySequence::PortableText);
     s.map[QStringLiteral("action.exportdxf")]    = QKeySequence::fromString(QStringLiteral("Ctrl+0"), QKeySequence::PortableText);
     return s;
