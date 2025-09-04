@@ -280,7 +280,7 @@ void MainWindow::initMenu()
     actionZoom_User = new QAction(tr("Zoom User"), this);
     actionZoom_All->setIcon(QIcon(":/pic/zoom_all.png"));
     actionZoom_Dynamic->setIcon(QIcon(":/pic/zoom_select.png"));
-    actionZoom_User->setIcon(QIcon(":/pic/manual.png"));
+    actionZoom_User->setIcon(QIcon(":/pic/zoom_user.png"));
     actionZoom_All->setCheckable(true);
     actionZoom_Dynamic->setCheckable(true);
     actionZoom_User->setCheckable(true);
