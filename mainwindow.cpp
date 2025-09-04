@@ -120,7 +120,7 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
   qDebug() << "konec konstruktoru";
   onAddPointModeChanged(AddPointMode::None); // vyplneni zkratek v tooltipu a podobne
   onContiModeChanged(ContiMode::SinglePoint); // vyplni zkratky u conti a
-  sceneModified(QPointF(0,0));
+
 
 }
 
@@ -361,6 +361,7 @@ void MainWindow::setup_scene() {
   //ui->graphicsView->fitInView(ui->graphicsView->scene()->sceneRect(), Qt::KeepAspectRatio);
   // ui->graphicsView->show();
   // qDebug() << " konecscene = " ;
+
 }
 
 void MainWindow::on_actionDelete_last_point_triggered() {}
