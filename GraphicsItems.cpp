@@ -74,7 +74,10 @@ mypoint::mypoint()
 
 void mypoint::addPointToShape(const QPointF& point)
 {
-    qDebug() << "pridavam bod do point " << point ;
+    QElapsedTimer timer;
+    timer.start();
+    qDebug() << "pridavam bod do point " << point;
+    qDebug() << "addPointToShape (mypoint):" << timer.nsecsElapsed() << "ns";
 }
 
 QRectF mypoint::boundingRect() const

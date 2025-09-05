@@ -7,6 +7,7 @@
 #include "settingsmanager.h"
 #include "idatasourceworker.h"
 #include "GraphicsItems.h"
+#include <QElapsedTimer>
 
 namespace {
     constexpr double kPi = 3.14159265358979323846;
@@ -196,6 +197,9 @@ void AppManager::clearShapeManager()
 
 void AppManager::addPointtoShapeManager()
 {
+    QElapsedTimer timer;
+    timer.start();
+
     // přebarvi předchozí poslední bod zpátky na červenou
     const auto& shapes = shapeManager_.getShapes();
     if (!shapes.isEmpty()) {
@@ -210,6 +214,8 @@ void AppManager::addPointtoShapeManager()
     point->setPos(endPointArm2_);
     point->pen.setColor(Qt::green); // nový poslední bod zeleně
     shapeManager_.addShape(point);
+
+    qDebug() << "addPointtoShapeManager:" << timer.nsecsElapsed() << "ns";
 }
 
 void AppManager::deleteLastPoint()
