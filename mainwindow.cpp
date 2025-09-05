@@ -256,7 +256,6 @@ void MainWindow::Zoom_Dynamic() {
 }
 
 void MainWindow::Zoom_All() {
-    qDebug()<<"-----------------------------";
   zoomMode_ = ZoomMode::All;
   ZoomToolButton->setDefaultAction(actionZoom_All);
 
@@ -266,10 +265,6 @@ void MainWindow::Zoom_All() {
                                     2.1 * (s.arm1_length + s.arm2_length),
                                     2.1 * (s.arm1_length + s.arm2_length)),
                               Qt::KeepAspectRatio);
-  qDebug()<<"rect ------------- " << QRect(-1.05 * (s.arm1_length + s.arm2_length),
-                                           -1.05 * (s.arm1_length + s.arm2_length),
-                                           2.1 * (s.arm1_length + s.arm2_length),
-                                           2.1 * (s.arm1_length + s.arm2_length)) ;
   emit zoomModeChanged(zoomMode_);
 }
 
