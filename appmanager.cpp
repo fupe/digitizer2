@@ -150,16 +150,17 @@ void AppManager::addpointfrommainwindow(void)
     //qDebug() << "add point from main window position " << endPointArm2_;
     lastpoint = endPointArm2_;
     switch (currentAddPointMode_) {
-        case AddPointMode::None:
-           // qDebug() << "add point" << modeAddPointToString(currentAddPointMode_);
-            addPointtoShapeManager();
-            break;
         case AddPointMode::Circle:
             // TODO: doplnit circle fit
             break;
         case AddPointMode::Polyline:
-            //qDebug() << "polyline add point";
-            if (shapeManager_.hasCurrent()) {
+            {
+                auto* poly = dynamic_cast<mypolyline*>(shapeManager_.currentShape());
+                if (!poly) {
+                    poly = new mypolyline(this);
+                    scene_->addItem(poly);
+                    shapeManager_.startShape(poly);
+                }
                 shapeManager_.appendToCurrent(endPointArm2_);
             }
             break;
@@ -173,15 +174,27 @@ void AppManager::addpointfrommainwindow(void)
                 emit calibrateAnglesAdded(Arm1Angle_, betaDeg);
             }
             break;
+        case AddPointMode::None:
         default:
+            {
+                mypoint* points = nullptr;
+                const auto& shapes = shapeManager_.getShapes();
+                for (auto* s : shapes) {
+                    if (auto* mp = dynamic_cast<mypoint*>(s)) {
+                        points = mp;
+                        break;
+                    }
+                }
+                if (!points) {
+                    points = new mypoint;
+                    scene_->addItem(points);
+                }
+                shapeManager_.startShape(points);
+                shapeManager_.appendToCurrent(endPointArm2_);
+            }
             break;
     }
     emit sceneModified(endPointArm2_);
-}
-
-void AppManager::addPolylinetoShapeManager()
-{
-    // TODO: tvůj kód pro polyline (ponecháno zakomentované v původní verzi)
 }
 
 void AppManager::finishCurrentShape()
@@ -193,27 +206,6 @@ void AppManager::finishCurrentShape()
 void AppManager::clearShapeManager()
 {
     shapeManager_.clear();
-}
-
-void AppManager::addPointtoShapeManager()
-{
-    QElapsedTimer timer;
-    timer.start();
-    lastpoint = endPointArm2_;
-
-    const auto& shapes = shapeManager_.getShapes();
-    mypoint* points = nullptr;
-    if (!shapes.isEmpty()) {
-        points = dynamic_cast<mypoint*>(shapes.last());
-    }
-    if (!points) {
-        points = new mypoint;
-        shapeManager_.addShape(points);
-    }
-    points->addPointToShape(endPointArm2_);
-
-
-    qDebug() << "addPointtoShapeManager:" << timer.nsecsElapsed() << "ns";
 }
 
 void AppManager::deleteLastPoint()

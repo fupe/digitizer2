@@ -74,7 +74,9 @@ void ShapeManager::startShape(GraphicsItems* shape)
 {
     if (!shape) return;
     currentShape_ = shape;
-    addShape(shape);
+    if (!shapes_.contains(shape)) {
+        addShape(shape);
+    }
 }
 
 void ShapeManager::appendToCurrent(const QPointF& point)
