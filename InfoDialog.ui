@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -195,11 +195,37 @@
     <string>Disconnected</string>
    </property>
   </widget>
+  <widget class="QLabel" name="label_memory">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>230</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Memory usage</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="memory_value">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>230</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
   <widget class="QPushButton" name="close">
    <property name="geometry">
     <rect>
      <x>260</x>
-     <y>240</y>
+     <y>270</y>
      <width>75</width>
      <height>23</height>
     </rect>

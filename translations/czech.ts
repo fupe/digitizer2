@@ -198,6 +198,11 @@
         <translation>Počet bodů</translation>
     </message>
     <message>
+        <location filename="../InfoDialog.ui" line="208"/>
+        <source>Memory usage</source>
+        <translation>Využití paměti</translation>
+    </message>
+    <message>
         <location filename="../InfoDialog.ui" line="52"/>
         <source>Close</source>
         <translation>Zavřít</translation>
