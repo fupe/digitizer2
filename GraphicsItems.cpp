@@ -68,7 +68,7 @@ mypoint::mypoint()
     setFlag (ItemIsSelectable, true);
     setFlag(QGraphicsItem::ItemIgnoresTransformations, true);
     pen.setColor(Qt::red);
-
+    m_boundingRect = QRectF();
 }
 
 
@@ -76,13 +76,20 @@ void mypoint::addPointToShape(const QPointF& point)
 {
     QElapsedTimer timer;
     timer.start();
+
+    QRectF newRect = m_boundingRect.united(QRectF(point.x()-10, point.y()-10, 20, 20));
+    prepareGeometryChange();
+    points_ << point;
+    m_boundingRect = newRect;
     qDebug() << "pridavam bod do point " << point;
     qDebug() << "addPointToShape (mypoint):" << timer.nsecsElapsed() << "ns";
+    update();
+
 }
 
 QRectF mypoint::boundingRect() const
 {
-    return QRectF (-10,-10,20,20);
+    return m_boundingRect;
 }
 
 void mypoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -92,26 +99,43 @@ void mypoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, Q
     Q_UNUSED(widget);
     pen.setWidth(3);
     painter->setPen(pen);
-    painter->drawLine (-10,-10,10,10);
-    painter->drawLine (10,-10,-10,10);
-    //painter->drawPoint(1,1);
-    //qDebug()<<"point vykreslen";
+    for (const auto& p : points_) {
+        painter->drawLine(p.x() - 10, p.y() - 10, p.x() + 10, p.y() + 10);
+        painter->drawLine(p.x() + 10, p.y() - 10, p.x() - 10, p.y() + 10);
+    }
 }
 
 void mypoint::export_dxf(DL_Dxf& dxf, DL_WriterA& dw, Units units)
 {
-    qDebug() << "export mypoint" << this->pos();
-    dxf.writeComment(dw, QString("alfa: %1").arg(-alfa).toStdString());
-    dxf.writeComment(dw, QString("beta: %1").arg(-beta).toStdString());
-    double x = mmToUnits(this->pos().x(), units);
-    double y = mmToUnits(this->pos().y(), units) * (-1);
-    DL_PointData data(x, y, 0.0);
-    dxf.writePoint(dw, data, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
+    for (const auto& p : points_) {
+        qDebug() << "export mypoint" << p;
+        dxf.writeComment(dw, QString("alfa: %1").arg(-alfa).toStdString());
+        dxf.writeComment(dw, QString("beta: %1").arg(-beta).toStdString());
+        double x = mmToUnits(p.x(), units);
+        double y = mmToUnits(p.y(), units) * (-1);
+        DL_PointData data(x, y, 0.0);
+        dxf.writePoint(dw, data, DL_Attributes("0", 256, -1, "BYLAYER", 1.0));
+    }
 }
 
 void mypoint::save(QTextStream &out)
 {
-    out << "POINT " << pos().x() << " " << pos().y() << " " << alfa << " " << beta << "\n";
+    for (const auto& p : points_) {
+        out << "POINT " << p.x() << " " << p.y() << " " << alfa << " " << beta << "\n";
+    }
+}
+
+void mypoint::removeLastPoint()
+{
+    if (points_.isEmpty())
+        return;
+    QPolygonF newPoints = points_;
+    newPoints.removeLast();
+    QRectF newRect = newPoints.boundingRect().adjusted(-10, -10, 10, 10);
+    prepareGeometryChange();
+    points_.removeLast();
+    m_boundingRect = newRect;
+    update();
 }
 
 
