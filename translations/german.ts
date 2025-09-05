@@ -197,6 +197,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../InfoDialog.ui" line="208"/>
+        <source>Memory usage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../InfoDialog.ui" line="52"/>
         <source>Close</source>
         <translation type="unfinished"></translation>

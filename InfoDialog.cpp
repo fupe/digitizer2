@@ -2,7 +2,12 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <psapi.h>
+#else
+#include <unistd.h>
 #endif
+#include <QFile>
+#include <QTextStream>
+#include <QTimer>
 #include "InfoDialog.h"
 #include "ui_InfoDialog.h"
 #include "appmanager.h"
@@ -37,6 +42,11 @@ InfoDialog::InfoDialog(AppManager* app, QWidget *parent) :
                 this, &InfoDialog::updateZoomMode);
         updateZoomMode(mw->zoomMode());
     }
+
+    connect(&memoryTimer_, &QTimer::timeout,
+            this, &InfoDialog::updateMemoryUsage);
+    memoryTimer_.start(1000);
+    updateMemoryUsage();
 }
 
 InfoDialog::~InfoDialog()
@@ -106,6 +116,32 @@ void InfoDialog::updateConnectionStatus(bool connected)
 {
     ui->connection_value->setText(connected ? tr("Connected")
                                            : tr("Disconnected"));
+}
+
+void InfoDialog::updateMemoryUsage()
+{
+#ifdef _WIN32
+    PROCESS_MEMORY_COUNTERS_EX pmc;
+    if (GetProcessMemoryInfo(GetCurrentProcess(),
+                              (PROCESS_MEMORY_COUNTERS*)&pmc,
+                              sizeof(pmc))) {
+        SIZE_T mem = pmc.WorkingSetSize;
+        ui->memory_value->setText(QString::number(mem / (1024 * 1024)) + " MB");
+    } else {
+        ui->memory_value->setText("N/A");
+    }
+#else
+    QFile f("/proc/self/statm");
+    if (f.open(QIODevice::ReadOnly)) {
+        QTextStream in(&f);
+        long pages; in >> pages;
+        long pageSize = sysconf(_SC_PAGE_SIZE);
+        long mem = pages * pageSize;
+        ui->memory_value->setText(QString::number(mem / (1024 * 1024)) + " MB");
+    } else {
+        ui->memory_value->setText("N/A");
+    }
+#endif
 }
 
 void InfoDialog::onSerialOpened()

@@ -2,6 +2,7 @@
 #define INFODIALOG_H
 
 #include <QDialog>
+#include <QTimer>
 
 class AppManager;
 enum class ZoomMode;
@@ -28,11 +29,13 @@ private slots:
     void updateConnectionStatus(bool connected);
     void onSerialOpened();
     void onSerialClosed();
+    void updateMemoryUsage();
 
 private:
     static QString zoomModeToString(ZoomMode mode);
     Ui::InfoDialog *ui;
     AppManager* app_ = nullptr;
+    QTimer memoryTimer_;
 };
 
 #endif // MYINFO_H
