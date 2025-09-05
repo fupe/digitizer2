@@ -360,7 +360,12 @@ void MainWindow::setup_scene() {
 
 }
 
-void MainWindow::on_actionDelete_last_point_triggered() {}
+void MainWindow::on_actionDelete_last_point_triggered()
+{
+    if (appManager()) {
+        appManager()->deleteLastPoint();
+    }
+}
 
 void MainWindow::sceneModified(QPointF) {
 

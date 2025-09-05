@@ -77,6 +77,7 @@ public:
     void setScene(QGraphicsScene* scene);
     void addPointtoMeasuru(void);
     void addPointtoShapeManager(void);
+    void deleteLastPoint();
     void addPolylinetoShapeManager(void);
     void finishCurrentShape();
     void clearShapeManager();

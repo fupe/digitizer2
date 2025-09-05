@@ -196,12 +196,44 @@ void AppManager::clearShapeManager()
 
 void AppManager::addPointtoShapeManager()
 {
+    // přebarvi předchozí poslední bod zpátky na červenou
+    const auto& shapes = shapeManager_.getShapes();
+    if (!shapes.isEmpty()) {
+        if (auto prev = dynamic_cast<mypoint*>(shapes.last())) {
+            prev->pen.setColor(Qt::red);
+            prev->update();
+        }
+    }
+
     lastpoint = endPointArm2_;
     auto* point = new mypoint;
-    //qDebug()<<"position " << endPointArm2_ ;
     point->setPos(endPointArm2_);
+    point->pen.setColor(Qt::green); // nový poslední bod zeleně
     shapeManager_.addShape(point);
-    //shapeManager_.printShapesInfo();
+}
+
+void AppManager::deleteLastPoint()
+{
+    const auto& shapes = shapeManager_.getShapes();
+    if (shapes.isEmpty())
+        return;
+
+    // smaž pouze pokud je poslední položka bod
+    if (!dynamic_cast<mypoint*>(shapes.last()))
+        return;
+
+    shapeManager_.deleteLastShape();
+
+    const auto& updated = shapeManager_.getShapes();
+    if (!updated.isEmpty()) {
+        if (auto last = dynamic_cast<mypoint*>(updated.last())) {
+            last->pen.setColor(Qt::green);
+            last->update();
+            lastpoint = last->pos();
+        }
+    } else {
+        lastpoint = QPointF();
+    }
 }
 
 void AppManager::addPointtoMeasuru()
