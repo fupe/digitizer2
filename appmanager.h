@@ -90,6 +90,7 @@ public:
     int pointCount() const;
     int polylineCount() const;
     int circleCount() const;
+    QVector<int> polylinePointCounts() const;
 
 signals:
     // stávající signály

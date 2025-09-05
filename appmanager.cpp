@@ -289,6 +289,16 @@ int AppManager::circleCount() const {
     return count;
 }
 
+QVector<int> AppManager::polylinePointCounts() const {
+    QVector<int> counts;
+    for (auto* item : shapeManager_.getShapes()) {
+        if (auto* pl = dynamic_cast<mypolyline*>(item)) {
+            counts.append(pl->mypolygon ? pl->mypolygon->size() : 0);
+        }
+    }
+    return counts;
+}
+
 void AppManager::setScene(QGraphicsScene *scene)
 {
     scene_ = scene;
