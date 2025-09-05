@@ -4,6 +4,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPainterPathStroker>
 #include <QDebug>
+#include <QElapsedTimer>
 #include <QGraphicsScene>
 #include "3rdparty/dxflib/src/dl_dxf.h"
 #include <QTextStream>
@@ -127,15 +128,21 @@ mypolyline::mypolyline(AppManager* app)
 
 void mypolyline::addPointToShape(const QPointF& point)
 {
-    qDebug() << "pridavam bod do mypolyline " << point ;
+    QElapsedTimer timer;
+    timer.start();
+
     prepareGeometryChange();
     mypolygon->append(point);
     update();
-    //m_boundingRect=QRectF(bounding_min_max());
+
+    qDebug() << "addPointToShape:" << timer.nsecsElapsed() << "ns";
 }
 
 QPainterPath mypolyline::shape() const
 {
+    QElapsedTimer timer;
+    timer.start();
+
     QPainterPath path;
     if (mypolygon && mypolygon->size() >1)
     {
@@ -147,7 +154,10 @@ QPainterPath mypolyline::shape() const
     }
     QPainterPathStroker stroker;
     stroker.setWidth(6);
-    return stroker.createStroke(path);
+    QPainterPath result = stroker.createStroke(path);
+
+    qDebug() << "shape:" << timer.nsecsElapsed() << "ns";
+    return result;
 }
 
 QRectF mypolyline::boundingRect() const
@@ -266,6 +276,9 @@ int mypolyline::get_selectedSegmentIndex()
     return selectedSegmentIndex;
 }
 void mypolyline::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    QElapsedTimer timer;
+    timer.start();
+
     QPointF pos = event->pos();  // souřadnice myši v rámci itemu
 
     selectedSegmentIndex = -1;  // reset
@@ -289,6 +302,7 @@ void mypolyline::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     }
 
     QGraphicsItem::mousePressEvent(event);
+    qDebug() << "mousePressEvent:" << timer.nsecsElapsed() << "ns";
 }
 
 void mypolyline::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
@@ -306,6 +320,9 @@ void mypolyline::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 
 void mypolyline::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
+    QElapsedTimer timer;
+    timer.start();
+
     QPointF pos = event->pos();  // pozice myši v souřadnicích itemu
 
     for (int i = 0; i < mypolygon->size() - 1; ++i) {
@@ -323,6 +340,7 @@ void mypolyline::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
             hoveredSegmentIndex = i;  // např. pro zvýraznění nebo výběr
             setCursor(Qt::PointingHandCursor);
             update();  // překreslit
+            qDebug() << "hoverMoveEvent:" << timer.nsecsElapsed() << "ns";
             return;
         }
     }
@@ -330,6 +348,7 @@ void mypolyline::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     hoveredSegmentIndex = -1;
     unsetCursor();
     update();
+    qDebug() << "hoverMoveEvent:" << timer.nsecsElapsed() << "ns";
 }
 
 mycircle::mycircle()
