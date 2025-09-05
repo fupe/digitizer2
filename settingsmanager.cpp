@@ -20,7 +20,8 @@ SettingsManager::SettingsManager(QObject* parent)
 {
     current_ = loadFromStore();
     current_.arms_pen = new QPen;
-    current_.arms_pen->setColor(Qt::black);
+    current_.arms_pen->setColor(current_.arms_color);
+
     current_.arms_pen->setWidth(3);
     current_.arms_pen->setCapStyle(Qt::RoundCap);
     current_.arms_pen->setCosmetic(true);

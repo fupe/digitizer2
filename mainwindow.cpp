@@ -107,6 +107,7 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
   qDebug() << "konec konstruktoru";
   onAddPointModeChanged(AddPointMode::None); // vyplneni zkratek v tooltipu a podobne
   onContiModeChanged(appManager()->getContiMode()); // vyplni zkratky u conti a
+  Zoom_All();
 
 
 }
@@ -250,6 +251,7 @@ void MainWindow::Zoom_Dynamic() {
 }
 
 void MainWindow::Zoom_All() {
+    qDebug()<<"-----------------------------";
   zoomMode_ = ZoomMode::All;
   ZoomToolButton->setDefaultAction(actionZoom_All);
 
@@ -259,6 +261,10 @@ void MainWindow::Zoom_All() {
                                     2.1 * (s.arm1_length + s.arm2_length),
                                     2.1 * (s.arm1_length + s.arm2_length)),
                               Qt::KeepAspectRatio);
+  qDebug()<<"rect ------------- " << QRect(-1.05 * (s.arm1_length + s.arm2_length),
+                                           -1.05 * (s.arm1_length + s.arm2_length),
+                                           2.1 * (s.arm1_length + s.arm2_length),
+                                           2.1 * (s.arm1_length + s.arm2_length)) ;
   emit zoomModeChanged(zoomMode_);
 }
 
@@ -956,6 +962,7 @@ void MainWindow::onLanguageChanged(const QString &language) {
 void MainWindow::on_actionConnect_triggered() {}
 
 void MainWindow::onSettingsChanged(const Settings &s) {
+    qDebug()<<"settings changed color " << s.arms_color;
   // aktualizuj délky ramen podle uloženého nastavení
   QLineF l = arm1->line();    // aktuální čára (uchová P1 i úhel)
   l.setLength(s.arm1_length); // změní jen délku
@@ -980,10 +987,19 @@ void MainWindow::onSettingsChanged(const Settings &s) {
       s.shortcuts.map.value(QStringLiteral("action.measure")));
   ui->actionAuto->setShortcut(
       s.shortcuts.map.value(QStringLiteral("action.continous")));
+  ui->actionDelete_last_point->setShortcut(
+      s.shortcuts.map.value(QStringLiteral("action.back")));
   if (zoomShortcut_)
     zoomShortcut_->setKey(s.shortcuts.map.value(QStringLiteral("action.zoom")));
   ui->actionSave_dxf->setShortcut(
       s.shortcuts.map.value(QStringLiteral("action.exportdxf")));
+    // zmena velikosti sceny
+  scene->setSceneRect(QRect(-1.05*(s.arm1_length+s.arm2_length),-1.05*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length),2.1*(s.arm1_length+s.arm2_length)));
+    //zmen barvu ramen
+  s.arms_pen->setColor(s.arms_color);
+  arm1->setPen(*s.arms_pen);
+  arm2->setPen(*s.arms_pen);
+  base->setPen(*s.arms_pen);
 
   onAddPointModeChanged(appManager()->getAddPointMode());
 }
