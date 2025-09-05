@@ -7,6 +7,7 @@
 #include "ui_InfoDialog.h"
 #include "appmanager.h"
 #include "mainwindow.h"
+#include <QStringList>
 
 InfoDialog::InfoDialog(AppManager* app, QWidget *parent) :
     QDialog(parent),
@@ -81,6 +82,13 @@ void InfoDialog::updateCounts()
     ui->num_points->setText(QString::number(app_->pointCount()));
     ui->num_polylines->setText(QString::number(app_->polylineCount()));
     ui->num_circles->setText(QString::number(app_->circleCount()));
+
+    const auto counts = app_->polylinePointCounts();
+    QStringList list;
+    for (int c : counts) {
+        list << QString::number(c);
+    }
+    ui->polyline_points->setText(list.join(", "));
 }
 
 void InfoDialog::updateZoomMode(ZoomMode mode)

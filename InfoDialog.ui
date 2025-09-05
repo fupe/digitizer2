@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -169,11 +169,37 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="label_connection">
+  <widget class="QLabel" name="label_polyline_points">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>200</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Points per polyline</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="polyline_points">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>200</y>
+     <width>120</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_connection">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>230</y>
      <width>120</width>
      <height>21</height>
     </rect>
@@ -186,7 +212,7 @@
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>200</y>
+     <y>230</y>
      <width>120</width>
      <height>21</height>
     </rect>
@@ -199,7 +225,7 @@
    <property name="geometry">
     <rect>
      <x>260</x>
-     <y>240</y>
+     <y>270</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -208,7 +234,7 @@
     <string>Close</string>
    </property>
   </widget>
- </widget>
+</widget>
  <resources/>
  <connections/>
 </ui>
