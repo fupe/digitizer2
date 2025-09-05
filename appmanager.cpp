@@ -7,6 +7,7 @@
 #include "settingsmanager.h"
 #include "idatasourceworker.h"
 #include "GraphicsItems.h"
+#include <QElapsedTimer>
 
 namespace {
     constexpr double kPi = 3.14159265358979323846;
@@ -196,20 +197,22 @@ void AppManager::clearShapeManager()
 
 void AppManager::addPointtoShapeManager()
 {
-    // přebarvi předchozí poslední bod zpátky na červenou
-    const auto& shapes = shapeManager_.getShapes();
-    if (!shapes.isEmpty()) {
-        if (auto prev = dynamic_cast<mypoint*>(shapes.last())) {
-            prev->pen.setColor(Qt::red);
-            prev->update();
-        }
-    }
-
+    QElapsedTimer timer;
+    timer.start();
     lastpoint = endPointArm2_;
-    auto* point = new mypoint;
-    point->setPos(endPointArm2_);
-    point->pen.setColor(Qt::green); // nový poslední bod zeleně
-    shapeManager_.addShape(point);
+
+    const auto& shapes = shapeManager_.getShapes();
+    mypoint* points = nullptr;
+    if (!shapes.isEmpty()) {
+        points = dynamic_cast<mypoint*>(shapes.last());
+    }
+    if (!points) {
+        points = new mypoint;
+        shapeManager_.addShape(points);
+    }
+    points->addPointToShape(endPointArm2_);
+
+    qDebug() << "addPointtoShapeManager:" << timer.nsecsElapsed() << "ns";
 }
 
 void AppManager::deleteLastPoint()
@@ -218,21 +221,15 @@ void AppManager::deleteLastPoint()
     if (shapes.isEmpty())
         return;
 
-    // smaž pouze pokud je poslední položka bod
-    if (!dynamic_cast<mypoint*>(shapes.last()))
-        return;
-
-    shapeManager_.deleteLastShape();
-
-    const auto& updated = shapeManager_.getShapes();
-    if (!updated.isEmpty()) {
-        if (auto last = dynamic_cast<mypoint*>(updated.last())) {
-            last->pen.setColor(Qt::green);
-            last->update();
-            lastpoint = last->pos();
+    // smaž poslední bod v existujícím objektu mypoint
+    if (auto points = dynamic_cast<mypoint*>(shapes.last())) {
+        points->removeLastPoint();
+        if (points->isEmpty()) {
+            shapeManager_.deleteLastShape();
+            lastpoint = QPointF();
+        } else {
+            lastpoint = points->lastPoint();
         }
-    } else {
-        lastpoint = QPointF();
     }
 }
 
@@ -262,8 +259,8 @@ void AppManager::onShapesChanged()
 int AppManager::pointCount() const {
     int count = 0;
     for (auto* item : shapeManager_.getShapes()) {
-        if (dynamic_cast<mypoint*>(item)) {
-            ++count;
+        if (auto mp = dynamic_cast<mypoint*>(item)) {
+            count += mp->pointsCount();
         }
     }
     return count;

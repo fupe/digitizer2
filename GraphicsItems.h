@@ -4,6 +4,7 @@
 #include <QPainter>
 #include <QList>
 #include <QtGlobal>
+#include <QPolygonF>
 #include "settings.h"
 
 class QTextStream;
@@ -55,12 +56,19 @@ public:
                return Type;
            }
     void addPointToShape(const QPointF&) override ;
+    void removeLastPoint();
+    bool isEmpty() const { return points_.isEmpty(); }
+    int pointsCount() const { return points_.size(); }
+    QPointF lastPoint() const { return points_.isEmpty() ? QPointF() : points_.last(); }
     QRectF boundingRect()const override;
     void paint(QPainter *painter,const QStyleOptionGraphicsItem *option, QWidget *widget) override ;
     virtual void export_dxf(DL_Dxf& dxf, DL_WriterA& dw, Units units) override;  //export to dxf file
     void save(QTextStream &out) override;
 
     QString typeName() const override { return "point"; }
+
+private:
+    QPolygonF points_;
 
 };
 
