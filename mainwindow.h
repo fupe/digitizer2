@@ -27,6 +27,7 @@ class InfoDialog;
 class GraphicsItems;
 class QKeyEvent;
 class QMouseEvent;
+class QShowEvent;
 enum class AddPointMode;
 enum class ZoomMode { All, Dynamic, User };
 
@@ -158,6 +159,7 @@ public:
   QGraphicsRectItem *rectangle;
 
 protected:
+  void showEvent(QShowEvent *event) override;
   void closeEvent(QCloseEvent *event) override;
 };
 

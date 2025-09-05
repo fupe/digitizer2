@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPen>
+#include <QTimer>
 #include <QtMath>
 
 #include "CustomToolButton.h"
@@ -107,12 +108,16 @@ MainWindow::MainWindow(AppManager *app, QWidget *parent)
   qDebug() << "konec konstruktoru";
   onAddPointModeChanged(AddPointMode::None); // vyplneni zkratek v tooltipu a podobne
   onContiModeChanged(appManager()->getContiMode()); // vyplni zkratky u conti a
-  Zoom_All();
 
 
 }
 
 MainWindow::~MainWindow() { delete ui; }
+
+void MainWindow::showEvent(QShowEvent *event) {
+  QMainWindow::showEvent(event);
+  QTimer::singleShot(0, this, &MainWindow::Zoom_All);
+}
 
 void MainWindow::updateSerialActions(bool connected)
 {
